@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { isAdminAuthenticated, loginAdmin, logoutAdmin } from '../utils/adminAuth'
 import AdminLoginCard from '../components/admin/AdminLoginCard.vue'
 
@@ -22,6 +22,28 @@ const handleLogout = () => {
   logoutAdmin()
   isAuthenticated.value = false
 }
+
+const pendingCount = ref(0)
+
+const fetchPendingCount = async () => {
+  try {
+    const res = await fetch('/api/orders-count?status=pending')
+    if (!res.ok) return
+    const data = await res.json()
+    pendingCount.value = typeof data?.count === 'number' ? data.count : 0
+  } catch (e) {
+    // ignore
+  }
+}
+
+let pollId: number | undefined
+onMounted(() => {
+  fetchPendingCount()
+  pollId = window.setInterval(fetchPendingCount, 30000)
+})
+onUnmounted(() => {
+  if (pollId) clearInterval(pollId)
+})
 </script>
 
 <template>
@@ -40,6 +62,7 @@ const handleLogout = () => {
         <nav class="admin-section-nav">
           <RouterLink to="/admin/products">Produkter</RouterLink>
           <RouterLink to="/admin/groups">Grupper</RouterLink>
+          <RouterLink to="/admin/orders">Ordrar <span v-if="pendingCount > 0" class="badge">{{ pendingCount }}</span></RouterLink>
           <RouterLink to="/admin/settings">Inställningar</RouterLink>
           <RouterLink to="/admin/theme">Tema</RouterLink>
         </nav>

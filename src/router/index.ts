@@ -6,6 +6,7 @@ import CheckoutView from '../views/CheckoutView.vue'
 import AdminView from '../views/AdminView.vue'
 import AdminProductsView from '../views/admin/AdminProductsView.vue'
 import AdminGroupsView from '../views/admin/AdminGroupsView.vue'
+import AdminOrdersView from '../views/admin/AdminOrdersView.vue'
 import AdminSettingsView from '../views/admin/AdminSettingsView.vue'
 import AdminThemeView from '../views/admin/AdminThemeView.vue'
 import LoginView from '../views/LoginView.vue'
@@ -31,6 +32,7 @@ const router = createRouter({
         { path: '', redirect: '/admin/products' },
         { path: 'products', name: 'admin-products', component: AdminProductsView },
         { path: 'groups', name: 'admin-groups', component: AdminGroupsView },
+        { path: 'orders', name: 'admin-orders', component: AdminOrdersView },
         { path: 'settings', name: 'admin-settings', component: AdminSettingsView },
         { path: 'theme', name: 'admin-theme', component: AdminThemeView },
       ],

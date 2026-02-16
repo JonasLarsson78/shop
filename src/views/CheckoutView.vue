@@ -68,18 +68,60 @@ const form = reactive({
 })
 
 const orderPlaced = ref(false)
+const placing = ref(false)
+const placeError = ref('')
 
-const placeOrder = () => {
-  if (shopStore.cartItems.length === 0) {
+const placeOrder = async () => {
+  placeError.value = ''
+  if (shopStore.cartItems.length === 0) return
+
+  // basic validation
+  if (!form.name || !form.email || !form.address) {
+    placeError.value = 'Fyll i namn, e-post och adress.'
     return
   }
 
-  orderPlaced.value = true
-  shopStore.clearCart()
+  placing.value = true
 
-  setTimeout(() => {
-    router.push('/')
-  }, 1500)
+  const items = shopStore.cartItems.map(i => ({
+    productId: i.product.id,
+    name: i.product.name,
+    quantity: i.quantity,
+    price: i.product.price,
+    subtotal: i.subtotal,
+  }))
+
+  const payload = {
+    customerName: form.name,
+    email: form.email,
+    address: form.address,
+    phone: form.phone,
+    zip: form.zip,
+    city: form.city,
+    items,
+    total: cartTotalWithShipping.value,
+    shippingOptionId: selectedShippingId.value,
+  }
+
+  try {
+    const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      throw new Error(body?.error || `Order request failed: ${res.status}`)
+    }
+
+    // success
+    orderPlaced.value = true
+    shopStore.clearCart()
+
+    setTimeout(() => {
+      router.push('/')
+    }, 1500)
+  } catch (err: any) {
+    placeError.value = err?.message || String(err)
+  } finally {
+    placing.value = false
+  }
 }
 </script>
 

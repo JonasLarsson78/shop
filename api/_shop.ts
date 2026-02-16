@@ -184,6 +184,25 @@ const ensureSchemaAndSeedInternal = async () => {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 
+  // Orders table
+  await query(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      customer_name VARCHAR(160) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      address TEXT,
+      phone VARCHAR(50) DEFAULT '',
+      zip VARCHAR(30) DEFAULT '',
+      city VARCHAR(120) DEFAULT '',
+      items TEXT NOT NULL,
+      total INT NOT NULL,
+      shipping_option_id INT UNSIGNED NULL,
+      status VARCHAR(40) NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `)
+
   // Users for simple auth
   await query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -664,5 +683,97 @@ export const getShopSnapshot = async () => {
     products,
     groups,
     settings,
+  }
+}
+
+export type Order = {
+  id: number
+  customerName: string
+  email: string
+  address: string | null
+  phone: string
+  zip: string
+  city: string
+  items: unknown
+  total: number
+  shippingOptionId: number | null
+  status: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const listOrders = async (): Promise<Order[]> => {
+  const rows = await query<Array<any>>(`
+    SELECT id, customer_name AS customerName, email, address, phone, zip, city, items, total, shipping_option_id AS shippingOptionId, status, created_at AS createdAt, updated_at AS updatedAt
+    FROM orders
+    ORDER BY created_at DESC
+  `)
+
+  return rows.map((r) => ({
+    ...r,
+    items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : r.items,
+  }))
+}
+
+export const createOrder = async (rawPayload: unknown): Promise<Order> => {
+  const payload = asRecord(rawPayload)
+  const customerName = typeof payload.customerName === 'string' ? payload.customerName.trim() : ''
+  const email = typeof payload.email === 'string' ? payload.email.trim() : ''
+  const address = typeof payload.address === 'string' ? payload.address.trim() : ''
+  const phone = typeof payload.phone === 'string' ? payload.phone.trim() : ''
+  const zip = typeof payload.zip === 'string' ? payload.zip.trim() : ''
+  const city = typeof payload.city === 'string' ? payload.city.trim() : ''
+  const items = Array.isArray(payload.items) ? payload.items : []
+  const total = Number.isFinite(Number(payload.total)) ? Math.max(0, Math.floor(Number(payload.total))) : 0
+  const shippingOptionId = Number.isFinite(Number(payload.shippingOptionId)) ? Math.floor(Number(payload.shippingOptionId)) : null
+
+  if (!customerName || !email || items.length === 0) {
+    throw new Error('Invalid order payload')
+  }
+
+  const result = await query<ResultSetHeader>(
+    'INSERT INTO orders (customer_name, email, address, phone, zip, city, items, total, shipping_option_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [customerName, email, address, phone, zip, city, JSON.stringify(items), total, shippingOptionId, 'pending'],
+  )
+
+  const id = result.insertId
+
+  return {
+    id,
+    customerName,
+    email,
+    address: address || null,
+    phone,
+    zip,
+    city,
+    items,
+    total,
+    shippingOptionId,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }
+}
+
+export const updateOrderStatus = async (orderId: number, rawPayload: unknown): Promise<Order> => {
+  const payload = asRecord(rawPayload)
+  const status = typeof payload.status === 'string' && payload.status.trim() ? payload.status.trim() : null
+
+  if (!status) {
+    throw new Error('Invalid status')
+  }
+
+  await query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId])
+
+  const rows = await query<Array<any>>('SELECT id, customer_name AS customerName, email, address, phone, zip, city, items, total, shipping_option_id AS shippingOptionId, status, created_at AS createdAt, updated_at AS updatedAt FROM orders WHERE id = ? LIMIT 1', [orderId])
+
+  if (!rows[0]) {
+    throw new Error('Order not found')
+  }
+
+  const r = rows[0]
+  return {
+    ...r,
+    items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : r.items,
   }
 }
