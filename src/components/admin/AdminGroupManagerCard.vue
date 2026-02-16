@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { useShopStore } from '../../stores/shop'
 
 const shopStore = useShopStore()
+const isCreateExpanded = ref(false)
 
 const groupForm = reactive({
   name: '',
@@ -13,6 +14,11 @@ const editGroupName = ref('')
 const addGroup = () => {
   shopStore.addGroup(groupForm.name)
   groupForm.name = ''
+  isCreateExpanded.value = false
+}
+
+const toggleCreate = () => {
+  isCreateExpanded.value = !isCreateExpanded.value
 }
 
 const startEditGroup = (groupId: number, groupName: string) => {
@@ -37,13 +43,21 @@ const removeGroup = (groupId: number) => {
     cancelEditGroup()
   }
 }
+
+const getGroupProductCount = (groupId: number) =>
+  shopStore.products.filter((product) => product.groupId === groupId).length
 </script>
 
 <template>
   <div class="card">
-    <h3>Produktgrupper</h3>
+    <div class="group-header">
+      <h3>Produktgrupper</h3>
+      <button type="button" class="button-muted" @click="toggleCreate">
+        {{ isCreateExpanded ? 'Stäng' : '+ Lägg till grupp' }}
+      </button>
+    </div>
 
-    <form class="group-create-form" @submit.prevent="addGroup">
+    <form v-if="isCreateExpanded" class="group-create-form" @submit.prevent="addGroup">
       <label>
         Ny grupp
         <input v-model="groupForm.name" required type="text" />
@@ -55,11 +69,7 @@ const removeGroup = (groupId: number) => {
 
     <div v-else class="group-list">
       <article v-for="group in shopStore.groups" :key="group.id" class="group-item">
-        <form
-          v-if="editingGroupId === group.id"
-          class="group-edit-form"
-          @submit.prevent="saveEditGroup(group.id)"
-        >
+        <form v-if="editingGroupId === group.id" class="group-edit-form" @submit.prevent="saveEditGroup(group.id)">
           <input v-model="editGroupName" required type="text" />
 
           <div class="row-actions">
@@ -69,7 +79,10 @@ const removeGroup = (groupId: number) => {
         </form>
 
         <div v-else class="group-item-row">
-          <p>{{ group.name }}</p>
+          <div class="group-info">
+            <p>{{ group.name }}</p>
+            <small>{{ getGroupProductCount(group.id) }} produkter</small>
+          </div>
 
           <div class="row-actions">
             <button type="button" @click="startEditGroup(group.id, group.name)">Edit</button>
@@ -82,6 +95,18 @@ const removeGroup = (groupId: number) => {
 </template>
 
 <style scoped lang="scss">
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+
+  h3 {
+    margin: 0;
+  }
+}
+
 .group-create-form {
   margin-bottom: 0.8rem;
 }
@@ -106,6 +131,16 @@ const removeGroup = (groupId: number) => {
   p {
     margin: 0;
     font-weight: 600;
+  }
+}
+
+.group-info {
+  display: grid;
+  gap: 0.15rem;
+
+  small {
+    color: $color-text-soft;
+    font-size: 0.82rem;
   }
 }
 

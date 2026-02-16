@@ -7,9 +7,9 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
     <GroupMenu />
 
     <div class="home-hero card">
-      <p class="home-kicker">Modern Hundshop</p>
-      <h2>Stilrena produkter för en gladare hundvardag</h2>
-      <p class="home-lead">Utvalda favoriter för lek, promenad och vila. Filtrera snabbt via grupper och fyll varukorgen
+      <p class="home-kicker">Modern webshop</p>
+      <h2>Stilren template för en modern butik</h2>
+      <p class="home-lead">Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen
         på några sekunder.</p>
 
       <ul class="home-points">
@@ -23,17 +23,17 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
         <RouterLink class="button-link button-muted" to="/cart">Se varukorg</RouterLink>
       </div>
 
-      <div class="home-scenes" aria-label="Hundmoment">
+      <div class="home-scenes" aria-label="Butiksmoment">
         <figure class="scene-card">
-          <figcaption>Lekstund</figcaption>
+          <figcaption>Nyheter</figcaption>
         </figure>
 
         <figure class="scene-card">
-          <figcaption>Matdags</figcaption>
+          <figcaption>Populärt</figcaption>
         </figure>
 
         <figure class="scene-card">
-          <figcaption>Promenad</figcaption>
+          <figcaption>Kampanjer</figcaption>
         </figure>
       </div>
     </div>

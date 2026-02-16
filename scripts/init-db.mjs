@@ -36,13 +36,13 @@ try {
 
   const hasLegacyType = Array.isArray(columnRows)
     ? columnRows.some((column) => {
-        if (!column || typeof column !== 'object' || !('dataType' in column)) {
-          return false
-        }
+      if (!column || typeof column !== 'object' || !('dataType' in column)) {
+        return false
+      }
 
-        const dataType = String(column.dataType).toLowerCase()
-        return !numericSqlTypes.has(dataType)
-      })
+      const dataType = String(column.dataType).toLowerCase()
+      return !numericSqlTypes.has(dataType)
+    })
     : false
 
   if (hasLegacyType) {

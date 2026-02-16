@@ -4,7 +4,7 @@ import { useShopStore } from './stores/shop'
 
 const shopStore = useShopStore()
 const storeName = computed(() =>
-  shopStore.hasInitializedData ? shopStore.settings.storeName || 'Doggo Shop' : 'Laddar butik...',
+  shopStore.hasInitializedData ? shopStore.settings.storeName || 'Template Shop' : 'Laddar butik...',
 )
 
 watchEffect(() => {

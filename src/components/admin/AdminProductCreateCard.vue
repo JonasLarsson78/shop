@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useShopStore } from '../../stores/shop'
 
 const shopStore = useShopStore()
+const isExpanded = ref(false)
 
 const productForm = reactive({
   name: '',
@@ -26,43 +27,69 @@ const addProduct = () => {
   productForm.price = 0
   productForm.imageUrl = ''
   productForm.groupId = ''
+  isExpanded.value = false
+}
+
+const toggleForm = () => {
+  isExpanded.value = !isExpanded.value
 }
 </script>
 
 <template>
-  <form class="card" @submit.prevent="addProduct">
-    <h3>Lägg till produkt</h3>
+  <div class="card">
+    <div class="create-header">
+      <h3>Lägg till produkt</h3>
+      <button type="button" class="button-muted" @click="toggleForm">
+        {{ isExpanded ? 'Stäng' : '+ Lägg till produkt' }}
+      </button>
+    </div>
 
-    <label>
-      Produktnamn
-      <input v-model="productForm.name" required type="text" />
-    </label>
+    <form v-if="isExpanded" @submit.prevent="addProduct">
+      <label>
+        Produktnamn
+        <input v-model="productForm.name" required type="text" />
+      </label>
 
-    <label>
-      Beskrivning
-      <textarea v-model="productForm.description" required rows="3" />
-    </label>
+      <label>
+        Beskrivning
+        <textarea v-model="productForm.description" required rows="3" />
+      </label>
 
-    <label>
-      Pris (kr)
-      <input v-model.number="productForm.price" min="1" required type="number" />
-    </label>
+      <label>
+        Pris (kr)
+        <input v-model.number="productForm.price" min="1" required type="number" />
+      </label>
 
-    <label>
-      Bild-URL
-      <input v-model="productForm.imageUrl" placeholder="https://..." type="text" />
-    </label>
+      <label>
+        Bild-URL
+        <input v-model="productForm.imageUrl" placeholder="https://..." type="text" />
+      </label>
 
-    <label>
-      Grupp
-      <select v-model="productForm.groupId">
-        <option value="">Ingen grupp</option>
-        <option v-for="group in shopStore.groups" :key="group.id" :value="group.id">
-          {{ group.name }}
-        </option>
-      </select>
-    </label>
+      <label>
+        Grupp
+        <select v-model="productForm.groupId">
+          <option value="">Ingen grupp</option>
+          <option v-for="group in shopStore.groups" :key="group.id" :value="group.id">
+            {{ group.name }}
+          </option>
+        </select>
+      </label>
 
-    <button type="submit">Lägg till</button>
-  </form>
+      <button type="submit">Lägg till</button>
+    </form>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.create-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+
+  h3 {
+    margin: 0;
+  }
+}
+</style>

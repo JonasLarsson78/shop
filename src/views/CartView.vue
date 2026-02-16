@@ -32,7 +32,8 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
     <div v-else class="cart-layout">
       <div class="cart-list">
         <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <img :src="getProductImage(item.product.imageUrl)" :alt="item.product.name" class="cart-image" loading="lazy" />
+          <img :src="getProductImage(item.product.imageUrl)" :alt="item.product.name" class="cart-image"
+            loading="lazy" />
 
           <div class="cart-details">
             <h3>{{ item.product.name }}</h3>

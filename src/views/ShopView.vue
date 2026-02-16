@@ -141,9 +141,9 @@ onBeforeUnmount(() => {
 
     <div class="shop-content">
       <header class="shop-header card">
-        <p class="shop-kicker">Hundshop</p>
+        <p class="shop-kicker">Webshop</p>
         <h2>{{ shopStore.settings.storeName }}</h2>
-        <p>Hundprodukter för lek, promenad och vila.</p>
+        <p>Produkter för en modern onlinebutik.</p>
       </header>
 
       <div class="group-section">

@@ -30,7 +30,7 @@ interface ShopSnapshot {
   settings: Settings | null
 }
 
-const SHOP_STORAGE_KEY = 'doggo-shop-state-v1'
+const SHOP_STORAGE_KEY = 'template-shop-state-v1'
 const DEFAULT_PRODUCT_IMAGE = ''
 
 const defaultSettings: Settings = {

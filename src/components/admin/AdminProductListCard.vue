@@ -121,11 +121,8 @@ onBeforeUnmount(() => {
       </div>
 
       <article v-for="product in shopStore.products" :key="product.id" class="admin-product-row">
-        <form
-          v-if="editingProductId === product.id"
-          class="admin-product-edit-row"
-          @submit.prevent="saveEditProduct(product.id)"
-        >
+        <form v-if="editingProductId === product.id" class="admin-product-edit-row"
+          @submit.prevent="saveEditProduct(product.id)">
           <div class="admin-edit-grid">
             <label>
               Produktnamn
