@@ -62,7 +62,8 @@ onUnmounted(() => {
         <nav class="admin-section-nav">
           <RouterLink to="/admin/products">Produkter</RouterLink>
           <RouterLink to="/admin/groups">Grupper</RouterLink>
-          <RouterLink to="/admin/orders">Ordrar <span v-if="pendingCount > 0" class="badge">{{ pendingCount }}</span></RouterLink>
+          <RouterLink to="/admin/orders">Ordrar <span v-if="pendingCount > 0" class="badge">{{ pendingCount }}</span>
+          </RouterLink>
           <RouterLink to="/admin/settings">Inställningar</RouterLink>
           <RouterLink to="/admin/theme">Tema</RouterLink>
         </nav>
