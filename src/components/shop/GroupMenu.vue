@@ -28,26 +28,20 @@ const groupLinks = computed(() => {
     <p class="group-menu-kicker">Navigera</p>
     <h3>Produktgrupper</h3>
 
-    <RouterLink class="group-menu-link" :to="{ path: '/shop' }" :class="{ active: $route.path === '/shop' && !$route.query.group }">
+    <RouterLink class="group-menu-link" :to="{ path: '/shop' }"
+      :class="{ active: $route.path === '/shop' && !$route.query.group }">
       Alla produkter
     </RouterLink>
 
-    <RouterLink
-      v-for="group in groupLinks.groupsWithProducts"
-      :key="group.id"
-      class="group-menu-link"
+    <RouterLink v-for="group in groupLinks.groupsWithProducts" :key="group.id" class="group-menu-link"
       :class="{ active: $route.path === '/shop' && $route.query.group === group.id }"
-      :to="{ path: '/shop', query: { group: group.id } }"
-    >
+      :to="{ path: '/shop', query: { group: group.id } }">
       {{ group.name }}
     </RouterLink>
 
-    <RouterLink
-      v-if="groupLinks.ungroupedCount > 0"
-      class="group-menu-link"
+    <RouterLink v-if="groupLinks.ungroupedCount > 0" class="group-menu-link"
       :class="{ active: $route.path === '/shop' && $route.query.group === 'ungrouped' }"
-      :to="{ path: '/shop', query: { group: 'ungrouped' } }"
-    >
+      :to="{ path: '/shop', query: { group: 'ungrouped' } }">
       Övrigt
     </RouterLink>
   </aside>

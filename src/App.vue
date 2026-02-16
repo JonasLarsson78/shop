@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useShopStore } from './stores/shop'
+
+const shopStore = useShopStore()
+</script>
+
 <template>
   <div class="app-shell">
     <header class="topbar">
@@ -8,7 +14,10 @@
       <nav class="nav">
         <RouterLink to="/">Start</RouterLink>
         <RouterLink to="/shop">Butik</RouterLink>
-        <RouterLink to="/cart">Varukorg</RouterLink>
+        <RouterLink to="/cart" class="cart-link">
+          <span>Varukorg</span>
+          <span v-if="shopStore.totalItems > 0" class="cart-badge">{{ shopStore.totalItems }}</span>
+        </RouterLink>
         <RouterLink to="/checkout">Kassa</RouterLink>
         <RouterLink to="/admin">Admin</RouterLink>
       </nav>
@@ -109,6 +118,26 @@ body {
     color: $color-brand-contrast;
     border-color: $color-brand;
   }
+}
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cart-badge {
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: rgba($color-brand-contrast, 0.92);
+  color: $color-brand;
 }
 
 .page-container {

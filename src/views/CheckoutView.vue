@@ -38,12 +38,8 @@ const placeOrder = () => {
       <form v-if="!orderPlaced" class="card" @submit.prevent="placeOrder">
         <h3>Kunduppgifter</h3>
 
-        <img
-          src="https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1400"
-          alt="Hund som vilar"
-          class="checkout-image"
-          loading="lazy"
-        />
+        <img src="https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1400"
+          alt="Hund som vilar" class="checkout-image" loading="lazy" />
 
         <label>
           Namn

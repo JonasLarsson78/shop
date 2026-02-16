@@ -282,8 +282,9 @@ export const useShopStore = defineStore('shop', {
         settings: this.settings,
       })
     },
-    addToCart(productId: string) {
-      this.cart[productId] = (this.cart[productId] ?? 0) + 1
+    addToCart(productId: string, quantity = 1) {
+      const safeQuantity = Number.isFinite(quantity) ? Math.max(1, Math.floor(quantity)) : 1
+      this.cart[productId] = (this.cart[productId] ?? 0) + safeQuantity
       this.persistState()
     },
     updateCartItem(productId: string, quantity: number) {

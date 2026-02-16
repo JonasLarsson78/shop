@@ -17,6 +17,14 @@ const handleProductImageError = (event: Event) => {
 
   img.src = fallbackImageUrl
 }
+
+const decreaseCartItem = (productId: string, currentQuantity: number) => {
+  shopStore.updateCartItem(productId, Math.max(1, currentQuantity - 1))
+}
+
+const increaseCartItem = (productId: string, currentQuantity: number) => {
+  shopStore.updateCartItem(productId, currentQuantity + 1)
+}
 </script>
 
 <template>
@@ -47,8 +55,12 @@ const handleProductImageError = (event: Event) => {
           <div class="cart-controls">
             <label class="cart-quantity">
               Antal
-              <input type="number" min="1" :value="item.quantity"
-                @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))" />
+              <div class="quantity-stepper">
+                <button type="button" class="step-button" @click="decreaseCartItem(item.product.id, item.quantity)">−</button>
+                <input type="number" min="1" :value="item.quantity"
+                  @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))" />
+                <button type="button" class="step-button" @click="increaseCartItem(item.product.id, item.quantity)">+</button>
+              </div>
             </label>
 
             <p class="cart-subtotal">{{ item.subtotal }} kr</p>
@@ -161,6 +173,7 @@ const handleProductImageError = (event: Event) => {
 }
 
 .cart-details {
+
   h3,
   p {
     margin: 0;
@@ -189,9 +202,27 @@ const handleProductImageError = (event: Event) => {
   display: grid;
   gap: 0.35rem;
 
+  .quantity-stepper {
+    display: grid;
+    grid-template-columns: 2rem 1fr 2rem;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
   input {
     width: 100%;
     min-width: 0;
+    text-align: center;
+  }
+
+  .step-button {
+    width: 2rem;
+    height: 2rem;
+    line-height: 1;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
