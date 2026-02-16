@@ -161,8 +161,8 @@ onBeforeUnmount(() => {
 
         <template v-else>
           <div class="admin-product-main">
-            <div v-if="!hasProductImage(product.imageUrl)" class="admin-product-thumb admin-product-thumb-missing" role="img"
-              aria-label="Bild saknas">
+            <div v-if="!hasProductImage(product.imageUrl)" class="admin-product-thumb admin-product-thumb-missing"
+              role="img" aria-label="Bild saknas">
               Bild saknas
             </div>
             <img v-else :src="product.imageUrl" :alt="product.name" class="admin-product-thumb" />

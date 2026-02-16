@@ -79,6 +79,7 @@ try {
       id TINYINT PRIMARY KEY,
       store_name VARCHAR(160) NOT NULL,
       sub_name VARCHAR(160) NOT NULL DEFAULT '',
+      brand_image_url TEXT NOT NULL,
       hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
       hero_title VARCHAR(255) NOT NULL DEFAULT '',
       hero_lead TEXT NOT NULL,
@@ -106,8 +107,12 @@ try {
       alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
     },
     {
+      name: 'brand_image_url',
+      alterSql: "ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name",
+    },
+    {
       name: 'hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER sub_name",
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
     },
     {
       name: 'hero_title',

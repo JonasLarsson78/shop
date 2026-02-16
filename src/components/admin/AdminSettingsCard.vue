@@ -7,6 +7,7 @@ const shopStore = useShopStore()
 const settingsForm = reactive({
   storeName: shopStore.settings.storeName,
   subName: shopStore.settings.subName,
+  brandImageUrl: shopStore.settings.brandImageUrl,
   heroKicker: shopStore.settings.heroKicker,
   heroTitle: shopStore.settings.heroTitle,
   heroLead: shopStore.settings.heroLead,
@@ -30,6 +31,7 @@ const saveSettings = () => {
   shopStore.updateSettings({
     storeName: settingsForm.storeName,
     subName: settingsForm.subName,
+    brandImageUrl: settingsForm.brandImageUrl,
     heroKicker: settingsForm.heroKicker,
     heroTitle: settingsForm.heroTitle,
     heroLead: settingsForm.heroLead,
@@ -65,6 +67,11 @@ const saveSettings = () => {
     <label>
       Underrubrik
       <input v-model="settingsForm.subName" type="text" />
+    </label>
+
+    <label>
+      Bild-URL (ersätter namn + underrubrik)
+      <input v-model="settingsForm.brandImageUrl" type="text" placeholder="https://..." />
     </label>
 
     <h4 class="settings-subheading">Startsida Hero</h4>

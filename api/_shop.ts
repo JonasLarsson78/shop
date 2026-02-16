@@ -19,6 +19,7 @@ export type ProductGroup = {
 export type ShopSettings = {
   storeName: string
   subName: string
+  brandImageUrl: string
   heroKicker: string
   heroTitle: string
   heroLead: string
@@ -175,6 +176,7 @@ const ensureSchemaAndSeedInternal = async () => {
       id TINYINT PRIMARY KEY,
       store_name VARCHAR(160) NOT NULL,
       sub_name VARCHAR(160) NOT NULL DEFAULT '',
+      brand_image_url TEXT NOT NULL,
       hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
       hero_title VARCHAR(255) NOT NULL DEFAULT '',
       hero_lead TEXT NOT NULL,
@@ -202,8 +204,12 @@ const ensureSchemaAndSeedInternal = async () => {
       alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
     },
     {
+      name: 'brand_image_url',
+      alterSql: "ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name",
+    },
+    {
       name: 'hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER sub_name",
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
     },
     {
       name: 'hero_title',
@@ -411,6 +417,7 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
   const rows = await query<Array<{
     storeName: string
     subName: string
+    brandImageUrl: string
     heroKicker: string
     heroTitle: string
     heroLead: string
@@ -432,6 +439,7 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
     SELECT
       store_name AS storeName,
       sub_name AS subName,
+      brand_image_url AS brandImageUrl,
       hero_kicker AS heroKicker,
       hero_title AS heroTitle,
       hero_lead AS heroLead,
@@ -467,6 +475,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
 
   const storeName = typeof payload.storeName === 'string' && payload.storeName.trim() ? payload.storeName.trim() : (currentSettings?.storeName ?? '')
   const subName = typeof payload.subName === 'string' ? payload.subName.trim() : (currentSettings?.subName ?? '')
+  const brandImageUrl = typeof payload.brandImageUrl === 'string' ? payload.brandImageUrl.trim() : (currentSettings?.brandImageUrl ?? '')
   const heroKicker = typeof payload.heroKicker === 'string' ? payload.heroKicker.trim() : (currentSettings?.heroKicker ?? '')
   const heroTitle = typeof payload.heroTitle === 'string' ? payload.heroTitle.trim() : (currentSettings?.heroTitle ?? '')
   const heroLead = typeof payload.heroLead === 'string' ? payload.heroLead.trim() : (currentSettings?.heroLead ?? '')
@@ -510,6 +519,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        id,
        store_name,
        sub_name,
+      brand_image_url,
        hero_kicker,
        hero_title,
        hero_lead,
@@ -528,10 +538,11 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        shipping_cost,
        free_shipping_threshold
      )
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        store_name = VALUES(store_name),
        sub_name = VALUES(sub_name),
+       brand_image_url = VALUES(brand_image_url),
        hero_kicker = VALUES(hero_kicker),
        hero_title = VALUES(hero_title),
        hero_lead = VALUES(hero_lead),
@@ -552,6 +563,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
     [
       storeName,
       subName,
+      brandImageUrl,
       heroKicker,
       heroTitle,
       heroLead,
@@ -575,6 +587,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
   return {
     storeName,
     subName,
+    brandImageUrl,
     heroKicker,
     heroTitle,
     heroLead,

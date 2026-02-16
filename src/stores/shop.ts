@@ -17,6 +17,7 @@ export interface ProductGroup {
 interface Settings {
   storeName: string
   subName: string
+  brandImageUrl: string
   heroKicker: string
   heroTitle: string
   heroLead: string
@@ -52,6 +53,7 @@ const DEFAULT_PRODUCT_IMAGE = ''
 const defaultSettings: Settings = {
   storeName: '',
   subName: '',
+  brandImageUrl: '',
   heroKicker: 'Modern webshop',
   heroTitle: 'Stilren template för en modern butik',
   heroLead: 'Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen på några sekunder.',

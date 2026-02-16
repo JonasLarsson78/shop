@@ -56,17 +56,13 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
   <section>
     <div class="card theme-card">
       <h3>Tema</h3>
-      <p class="theme-help">Välj ett färdigt tema eller ange egna färger. Custom aktiveras automatiskt när du ändrar färgerna.</p>
+      <p class="theme-help">Välj ett färdigt tema eller ange egna färger. Custom aktiveras automatiskt när du ändrar
+        färgerna.</p>
 
       <div class="theme-options">
-        <button
-          v-for="option in themeOptions"
-          :key="option.id"
-          type="button"
-          class="theme-option"
+        <button v-for="option in themeOptions" :key="option.id" type="button" class="theme-option"
           :class="{ 'theme-option-active': selectedMode === option.id }"
-          @click="option.id === 'custom' ? applyCustomTheme() : applyPresetTheme(option.id)"
-        >
+          @click="option.id === 'custom' ? applyCustomTheme() : applyPresetTheme(option.id)">
           {{ option.label }}
         </button>
       </div>
@@ -95,7 +91,8 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
           </div>
         </label>
         <p v-if="!customColorsValid" class="theme-error">Ange giltiga hex-koder, t.ex. #4f46e5.</p>
-        <button type="button" class="button-primary" :disabled="!customColorsValid" @click="applyCustomTheme">Använd custom</button>
+        <button type="button" class="button-primary" :disabled="!customColorsValid" @click="applyCustomTheme">Använd
+          custom</button>
       </div>
     </div>
   </section>

@@ -27,6 +27,8 @@ const storeName = computed(() => shopStore.settings.storeName || '')
 
 const subName = computed(() => (shopStore.hasInitializedData ? shopStore.settings.subName || '' : ''))
 
+const brandImageUrl = computed(() => (shopStore.hasInitializedData ? shopStore.settings.brandImageUrl?.trim() || '' : ''))
+
 watchEffect(() => {
   if (typeof document !== 'undefined') {
     document.title = subName.value || storeName.value
@@ -38,8 +40,11 @@ watchEffect(() => {
   <div class="app-shell">
     <header v-if="shopStore.hasInitializedData" class="topbar">
       <div class="brand-wrap">
-        <h1 v-if="storeName" class="brand">{{ storeName }}</h1>
-        <p v-if="subName" class="eyebrow">{{ subName }}</p>
+        <img v-if="brandImageUrl" :src="brandImageUrl" :alt="storeName || 'Butik'" class="brand-image" />
+        <template v-else>
+          <h1 v-if="storeName" class="brand">{{ storeName }}</h1>
+          <p v-if="subName" class="eyebrow">{{ subName }}</p>
+        </template>
       </div>
       <nav v-if="shopStore.hasInitializedData" class="nav">
         <RouterLink to="/">
@@ -150,6 +155,13 @@ body {
 .brand-wrap {
   display: grid;
   gap: 0.15rem;
+}
+
+.brand-image {
+  max-height: 70px;
+  width: auto;
+  object-fit: contain;
+  border-radius: $radius-md;
 }
 
 .eyebrow {
