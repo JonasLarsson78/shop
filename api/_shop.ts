@@ -147,6 +147,7 @@ const resetLegacyStringIdTablesIfNeeded = async () => {
 }
 
 const ensureSchemaAndSeedInternal = async () => {
+
   await resetLegacyStringIdTablesIfNeeded()
 
   await query(`
@@ -168,6 +169,17 @@ const ensureSchemaAndSeedInternal = async () => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       CONSTRAINT fk_products_group FOREIGN KEY (group_id) REFERENCES \`groups\`(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `)
+
+  // Ny tabell för shipping options
+  await query(`
+    CREATE TABLE IF NOT EXISTS shipping_options (
+      id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      price INT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 

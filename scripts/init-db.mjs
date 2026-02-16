@@ -101,6 +101,16 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 
+  await connection.execute(`
+    CREATE TABLE IF NOT EXISTS shipping_options (
+      id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      price INT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `)
+
   const settingsColumnsToEnsure = [
     {
       name: 'sub_name',
@@ -188,7 +198,7 @@ try {
     }
   }
 
-  console.log('✅ Tables created/verified: groups, products, settings')
+  console.log('✅ Tables created/verified: groups, products, settings, shipping_options')
 } finally {
   await connection.end()
 }

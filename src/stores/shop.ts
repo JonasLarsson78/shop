@@ -47,6 +47,12 @@ interface ShopSnapshot {
   settings: Settings | null
 }
 
+export interface ShippingOption {
+  id: number
+  name: string
+  price: number
+}
+
 const SHOP_STORAGE_KEY = 'template-shop-state-v1'
 const DEFAULT_PRODUCT_IMAGE = ''
 
@@ -134,6 +140,7 @@ export const useShopStore = defineStore('shop', {
     settings: defaultSettings,
     dbStatus: 'loading' as 'loading' | 'connected' | 'error',
     hasInitializedData: false,
+    shippingOptions: [] as ShippingOption[],
   }),
   getters: {
     cartItems(state) {
@@ -528,6 +535,50 @@ export const useShopStore = defineStore('shop', {
       }
 
       this.persistState()
+    },
+    async fetchShippingOptions() {
+      try {
+        const options = await apiRequest<ShippingOption[]>('/api/shipping-options', { method: 'GET' })
+        this.shippingOptions = options
+      } catch (error) {
+        console.error('Failed to fetch shipping options:', error)
+      }
+    },
+    async addShippingOption(payload: { name: string; price: number }) {
+      try {
+        const option = await apiRequest<ShippingOption>('/api/shipping-options', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        })
+        this.shippingOptions.push(option)
+      } catch (error) {
+        console.error('Failed to add shipping option:', error)
+      }
+    },
+    async updateShippingOption(id: number, payload: { name: string; price: number }) {
+      try {
+        const option = await apiRequest<ShippingOption>('/api/shipping-options', {
+          method: 'PUT',
+          body: JSON.stringify({ id, ...payload }),
+        })
+        const idx = this.shippingOptions.findIndex(o => o.id === id)
+        if (idx !== -1) {
+          this.shippingOptions[idx] = option
+        }
+      } catch (error) {
+        console.error('Failed to update shipping option:', error)
+      }
+    },
+    async deleteShippingOption(id: number) {
+      try {
+        await apiRequest('/api/shipping-options', {
+          method: 'DELETE',
+          body: JSON.stringify({ id }),
+        })
+        this.shippingOptions = this.shippingOptions.filter(o => o.id !== id)
+      } catch (error) {
+        console.error('Failed to delete shipping option:', error)
+      }
     },
   },
 })

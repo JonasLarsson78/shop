@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useShopStore } from '../../stores/shop'
 
 const shopStore = useShopStore()
@@ -23,9 +23,10 @@ const settingsForm = reactive({
   checkoutHeroKicker: shopStore.settings.checkoutHeroKicker,
   checkoutHeroTitle: shopStore.settings.checkoutHeroTitle,
   checkoutHeroLead: shopStore.settings.checkoutHeroLead,
-  shippingCost: shopStore.settings.shippingCost,
   freeShippingThreshold: shopStore.settings.freeShippingThreshold,
 })
+
+const newShipping = ref({ name: '', price: 0 })
 
 const saveSettings = () => {
   shopStore.updateSettings({
@@ -47,10 +48,26 @@ const saveSettings = () => {
     checkoutHeroKicker: settingsForm.checkoutHeroKicker,
     checkoutHeroTitle: settingsForm.checkoutHeroTitle,
     checkoutHeroLead: settingsForm.checkoutHeroLead,
-    shippingCost: Number(settingsForm.shippingCost),
     freeShippingThreshold: Number(settingsForm.freeShippingThreshold),
   })
 }
+
+const addShipping = async () => {
+  if (!newShipping.value.name || newShipping.value.price < 0) return
+  await shopStore.addShippingOption({ name: newShipping.value.name, price: newShipping.value.price })
+  newShipping.value = { name: '', price: 0 }
+}
+
+const updateShipping = async (option: any) => {
+  await shopStore.updateShippingOption(option.id, { name: option.name, price: option.price })
+}
+
+const deleteShipping = async (id: number) => {
+  await shopStore.deleteShippingOption(id)
+}
+
+// Hämta fraktalternativ när komponenten mountas
+if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
 </script>
 
 <template>
@@ -165,14 +182,26 @@ const saveSettings = () => {
     <hr class="settings-divider" />
 
     <label>
-      Fraktkostnad (kr)
-      <input v-model.number="settingsForm.shippingCost" min="0" required type="number" />
-    </label>
-
-    <label>
       Fri frakt över (kr)
       <input v-model.number="settingsForm.freeShippingThreshold" min="0" required type="number" />
     </label>
+
+    <div class="shipping-options">
+      <h4>Fraktalternativ</h4>
+      <ul>
+        <li v-for="option in shopStore.shippingOptions" :key="option.id">
+          <input v-model="option.name" @blur="updateShipping(option)" placeholder="Namn" />
+          <input v-model.number="option.price" @blur="updateShipping(option)" type="number" min="0"
+            style="width: 80px" /> kr
+          <button type="button" @click="deleteShipping(option.id)">Ta bort</button>
+        </li>
+      </ul>
+      <div>
+        <input v-model="newShipping.name" placeholder="Nytt fraktalternativ" />
+        <input v-model.number="newShipping.price" type="number" min="0" style="width: 80px" placeholder="Pris" />
+        <button type="button" @click="addShipping">Lägg till</button>
+      </div>
+    </div>
 
     <button type="submit">Spara inställningar</button>
   </form>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useShopStore } from '../stores/shop'
+import { ref, computed, watch, onMounted } from 'vue'
 
 const shopStore = useShopStore()
 const hasProductImage = (imageUrl: string) => imageUrl.trim().length > 0
@@ -11,6 +12,35 @@ const decreaseCartItem = (productId: number, currentQuantity: number) => {
 const increaseCartItem = (productId: number, currentQuantity: number) => {
   shopStore.updateCartItem(productId, currentQuantity + 1)
 }
+
+const selectedShippingId = ref(shopStore.shippingOptions[0]?.id || null)
+
+watch(
+  () => shopStore.shippingOptions,
+  (options) => {
+    if (!selectedShippingId.value && options.length > 0 && options[0]) {
+      selectedShippingId.value = options[0].id
+    }
+  },
+  { immediate: true }
+)
+
+const selectedShipping = computed(() =>
+  shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)
+)
+
+const cartTotalWithShipping = computed(() => {
+  const shipping = selectedShipping.value?.price ?? 0
+  return shopStore.cartSubtotal + shipping
+})
+
+// shippingDisplay borttagen, ej använd
+
+onMounted(() => {
+  if (!shopStore.shippingOptions.length) {
+    shopStore.fetchShippingOptions()
+  }
+})
 </script>
 
 <template>
@@ -68,13 +98,24 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
         </div>
         <div class="summary-row">
           <span>Frakt</span>
-          <strong>{{ shopStore.shippingFee }} kr</strong>
+          <template v-if="shopStore.shippingOptions.length">
+            <select v-model="selectedShippingId">
+              <option v-for="option in shopStore.shippingOptions" :key="option.id" :value="option.id">
+                {{ option.name }} ({{ option.price }} kr)
+              </option>
+            </select>
+          </template>
+          <template v-else>
+            <span>0 kr</span>
+          </template>
         </div>
         <div class="summary-row total-row">
           <span>Totalt</span>
-          <strong>{{ shopStore.cartTotal }} kr</strong>
+          <strong>{{ cartTotalWithShipping }} kr</strong>
         </div>
-        <RouterLink class="button-link checkout-link" to="/checkout">Till kassan</RouterLink>
+        <RouterLink class="button-link checkout-link"
+          :to="{ path: '/checkout', query: { shipping: selectedShippingId } }"
+          :disabled="!shopStore.shippingOptions.length">Till kassan</RouterLink>
       </aside>
     </div>
   </section>

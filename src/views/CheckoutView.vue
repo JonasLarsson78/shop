@@ -1,10 +1,40 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useShopStore } from '../stores/shop'
 
 const shopStore = useShopStore()
 const router = useRouter()
+const route = useRoute()
+const selectedShippingId = ref<number | null>(null)
+
+onMounted(() => {
+  if (!shopStore.shippingOptions.length) {
+    shopStore.fetchShippingOptions()
+  }
+  const shippingId = Number(route.query.shipping)
+  if (shippingId && shopStore.shippingOptions.some(opt => opt.id === shippingId)) {
+    selectedShippingId.value = shippingId
+  } else if (shopStore.shippingOptions.length > 0 && shopStore.shippingOptions[0]) {
+    selectedShippingId.value = shopStore.shippingOptions[0].id
+  } else {
+    selectedShippingId.value = null
+  }
+})
+
+const selectedShipping = computed(() =>
+  shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)
+)
+
+const cartTotalWithShipping = computed(() => {
+  const shipping = selectedShipping.value?.price ?? 0
+  return shopStore.cartSubtotal + shipping
+})
+
+const shippingDisplay = computed(() => {
+  if (!shopStore.shippingOptions.length) return 0
+  return selectedShipping.value?.price ?? 0
+})
 
 const form = reactive({
   name: '',
@@ -68,9 +98,22 @@ const placeOrder = () => {
             {{ item.product.name }} x {{ item.quantity }} = {{ item.subtotal }} kr
           </li>
         </ul>
+        <label>
+          Fraktalternativ
+          <template v-if="shopStore.shippingOptions.length">
+            <select v-model="selectedShippingId">
+              <option v-for="option in shopStore.shippingOptions" :key="option.id" :value="option.id">
+                {{ option.name }} ({{ option.price }} kr)
+              </option>
+            </select>
+          </template>
+          <template v-else>
+            <span>0 kr</span>
+          </template>
+        </label>
         <p>Delsumma: {{ shopStore.cartSubtotal }} kr</p>
-        <p>Frakt: {{ shopStore.shippingFee }} kr</p>
-        <p class="total">Totalt: {{ shopStore.cartTotal }} kr</p>
+        <p>Frakt: {{ shippingDisplay }} kr</p>
+        <p class="total">Totalt: {{ cartTotalWithShipping }} kr</p>
       </div>
     </div>
 
