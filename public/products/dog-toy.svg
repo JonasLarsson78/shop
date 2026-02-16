@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Tuggleksak">
-  <rect width="800" height="500" fill="#ecfeff"/>
-  <circle cx="290" cy="250" r="90" fill="#06b6d4"/>
-  <rect x="290" y="210" width="220" height="80" rx="40" fill="#0891b2"/>
-  <circle cx="510" cy="250" r="90" fill="#06b6d4"/>
-  <text x="400" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#0f172a">Tuggleksak Gummi</text>
-</svg>

@@ -6,14 +6,9 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 
 const shopStore = useShopStore()
 const route = useRoute()
-const fallbackImageUrl = 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200'
-const legacyProductImageMap: Record<string, string> = {
-  '/products/dog-bowl.svg': 'https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  '/products/dog-leash.svg': 'https://images.pexels.com/photos/1490908/pexels-photo-1490908.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  '/products/dog-bed.svg': 'https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  '/products/dog-toy.svg': 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  '/products/default-dog.svg': 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200',
-}
+const MISSING_IMAGE_URL = '/products/image-missing.svg'
+
+const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
 
 const activeGroupId = computed(() => {
   const groupQuery = route.query.group
@@ -22,10 +17,20 @@ const activeGroupId = computed(() => {
     return 'all'
   }
 
-  return groupQuery
+  if (groupQuery === 'all' || groupQuery === 'ungrouped') {
+    return groupQuery
+  }
+
+  const parsedId = Number(groupQuery)
+
+  if (!Number.isInteger(parsedId) || parsedId <= 0) {
+    return 'all'
+  }
+
+  return parsedId
 })
 
-const isValidGroup = (groupId: string) => shopStore.groups.some((group) => group.id === groupId)
+const isValidGroup = (groupId: number) => shopStore.groups.some((group) => group.id === groupId)
 
 const visibleProducts = computed(() => {
   if (activeGroupId.value === 'all') {
@@ -60,42 +65,14 @@ const activeGroupName = computed(() => {
   return group?.name ?? 'Alla produkter'
 })
 
-const resolveProductImage = (imageUrl: string) => {
-  const trimmedUrl = imageUrl.trim()
-
-  if (!trimmedUrl) {
-    return fallbackImageUrl
-  }
-
-  if (legacyProductImageMap[trimmedUrl]) {
-    return legacyProductImageMap[trimmedUrl]
-  }
-
-  return trimmedUrl
-}
-
-const handleProductImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement | null
-
-  if (!img) {
-    return
-  }
-
-  if (img.src.endsWith(fallbackImageUrl)) {
-    return
-  }
-
-  img.src = fallbackImageUrl
-}
-
 const recentlyAddedProductIds = ref<Record<string, boolean>>({})
-const selectedQuantities = ref<Record<string, number>>({})
-const addFeedbackTimers = new Map<string, ReturnType<typeof setTimeout>>()
+const selectedQuantities = ref<Record<number, number>>({})
+const addFeedbackTimers = new Map<number, ReturnType<typeof setTimeout>>()
 const toastMessage = ref('')
 const showToast = ref(false)
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 
-const getSelectedQuantity = (productId: string) => {
+const getSelectedQuantity = (productId: number) => {
   const quantity = selectedQuantities.value[productId]
 
   if (!quantity || quantity < 1) {
@@ -105,20 +82,20 @@ const getSelectedQuantity = (productId: string) => {
   return Math.floor(quantity)
 }
 
-const setSelectedQuantity = (productId: string, rawValue: string) => {
+const setSelectedQuantity = (productId: number, rawValue: string) => {
   const parsedValue = Number(rawValue)
   selectedQuantities.value[productId] = Number.isFinite(parsedValue) ? Math.max(1, Math.floor(parsedValue)) : 1
 }
 
-const decreaseSelectedQuantity = (productId: string) => {
+const decreaseSelectedQuantity = (productId: number) => {
   selectedQuantities.value[productId] = Math.max(1, getSelectedQuantity(productId) - 1)
 }
 
-const increaseSelectedQuantity = (productId: string) => {
+const increaseSelectedQuantity = (productId: number) => {
   selectedQuantities.value[productId] = getSelectedQuantity(productId) + 1
 }
 
-const addProductToCart = (productId: string) => {
+const addProductToCart = (productId: number) => {
   const quantity = getSelectedQuantity(productId)
   shopStore.addToCart(productId, quantity)
   recentlyAddedProductIds.value[productId] = true
@@ -164,8 +141,6 @@ onBeforeUnmount(() => {
 
     <div class="shop-content">
       <header class="shop-header card">
-        <img src="https://images.pexels.com/photos/1490908/pexels-photo-1490908.jpeg?auto=compress&cs=tinysrgb&w=1600"
-          alt="Hund på promenad" class="shop-header-image" loading="lazy" />
         <p class="shop-kicker">Hundshop</p>
         <h2>{{ shopStore.settings.storeName }}</h2>
         <p>Hundprodukter för lek, promenad och vila.</p>
@@ -176,8 +151,7 @@ onBeforeUnmount(() => {
 
         <div class="grid">
           <article v-for="product in visibleProducts" :key="product.id" class="card product-card">
-            <img :src="resolveProductImage(product.imageUrl)" :alt="product.name" class="product-image" loading="lazy"
-              @error="handleProductImageError" />
+            <img :src="getProductImage(product.imageUrl)" :alt="product.name" class="product-image" loading="lazy" />
             <h3>{{ product.name }}</h3>
             <p>{{ product.description }}</p>
             <p class="price">{{ product.price }} kr</p>
@@ -235,15 +209,6 @@ onBeforeUnmount(() => {
   letter-spacing: 0.08em;
   font-size: 0.76rem;
   font-weight: 600;
-}
-
-.shop-header-image {
-  width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border: 1px solid rgba($color-brand, 0.2);
-  border-radius: $radius-md;
-  background: #fff;
 }
 
 .grid {

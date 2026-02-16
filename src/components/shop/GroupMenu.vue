@@ -34,8 +34,8 @@ const groupLinks = computed(() => {
     </RouterLink>
 
     <RouterLink v-for="group in groupLinks.groupsWithProducts" :key="group.id" class="group-menu-link"
-      :class="{ active: $route.path === '/shop' && $route.query.group === group.id }"
-      :to="{ path: '/shop', query: { group: group.id } }">
+      :class="{ active: $route.path === '/shop' && $route.query.group === String(group.id) }"
+      :to="{ path: '/shop', query: { group: String(group.id) } }">
       {{ group.name }}
     </RouterLink>
 

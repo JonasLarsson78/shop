@@ -1,5 +1,5 @@
-const ADMIN_SESSION_KEY = 'doggo-admin-session'
-const ADMIN_PASSWORD = 'hund123'
+const ADMIN_SESSION_KEY = 'admin-session'
+const ADMIN_PASSWORD = 'admin123'
 
 export const isAdminAuthenticated = () => {
   if (typeof window === 'undefined') {

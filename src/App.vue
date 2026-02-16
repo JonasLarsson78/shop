@@ -1,15 +1,25 @@
 <script setup lang="ts">
+import { computed, watchEffect } from 'vue'
 import { useShopStore } from './stores/shop'
 
 const shopStore = useShopStore()
+const storeName = computed(() =>
+  shopStore.hasInitializedData ? shopStore.settings.storeName || 'Doggo Shop' : 'Laddar butik...',
+)
+
+watchEffect(() => {
+  if (typeof document !== 'undefined') {
+    document.title = storeName.value
+  }
+})
 </script>
 
 <template>
   <div class="app-shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <p class="eyebrow">Premium Hundshop</p>
-        <h1 class="brand">Doggo Shop</h1>
+        <p class="eyebrow">Premium Shop</p>
+        <h1 class="brand">{{ storeName }}</h1>
       </div>
       <nav class="nav">
         <RouterLink to="/">Start</RouterLink>
@@ -24,7 +34,10 @@ const shopStore = useShopStore()
     </header>
 
     <main class="page-container">
-      <RouterView />
+      <RouterView v-if="shopStore.hasInitializedData" />
+      <div v-else class="loading-state" aria-label="Laddar butik">
+        <div class="loader" />
+      </div>
     </main>
   </div>
 </template>
@@ -145,6 +158,27 @@ body {
   border: 1px solid $color-border;
   border-radius: $radius-lg;
   padding: 1.15rem;
+}
+
+.loading-state {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 3px solid rgba($color-brand, 0.2);
+  border-top-color: $color-brand;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .card {

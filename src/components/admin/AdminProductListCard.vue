@@ -4,18 +4,21 @@ import { useShopStore } from '../../stores/shop'
 import type { ProductGroup, Product } from '../../stores/shop'
 
 const shopStore = useShopStore()
+const MISSING_IMAGE_URL = '/products/image-missing.svg'
 
-const editingProductId = ref<string | null>(null)
-const productPendingDeleteId = ref<string | null>(null)
+const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
+
+const editingProductId = ref<number | null>(null)
+const productPendingDeleteId = ref<number | null>(null)
 const editForm = reactive({
   name: '',
   description: '',
   price: 0,
   imageUrl: '',
-  groupId: '',
+  groupId: '' as number | '',
 })
 
-const startEditProduct = (productId: string) => {
+const startEditProduct = (productId: number) => {
   const product = shopStore.products.find((item: Product) => item.id === productId)
 
   if (!product) {
@@ -34,7 +37,7 @@ const cancelEditProduct = () => {
   editingProductId.value = null
 }
 
-const saveEditProduct = (productId: string) => {
+const saveEditProduct = (productId: number) => {
   shopStore.updateProduct(productId, {
     name: editForm.name,
     description: editForm.description,
@@ -46,7 +49,7 @@ const saveEditProduct = (productId: string) => {
   editingProductId.value = null
 }
 
-const askDeleteProduct = (productId: string) => {
+const askDeleteProduct = (productId: number) => {
   productPendingDeleteId.value = productId
 }
 
@@ -70,7 +73,7 @@ const confirmDeleteProduct = () => {
   productPendingDeleteId.value = null
 }
 
-const getGroupName = (groupId: string | null) => {
+const getGroupName = (groupId: number | null) => {
   if (!groupId) {
     return 'Ingen grupp'
   }
@@ -163,7 +166,7 @@ onBeforeUnmount(() => {
 
         <template v-else>
           <div class="admin-product-main">
-            <img :src="product.imageUrl" :alt="product.name" class="admin-product-thumb" />
+            <img :src="getProductImage(product.imageUrl)" :alt="product.name" class="admin-product-thumb" />
             <div>
               <h4>{{ product.name }}</h4>
               <p>{{ product.description }}</p>
@@ -230,7 +233,7 @@ onBeforeUnmount(() => {
 
 .admin-product-main {
   display: grid;
-  grid-template-columns: 64px 1fr;
+  grid-template-columns: auto 1fr;
   gap: 0.65rem;
   align-items: center;
 

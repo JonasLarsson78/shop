@@ -38,9 +38,6 @@ const placeOrder = () => {
       <form v-if="!orderPlaced" class="card" @submit.prevent="placeOrder">
         <h3>Kunduppgifter</h3>
 
-        <img src="https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1400"
-          alt="Hund som vilar" class="checkout-image" loading="lazy" />
-
         <label>
           Namn
           <input v-model="form.name" required type="text" />
@@ -77,16 +74,6 @@ const placeOrder = () => {
 </template>
 
 <style scoped lang="scss">
-.checkout-image {
-  width: 100%;
-  max-height: 170px;
-  object-fit: cover;
-  border: 1px solid rgba($color-brand, 0.2);
-  border-radius: $radius-md;
-  background: #fff;
-  margin: 0.1rem 0 0.8rem;
-}
-
 .success {
   margin-top: 1rem;
   font-weight: 700;

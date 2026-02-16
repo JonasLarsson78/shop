@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
 
 export interface Product {
-  id: string
+  id: number
   name: string
   description: string
   price: number
   imageUrl: string
-  groupId: string | null
+  groupId: number | null
 }
 
 export interface ProductGroup {
-  id: string
+  id: number
   name: string
 }
 
@@ -21,101 +21,38 @@ interface Settings {
 }
 
 interface PersistedShopState {
+  cart: Record<string, number>
+}
+
+interface ShopSnapshot {
   products: Product[]
   groups: ProductGroup[]
-  cart: Record<string, number>
-  settings: Settings
+  settings: Settings | null
 }
 
 const SHOP_STORAGE_KEY = 'doggo-shop-state-v1'
-const DEFAULT_PRODUCT_IMAGE = 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200'
-
-const defaultGroups: ProductGroup[] = [
-  { id: 'group-food', name: 'Mat & Skålar' },
-  { id: 'group-walk', name: 'Promenad' },
-  { id: 'group-sleep', name: 'Sovplats' },
-  { id: 'group-play', name: 'Leksaker' },
-]
-
-const defaultProducts: Product[] = [
-  {
-    id: 'dog-bowl-1',
-    name: 'Stålhundskål 1L',
-    description: 'Slitstark matskål i rostfritt stål för daglig användning.',
-    price: 149,
-    imageUrl: 'https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    groupId: 'group-food',
-  },
-  {
-    id: 'dog-leash-1',
-    name: 'Justerbart Koppel',
-    description: 'Mjukt men starkt koppel för promenader i alla väder.',
-    price: 229,
-    imageUrl: 'https://images.pexels.com/photos/1490908/pexels-photo-1490908.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    groupId: 'group-walk',
-  },
-  {
-    id: 'dog-bed-1',
-    name: 'Hundsäng Comfort',
-    description: 'Mjuk hundsäng med tvättbart överdrag.',
-    price: 699,
-    imageUrl: 'https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    groupId: 'group-sleep',
-  },
-  {
-    id: 'dog-toy-1',
-    name: 'Tuggleksak Gummi',
-    description: 'Tålig leksak som aktiverar och tränar käkmuskler.',
-    price: 89,
-    imageUrl: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    groupId: 'group-play',
-  },
-]
+const DEFAULT_PRODUCT_IMAGE = ''
 
 const defaultSettings: Settings = {
-  storeName: 'Doggo Shop',
-  shippingCost: 59,
-  freeShippingThreshold: 800,
+  storeName: '',
+  shippingCost: 0,
+  freeShippingThreshold: 0,
 }
 
-const normalizeGroup = (rawGroup: Partial<ProductGroup>): ProductGroup | null => {
-  if (typeof rawGroup.id !== 'string' || typeof rawGroup.name !== 'string') {
-    return null
+const apiRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {
+  const response = await fetch(path, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+    ...init,
+  })
+
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status}`)
   }
 
-  const trimmedName = rawGroup.name.trim()
-
-  if (!trimmedName) {
-    return null
-  }
-
-  return {
-    id: rawGroup.id,
-    name: trimmedName,
-  }
-}
-
-const normalizeProduct = (rawProduct: Partial<Product>): Product | null => {
-  if (
-    typeof rawProduct.id !== 'string' ||
-    typeof rawProduct.name !== 'string' ||
-    typeof rawProduct.description !== 'string' ||
-    typeof rawProduct.price !== 'number'
-  ) {
-    return null
-  }
-
-  return {
-    id: rawProduct.id,
-    name: rawProduct.name,
-    description: rawProduct.description,
-    price: rawProduct.price,
-    imageUrl:
-      typeof rawProduct.imageUrl === 'string' && rawProduct.imageUrl.trim().length > 0
-        ? rawProduct.imageUrl
-        : DEFAULT_PRODUCT_IMAGE,
-    groupId: typeof rawProduct.groupId === 'string' ? rawProduct.groupId : null,
-  }
+  return (await response.json()) as T
 }
 
 const loadPersistedShopState = (): PersistedShopState | null => {
@@ -136,46 +73,8 @@ const loadPersistedShopState = (): PersistedShopState | null => {
       return null
     }
 
-    const normalizedGroups = Array.isArray(parsedState.groups)
-      ? parsedState.groups
-          .map((group) => normalizeGroup(group as Partial<ProductGroup>))
-          .filter((group): group is ProductGroup => group !== null)
-      : defaultGroups
-
-    const safeGroups = normalizedGroups.length > 0 ? normalizedGroups : defaultGroups
-    const validGroupIds = new Set(safeGroups.map((group) => group.id))
-
-    const normalizedProducts = Array.isArray(parsedState.products)
-      ? parsedState.products
-          .map((product) => normalizeProduct(product as Partial<Product>))
-          .filter((product): product is Product => product !== null)
-          .map((product) => ({
-            ...product,
-            groupId: product.groupId && validGroupIds.has(product.groupId) ? product.groupId : null,
-          }))
-      : defaultProducts
-
     return {
-      products: normalizedProducts.length > 0 ? normalizedProducts : defaultProducts,
-      groups: safeGroups,
       cart: parsedState.cart && typeof parsedState.cart === 'object' ? parsedState.cart : {},
-      settings:
-        parsedState.settings && typeof parsedState.settings === 'object'
-          ? {
-              storeName:
-                typeof parsedState.settings.storeName === 'string'
-                  ? parsedState.settings.storeName
-                  : defaultSettings.storeName,
-              shippingCost:
-                typeof parsedState.settings.shippingCost === 'number'
-                  ? parsedState.settings.shippingCost
-                  : defaultSettings.shippingCost,
-              freeShippingThreshold:
-                typeof parsedState.settings.freeShippingThreshold === 'number'
-                  ? parsedState.settings.freeShippingThreshold
-                  : defaultSettings.freeShippingThreshold,
-            }
-          : defaultSettings,
     }
   } catch {
     return null
@@ -191,19 +90,23 @@ const saveShopState = (state: PersistedShopState) => {
 }
 
 const persistedState = loadPersistedShopState()
+const toCartKey = (productId: number) => String(productId)
 
 export const useShopStore = defineStore('shop', {
   state: () => ({
-    products: persistedState?.products ?? defaultProducts,
-    groups: persistedState?.groups ?? defaultGroups,
+    products: [] as Product[],
+    groups: [] as ProductGroup[],
     cart: persistedState?.cart ?? ({} as Record<string, number>),
-    settings: persistedState?.settings ?? defaultSettings,
+    settings: defaultSettings,
+    dbStatus: 'loading' as 'loading' | 'connected' | 'error',
+    hasInitializedData: false,
   }),
   getters: {
     cartItems(state) {
       return Object.entries(state.cart)
         .map(([productId, quantity]) => {
-          const product = state.products.find((item) => item.id === productId)
+          const numericProductId = Number(productId)
+          const product = state.products.find((item) => item.id === numericProductId)
 
           if (!product) {
             return null
@@ -219,7 +122,8 @@ export const useShopStore = defineStore('shop', {
     },
     cartSubtotal(state) {
       return Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const product = state.products.find((item) => item.id === productId)
+        const numericProductId = Number(productId)
+        const product = state.products.find((item) => item.id === numericProductId)
 
         if (!product) {
           return total
@@ -236,7 +140,8 @@ export const useShopStore = defineStore('shop', {
       }
 
       const subtotal = Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const product = state.products.find((item) => item.id === productId)
+        const numericProductId = Number(productId)
+        const product = state.products.find((item) => item.id === numericProductId)
 
         if (!product) {
           return total
@@ -249,7 +154,8 @@ export const useShopStore = defineStore('shop', {
     },
     cartTotal(state) {
       const subtotal = Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const product = state.products.find((item) => item.id === productId)
+        const numericProductId = Number(productId)
+        const product = state.products.find((item) => item.id === numericProductId)
 
         if (!product) {
           return total
@@ -276,37 +182,57 @@ export const useShopStore = defineStore('shop', {
   actions: {
     persistState() {
       saveShopState({
-        products: this.products,
-        groups: this.groups,
         cart: this.cart,
-        settings: this.settings,
       })
     },
-    addToCart(productId: string, quantity = 1) {
+    async initializeData() {
+      try {
+        const snapshot = await apiRequest<ShopSnapshot>('/api/bootstrap', {
+          method: 'POST',
+        })
+
+        this.products = snapshot.products
+        this.groups = snapshot.groups
+        this.settings = snapshot.settings ?? defaultSettings
+        this.dbStatus = 'connected'
+        this.persistState()
+      } catch (error) {
+        console.error('Failed to load shop data from DB API:', error)
+        this.products = []
+        this.groups = []
+        this.dbStatus = 'error'
+      } finally {
+        this.hasInitializedData = true
+      }
+    },
+    addToCart(productId: number, quantity = 1) {
       const safeQuantity = Number.isFinite(quantity) ? Math.max(1, Math.floor(quantity)) : 1
-      this.cart[productId] = (this.cart[productId] ?? 0) + safeQuantity
+      const key = toCartKey(productId)
+      this.cart[key] = (this.cart[key] ?? 0) + safeQuantity
       this.persistState()
     },
-    updateCartItem(productId: string, quantity: number) {
+    updateCartItem(productId: number, quantity: number) {
+      const key = toCartKey(productId)
+
       if (quantity <= 0) {
-        delete this.cart[productId]
+        delete this.cart[key]
         this.persistState()
         return
       }
 
-      this.cart[productId] = quantity
+      this.cart[key] = quantity
       this.persistState()
     },
-    removeFromCart(productId: string) {
-      delete this.cart[productId]
+    removeFromCart(productId: number) {
+      delete this.cart[toCartKey(productId)]
       this.persistState()
     },
     clearCart() {
       this.cart = {}
       this.persistState()
     },
-    addProduct(payload: Omit<Product, 'id'>) {
-      const id = `dog-product-${Date.now()}`
+    applyLocalAddProduct(payload: Omit<Product, 'id'>) {
+      const id = Date.now()
       const groupExists = payload.groupId ? this.groups.some((group) => group.id === payload.groupId) : true
 
       this.products.push({
@@ -318,7 +244,27 @@ export const useShopStore = defineStore('shop', {
 
       this.persistState()
     },
-    updateProduct(productId: string, payload: Omit<Product, 'id'>) {
+    async addProduct(payload: Omit<Product, 'id'>) {
+      const safePayload = {
+        ...payload,
+        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+      }
+
+      try {
+        const product = await apiRequest<Product>('/api/products', {
+          method: 'POST',
+          body: JSON.stringify(safePayload),
+        })
+
+        this.products.push(product)
+      } catch (error) {
+        console.error('Failed to add product in DB API:', error)
+        return
+      }
+
+      this.persistState()
+    },
+    applyLocalUpdateProduct(productId: number, payload: Omit<Product, 'id'>) {
       const productIndex = this.products.findIndex((product) => product.id === productId)
       const groupExists = payload.groupId ? this.groups.some((group) => group.id === payload.groupId) : true
 
@@ -335,23 +281,89 @@ export const useShopStore = defineStore('shop', {
 
       this.persistState()
     },
-    deleteProduct(productId: string) {
-      this.products = this.products.filter((product) => product.id !== productId)
+    async updateProduct(productId: number, payload: Omit<Product, 'id'>) {
+      const safePayload = {
+        ...payload,
+        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+      }
 
-      if (this.cart[productId]) {
-        delete this.cart[productId]
+      try {
+        const updated = await apiRequest<Product>(`/api/products/${productId}`, {
+          method: 'PUT',
+          body: JSON.stringify(safePayload),
+        })
+
+        const productIndex = this.products.findIndex((product) => product.id === productId)
+        if (productIndex === -1) {
+          return
+        }
+
+        this.products[productIndex] = updated
+      } catch (error) {
+        console.error('Failed to update product in DB API:', error)
+        return
       }
 
       this.persistState()
     },
-    addGroup(name: string) {
+    applyLocalDeleteProduct(productId: number) {
+      this.products = this.products.filter((product) => product.id !== productId)
+
+      const key = toCartKey(productId)
+      if (this.cart[key]) {
+        delete this.cart[key]
+      }
+
+      this.persistState()
+    },
+    async deleteProduct(productId: number) {
+      const productIndex = this.products.findIndex((product) => product.id === productId)
+
+      if (productIndex === -1) {
+        return
+      }
+
+      const deletedProduct = this.products[productIndex]
+
+      if (!deletedProduct) {
+        return
+      }
+
+      const key = toCartKey(productId)
+      const previousCartQuantity = this.cart[key] ?? null
+
+      this.products.splice(productIndex, 1)
+
+      if (this.cart[key]) {
+        delete this.cart[key]
+      }
+
+      this.persistState()
+
+      try {
+        await apiRequest<{ ok: boolean }>(`/api/products/${productId}`, {
+          method: 'DELETE',
+        })
+      } catch (error) {
+        console.error('Failed to delete product in DB API:', error)
+        this.products.splice(productIndex, 0, deletedProduct)
+
+        if (previousCartQuantity !== null) {
+          this.cart[key] = previousCartQuantity
+        }
+
+        this.persistState()
+        return
+      }
+    },
+    applyLocalAddGroup(name: string) {
       const trimmedName = name.trim()
 
       if (!trimmedName) {
         return
       }
 
-      const id = `group-${Date.now()}`
+      const id = Date.now()
 
       this.groups.push({
         id,
@@ -360,7 +372,28 @@ export const useShopStore = defineStore('shop', {
 
       this.persistState()
     },
-    updateGroup(groupId: string, name: string) {
+    async addGroup(name: string) {
+      const trimmedName = name.trim()
+
+      if (!trimmedName) {
+        return
+      }
+
+      try {
+        const group = await apiRequest<ProductGroup>('/api/groups', {
+          method: 'POST',
+          body: JSON.stringify({ name: trimmedName }),
+        })
+
+        this.groups.push(group)
+      } catch (error) {
+        console.error('Failed to add group in DB API:', error)
+        return
+      }
+
+      this.persistState()
+    },
+    applyLocalUpdateGroup(groupId: number, name: string) {
       const trimmedName = name.trim()
 
       if (!trimmedName) {
@@ -380,7 +413,33 @@ export const useShopStore = defineStore('shop', {
 
       this.persistState()
     },
-    deleteGroup(groupId: string) {
+    async updateGroup(groupId: number, name: string) {
+      const trimmedName = name.trim()
+
+      if (!trimmedName) {
+        return
+      }
+
+      try {
+        const updated = await apiRequest<ProductGroup>(`/api/groups/${groupId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ name: trimmedName }),
+        })
+
+        const groupIndex = this.groups.findIndex((group) => group.id === groupId)
+        if (groupIndex === -1) {
+          return
+        }
+
+        this.groups[groupIndex] = updated
+      } catch (error) {
+        console.error('Failed to update group in DB API:', error)
+        return
+      }
+
+      this.persistState()
+    },
+    applyLocalDeleteGroup(groupId: number) {
       this.groups = this.groups.filter((group) => group.id !== groupId)
       this.products = this.products.map((product) =>
         product.groupId === groupId
@@ -393,10 +452,45 @@ export const useShopStore = defineStore('shop', {
 
       this.persistState()
     },
-    updateSettings(payload: Partial<Settings>) {
-      this.settings = {
-        ...this.settings,
-        ...payload,
+    async deleteGroup(groupId: number) {
+      const previousGroups = [...this.groups]
+      const previousProducts = this.products.map((product) => ({ ...product }))
+
+      this.groups = this.groups.filter((group) => group.id !== groupId)
+      this.products = this.products.map((product) =>
+        product.groupId === groupId
+          ? {
+              ...product,
+              groupId: null,
+            }
+          : product,
+      )
+
+      this.persistState()
+
+      try {
+        await apiRequest<{ ok: boolean }>(`/api/groups/${groupId}`, {
+          method: 'DELETE',
+        })
+      } catch (error) {
+        console.error('Failed to delete group in DB API:', error)
+        this.groups = previousGroups
+        this.products = previousProducts
+        this.persistState()
+        return
+      }
+    },
+    async updateSettings(payload: Partial<Settings>) {
+      try {
+        const updated = await apiRequest<Settings>('/api/settings', {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        })
+
+        this.settings = updated
+      } catch (error) {
+        console.error('Failed to update settings in DB API:', error)
+        return
       }
 
       this.persistState()

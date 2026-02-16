@@ -9,7 +9,7 @@ const productForm = reactive({
   description: '',
   price: 0,
   imageUrl: '',
-  groupId: '',
+  groupId: '' as number | '',
 })
 
 const addProduct = () => {
@@ -50,7 +50,7 @@ const addProduct = () => {
 
     <label>
       Bild-URL
-      <input v-model="productForm.imageUrl" placeholder="/products/min-bild.svg" type="text" />
+      <input v-model="productForm.imageUrl" placeholder="https://..." type="text" />
     </label>
 
     <label>

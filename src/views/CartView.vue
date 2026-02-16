@@ -2,27 +2,15 @@
 import { useShopStore } from '../stores/shop'
 
 const shopStore = useShopStore()
-const fallbackImageUrl = 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=900'
+const MISSING_IMAGE_URL = '/products/image-missing.svg'
 
-const handleProductImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement | null
+const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
 
-  if (!img) {
-    return
-  }
-
-  if (img.src === fallbackImageUrl) {
-    return
-  }
-
-  img.src = fallbackImageUrl
-}
-
-const decreaseCartItem = (productId: string, currentQuantity: number) => {
+const decreaseCartItem = (productId: number, currentQuantity: number) => {
   shopStore.updateCartItem(productId, Math.max(1, currentQuantity - 1))
 }
 
-const increaseCartItem = (productId: string, currentQuantity: number) => {
+const increaseCartItem = (productId: number, currentQuantity: number) => {
   shopStore.updateCartItem(productId, currentQuantity + 1)
 }
 </script>
@@ -44,8 +32,7 @@ const increaseCartItem = (productId: string, currentQuantity: number) => {
     <div v-else class="cart-layout">
       <div class="cart-list">
         <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <img :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy"
-            @error="handleProductImageError" />
+          <img :src="getProductImage(item.product.imageUrl)" :alt="item.product.name" class="cart-image" loading="lazy" />
 
           <div class="cart-details">
             <h3>{{ item.product.name }}</h3>
@@ -155,6 +142,14 @@ const increaseCartItem = (productId: string, currentQuantity: number) => {
   }
 }
 
+.cart-image {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  border: 1px solid rgba($color-brand, 0.2);
+}
+
 .summary {
   position: sticky;
   top: 1rem;
@@ -164,14 +159,6 @@ const increaseCartItem = (productId: string, currentQuantity: number) => {
   h3 {
     margin: 0 0 0.15rem;
   }
-}
-
-.cart-image {
-  width: 96px;
-  height: 96px;
-  object-fit: cover;
-  border-radius: $radius-sm;
-  border: 1px solid rgba($color-brand, 0.2);
 }
 
 .cart-details {
@@ -286,9 +273,5 @@ const increaseCartItem = (productId: string, currentQuantity: number) => {
     justify-self: start;
   }
 
-  .cart-image {
-    width: 100%;
-    height: 180px;
-  }
 }
 </style>

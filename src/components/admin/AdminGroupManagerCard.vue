@@ -7,7 +7,7 @@ const shopStore = useShopStore()
 const groupForm = reactive({
   name: '',
 })
-const editingGroupId = ref<string | null>(null)
+const editingGroupId = ref<number | null>(null)
 const editGroupName = ref('')
 
 const addGroup = () => {
@@ -15,7 +15,7 @@ const addGroup = () => {
   groupForm.name = ''
 }
 
-const startEditGroup = (groupId: string, groupName: string) => {
+const startEditGroup = (groupId: number, groupName: string) => {
   editingGroupId.value = groupId
   editGroupName.value = groupName
 }
@@ -25,12 +25,12 @@ const cancelEditGroup = () => {
   editGroupName.value = ''
 }
 
-const saveEditGroup = (groupId: string) => {
+const saveEditGroup = (groupId: number) => {
   shopStore.updateGroup(groupId, editGroupName.value)
   cancelEditGroup()
 }
 
-const removeGroup = (groupId: string) => {
+const removeGroup = (groupId: number) => {
   shopStore.deleteGroup(groupId)
 
   if (editingGroupId.value === groupId) {

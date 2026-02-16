@@ -7,8 +7,6 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
     <GroupMenu />
 
     <div class="home-hero card">
-      <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1600"
-        alt="Hund som leker" class="home-hero-image" loading="lazy" />
       <p class="home-kicker">Modern Hundshop</p>
       <h2>Stilrena produkter för en gladare hundvardag</h2>
       <p class="home-lead">Utvalda favoriter för lek, promenad och vila. Filtrera snabbt via grupper och fyll varukorgen
@@ -27,20 +25,14 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 
       <div class="home-scenes" aria-label="Hundmoment">
         <figure class="scene-card">
-          <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200"
-            alt="Hund som leker" loading="lazy" />
           <figcaption>Lekstund</figcaption>
         </figure>
 
         <figure class="scene-card">
-          <img src="https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&cs=tinysrgb&w=1200"
-            alt="Hund som äter" loading="lazy" />
           <figcaption>Matdags</figcaption>
         </figure>
 
         <figure class="scene-card">
-          <img src="https://images.pexels.com/photos/1490908/pexels-photo-1490908.jpeg?auto=compress&cs=tinysrgb&w=1200"
-            alt="Hund på promenad" loading="lazy" />
           <figcaption>Promenad</figcaption>
         </figure>
       </div>
@@ -52,16 +44,6 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 .home-hero {
   max-width: 760px;
   background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.14) 100%);
-}
-
-.home-hero-image {
-  width: 100%;
-  max-width: 280px;
-  margin: 0 0 0.5rem;
-  border: 1px solid rgba($color-brand, 0.2);
-  border-radius: $radius-md;
-  padding: 0.55rem;
-  background: #fff;
 }
 
 .home-kicker {
@@ -109,16 +91,7 @@ h2 {
   margin: 0;
   border: 1px solid rgba($color-brand, 0.22);
   border-radius: $radius-md;
-  overflow: hidden;
-  background: #fff;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    background: $color-surface-muted;
-  }
+  background: $color-surface;
 
   figcaption {
     padding: 0.45rem 0.6rem;
@@ -130,10 +103,6 @@ h2 {
 @media (max-width: 760px) {
   .home-scenes {
     grid-template-columns: 1fr;
-  }
-
-  .scene-card img {
-    height: 140px;
   }
 }
 </style>
