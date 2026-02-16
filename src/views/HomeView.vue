@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import GroupMenu from '../components/shop/GroupMenu.vue'
+import { useShopStore } from '../stores/shop'
+
+const shopStore = useShopStore()
+
+const heroPoints = computed(() =>
+  [shopStore.settings.heroPoint1, shopStore.settings.heroPoint2, shopStore.settings.heroPoint3].filter(
+    (point) => point.trim().length > 0,
+  ),
+)
 </script>
 
 <template>
@@ -7,15 +17,12 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
     <GroupMenu />
 
     <div class="home-hero card">
-      <p class="home-kicker">Modern webshop</p>
-      <h2>Stilren template för en modern butik</h2>
-      <p class="home-lead">Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen
-        på några sekunder.</p>
+      <h2 v-if="shopStore.settings.heroTitle">{{ shopStore.settings.heroTitle }}</h2>
+      <p v-if="shopStore.settings.heroKicker" class="home-kicker">{{ shopStore.settings.heroKicker }}</p>
+      <p v-if="shopStore.settings.heroLead" class="home-lead">{{ shopStore.settings.heroLead }}</p>
 
-      <ul class="home-points">
-        <li>Snabbt att hitta rätt produkter</li>
-        <li>Tydliga grupper för varje behov</li>
-        <li>Smidig checkout utan krångel</li>
+      <ul v-if="heroPoints.length > 0" class="home-points">
+        <li v-for="point in heroPoints" :key="point">{{ point }}</li>
       </ul>
 
       <div class="home-actions">
@@ -33,7 +40,7 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 }
 
 .home-kicker {
-  margin: 0;
+  margin: 0 0 0.7rem;
   color: $color-text-soft;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -42,7 +49,7 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 }
 
 h2 {
-  margin: 0.35rem 0 0.7rem;
+  margin: 0 0 0.35rem;
   line-height: 1.2;
 }
 

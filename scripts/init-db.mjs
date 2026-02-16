@@ -79,23 +79,63 @@ try {
       id TINYINT PRIMARY KEY,
       store_name VARCHAR(160) NOT NULL,
       sub_name VARCHAR(160) NOT NULL DEFAULT '',
+      hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      hero_lead TEXT NOT NULL,
+      hero_point_1 VARCHAR(255) NOT NULL DEFAULT '',
+      hero_point_2 VARCHAR(255) NOT NULL DEFAULT '',
+      hero_point_3 VARCHAR(255) NOT NULL DEFAULT '',
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 
-  const [settingsColumnRows] = await connection.execute(`
-    SELECT COLUMN_NAME AS columnName
-    FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'settings'
-      AND COLUMN_NAME = 'sub_name'
-    LIMIT 1
-  `)
+  const settingsColumnsToEnsure = [
+    {
+      name: 'sub_name',
+      alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
+    },
+    {
+      name: 'hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER sub_name",
+    },
+    {
+      name: 'hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
+    },
+    {
+      name: 'hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title",
+    },
+    {
+      name: 'hero_point_1',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
+    },
+    {
+      name: 'hero_point_2',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
+    },
+    {
+      name: 'hero_point_3',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+    },
+  ]
 
-  if (!Array.isArray(settingsColumnRows) || settingsColumnRows.length === 0) {
-    await connection.execute("ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name")
+  for (const column of settingsColumnsToEnsure) {
+    const [columnRows] = await connection.execute(
+      `SELECT COLUMN_NAME AS columnName
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'settings'
+         AND COLUMN_NAME = ?
+       LIMIT 1`,
+      [column.name],
+    )
+
+    if (!Array.isArray(columnRows) || columnRows.length === 0) {
+      await connection.execute(column.alterSql)
+    }
   }
 
   console.log('✅ Tables created/verified: groups, products, settings')

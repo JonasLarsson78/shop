@@ -17,6 +17,12 @@ export interface ProductGroup {
 interface Settings {
   storeName: string
   subName: string
+  heroKicker: string
+  heroTitle: string
+  heroLead: string
+  heroPoint1: string
+  heroPoint2: string
+  heroPoint3: string
   shippingCost: number
   freeShippingThreshold: number
 }
@@ -37,6 +43,12 @@ const DEFAULT_PRODUCT_IMAGE = ''
 const defaultSettings: Settings = {
   storeName: '',
   subName: '',
+  heroKicker: 'Modern webshop',
+  heroTitle: 'Stilren template för en modern butik',
+  heroLead: 'Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen på några sekunder.',
+  heroPoint1: 'Snabbt att hitta rätt produkter',
+  heroPoint2: 'Tydliga grupper för varje behov',
+  heroPoint3: 'Smidig checkout utan krångel',
   shippingCost: 0,
   freeShippingThreshold: 0,
 }

@@ -19,6 +19,12 @@ export type ProductGroup = {
 export type ShopSettings = {
   storeName: string
   subName: string
+  heroKicker: string
+  heroTitle: string
+  heroLead: string
+  heroPoint1: string
+  heroPoint2: string
+  heroPoint3: string
   shippingCost: number
   freeShippingThreshold: number
 }
@@ -160,23 +166,63 @@ const ensureSchemaAndSeedInternal = async () => {
       id TINYINT PRIMARY KEY,
       store_name VARCHAR(160) NOT NULL,
       sub_name VARCHAR(160) NOT NULL DEFAULT '',
+      hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      hero_lead TEXT NOT NULL,
+      hero_point_1 VARCHAR(255) NOT NULL DEFAULT '',
+      hero_point_2 VARCHAR(255) NOT NULL DEFAULT '',
+      hero_point_3 VARCHAR(255) NOT NULL DEFAULT '',
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 
-  const settingsSubNameColumn = await query<Array<{ columnName: string }>>(`
-    SELECT COLUMN_NAME AS columnName
-    FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'settings'
-      AND COLUMN_NAME = 'sub_name'
-    LIMIT 1
-  `)
+  const settingsColumnsToEnsure = [
+    {
+      name: 'sub_name',
+      alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
+    },
+    {
+      name: 'hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER sub_name",
+    },
+    {
+      name: 'hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
+    },
+    {
+      name: 'hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title",
+    },
+    {
+      name: 'hero_point_1',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
+    },
+    {
+      name: 'hero_point_2',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
+    },
+    {
+      name: 'hero_point_3',
+      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+    },
+  ] as const
 
-  if (!settingsSubNameColumn[0]) {
-    await query("ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name")
+  for (const column of settingsColumnsToEnsure) {
+    const existingColumn = await query<Array<{ columnName: string }>>(
+      `SELECT COLUMN_NAME AS columnName
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'settings'
+         AND COLUMN_NAME = ?
+       LIMIT 1`,
+      [column.name],
+    )
+
+    if (!existingColumn[0]) {
+      await query(column.alterSql)
+    }
   }
 
 }
@@ -308,8 +354,29 @@ export const deleteGroup = async (groupId: number) => {
 }
 
 export const getSettings = async (): Promise<ShopSettings | null> => {
-  const rows = await query<Array<{ storeName: string; subName: string; shippingCost: number; freeShippingThreshold: number }>>(`
-    SELECT store_name AS storeName, sub_name AS subName, shipping_cost AS shippingCost, free_shipping_threshold AS freeShippingThreshold
+  const rows = await query<Array<{
+    storeName: string
+    subName: string
+    heroKicker: string
+    heroTitle: string
+    heroLead: string
+    heroPoint1: string
+    heroPoint2: string
+    heroPoint3: string
+    shippingCost: number
+    freeShippingThreshold: number
+  }>>(`
+    SELECT
+      store_name AS storeName,
+      sub_name AS subName,
+      hero_kicker AS heroKicker,
+      hero_title AS heroTitle,
+      hero_lead AS heroLead,
+      hero_point_1 AS heroPoint1,
+      hero_point_2 AS heroPoint2,
+      hero_point_3 AS heroPoint3,
+      shipping_cost AS shippingCost,
+      free_shipping_threshold AS freeShippingThreshold
     FROM settings
     WHERE id = 1
     LIMIT 1
@@ -328,25 +395,66 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
 
   const storeName = typeof payload.storeName === 'string' && payload.storeName.trim() ? payload.storeName.trim() : (currentSettings?.storeName ?? '')
   const subName = typeof payload.subName === 'string' ? payload.subName.trim() : (currentSettings?.subName ?? '')
+  const heroKicker = typeof payload.heroKicker === 'string' ? payload.heroKicker.trim() : (currentSettings?.heroKicker ?? '')
+  const heroTitle = typeof payload.heroTitle === 'string' ? payload.heroTitle.trim() : (currentSettings?.heroTitle ?? '')
+  const heroLead = typeof payload.heroLead === 'string' ? payload.heroLead.trim() : (currentSettings?.heroLead ?? '')
+  const heroPoint1 = typeof payload.heroPoint1 === 'string' ? payload.heroPoint1.trim() : (currentSettings?.heroPoint1 ?? '')
+  const heroPoint2 = typeof payload.heroPoint2 === 'string' ? payload.heroPoint2.trim() : (currentSettings?.heroPoint2 ?? '')
+  const heroPoint3 = typeof payload.heroPoint3 === 'string' ? payload.heroPoint3.trim() : (currentSettings?.heroPoint3 ?? '')
   const shippingCost = Number.isFinite(Number(payload.shippingCost)) ? Math.max(0, Math.floor(Number(payload.shippingCost))) : (currentSettings?.shippingCost ?? 0)
   const freeShippingThreshold = Number.isFinite(Number(payload.freeShippingThreshold))
     ? Math.max(0, Math.floor(Number(payload.freeShippingThreshold)))
     : (currentSettings?.freeShippingThreshold ?? 0)
 
   await query(
-    `INSERT INTO settings (id, store_name, sub_name, shipping_cost, free_shipping_threshold)
-     VALUES (1, ?, ?, ?, ?)
+    `INSERT INTO settings (
+       id,
+       store_name,
+       sub_name,
+       hero_kicker,
+       hero_title,
+       hero_lead,
+       hero_point_1,
+       hero_point_2,
+       hero_point_3,
+       shipping_cost,
+       free_shipping_threshold
+     )
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        store_name = VALUES(store_name),
        sub_name = VALUES(sub_name),
+       hero_kicker = VALUES(hero_kicker),
+       hero_title = VALUES(hero_title),
+       hero_lead = VALUES(hero_lead),
+       hero_point_1 = VALUES(hero_point_1),
+       hero_point_2 = VALUES(hero_point_2),
+       hero_point_3 = VALUES(hero_point_3),
        shipping_cost = VALUES(shipping_cost),
        free_shipping_threshold = VALUES(free_shipping_threshold)`,
-    [storeName, subName, shippingCost, freeShippingThreshold],
+    [
+      storeName,
+      subName,
+      heroKicker,
+      heroTitle,
+      heroLead,
+      heroPoint1,
+      heroPoint2,
+      heroPoint3,
+      shippingCost,
+      freeShippingThreshold,
+    ],
   )
 
   return {
     storeName,
     subName,
+    heroKicker,
+    heroTitle,
+    heroLead,
+    heroPoint1,
+    heroPoint2,
+    heroPoint3,
     shippingCost,
     freeShippingThreshold,
   }
