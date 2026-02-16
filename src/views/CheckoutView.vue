@@ -31,7 +31,8 @@ const placeOrder = () => {
 <template>
   <section>
     <div class="hero-header card">
-      <p v-if="shopStore.settings.checkoutHeroKicker" class="hero-kicker">{{ shopStore.settings.checkoutHeroKicker }}</p>
+      <p v-if="shopStore.settings.checkoutHeroKicker" class="hero-kicker">{{ shopStore.settings.checkoutHeroKicker }}
+      </p>
       <h2 v-if="shopStore.settings.checkoutHeroTitle">{{ shopStore.settings.checkoutHeroTitle }}</h2>
       <p v-if="shopStore.settings.checkoutHeroLead" class="hero-lead">{{ shopStore.settings.checkoutHeroLead }}</p>
     </div>
@@ -80,7 +81,7 @@ const placeOrder = () => {
 <style scoped lang="scss">
 .hero-header {
   margin-bottom: 1rem;
-  background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.14) 100%);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
 
   h2 {
     margin: 0 0 0.35rem;

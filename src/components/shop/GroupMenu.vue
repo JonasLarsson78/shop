@@ -87,8 +87,9 @@ const groupLinks = computed(() => {
   }
 
   &.active {
-    background: $color-brand;
-    color: $color-brand-contrast;
+    background: var(--theme-accent);
+    color: var(--theme-button-primary-text);
+    border-color: var(--theme-accent-border);
   }
 }
 

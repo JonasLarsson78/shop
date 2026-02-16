@@ -62,7 +62,7 @@ const getGroupProductCount = (groupId: number) =>
         Ny grupp
         <input v-model="groupForm.name" required type="text" />
       </label>
-      <button type="submit">Lägg till grupp</button>
+      <button type="submit" class="button-primary">Lägg till grupp</button>
     </form>
 
     <p v-if="shopStore.groups.length === 0">Inga grupper ännu.</p>

@@ -41,6 +41,7 @@ const handleLogout = () => {
           <RouterLink to="/admin/products">Produkter</RouterLink>
           <RouterLink to="/admin/groups">Grupper</RouterLink>
           <RouterLink to="/admin/settings">Inställningar</RouterLink>
+          <RouterLink to="/admin/theme">Tema</RouterLink>
         </nav>
       </div>
 
@@ -81,8 +82,9 @@ const handleLogout = () => {
   }
 
   a.router-link-active {
-    background: $color-brand;
-    color: $color-brand-contrast;
+    background: var(--theme-accent-soft);
+    color: $color-text-strong;
+    border-color: var(--theme-accent-border);
   }
 }
 </style>

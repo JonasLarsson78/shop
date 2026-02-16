@@ -7,6 +7,7 @@ import AdminView from '../views/AdminView.vue'
 import AdminProductsView from '../views/admin/AdminProductsView.vue'
 import AdminGroupsView from '../views/admin/AdminGroupsView.vue'
 import AdminSettingsView from '../views/admin/AdminSettingsView.vue'
+import AdminThemeView from '../views/admin/AdminThemeView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,6 +24,7 @@ const router = createRouter({
         { path: 'products', name: 'admin-products', component: AdminProductsView },
         { path: 'groups', name: 'admin-groups', component: AdminGroupsView },
         { path: 'settings', name: 'admin-settings', component: AdminSettingsView },
+        { path: 'theme', name: 'admin-theme', component: AdminThemeView },
       ],
     },
   ],

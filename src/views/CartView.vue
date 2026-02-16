@@ -2,9 +2,7 @@
 import { useShopStore } from '../stores/shop'
 
 const shopStore = useShopStore()
-const MISSING_IMAGE_URL = '/products/image-missing.svg'
-
-const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
+const hasProductImage = (imageUrl: string) => imageUrl.trim().length > 0
 
 const decreaseCartItem = (productId: number, currentQuantity: number) => {
   shopStore.updateCartItem(productId, Math.max(1, currentQuantity - 1))
@@ -32,8 +30,11 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
     <div v-else class="cart-layout">
       <div class="cart-list">
         <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <img :src="getProductImage(item.product.imageUrl)" :alt="item.product.name" class="cart-image"
-            loading="lazy" />
+          <div v-if="!hasProductImage(item.product.imageUrl)" class="cart-image cart-image-missing" role="img"
+            aria-label="Bild saknas">
+            Bild saknas
+          </div>
+          <img v-else :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy" />
 
           <div class="cart-details">
             <h3>{{ item.product.name }}</h3>
@@ -86,7 +87,7 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
 }
 
 .cart-header {
-  background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.12) 100%);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
 
   h2 {
     margin: 0.25rem 0 0.45rem;
@@ -149,6 +150,18 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
   object-fit: cover;
   border-radius: $radius-sm;
   border: 1px solid rgba($color-brand, 0.2);
+}
+
+.cart-image-missing {
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--theme-accent);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  border-color: var(--theme-accent-border);
+  padding: 0.3rem;
 }
 
 .summary {
@@ -227,6 +240,8 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
 .cart-controls .button-muted {
   grid-area: remove;
   justify-self: end;
+  color: var(--theme-button-muted-text) !important;
+  border-color: transparent !important;
 }
 
 .summary-row {

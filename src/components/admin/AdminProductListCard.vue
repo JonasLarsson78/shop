@@ -4,9 +4,7 @@ import { useShopStore } from '../../stores/shop'
 import type { ProductGroup, Product } from '../../stores/shop'
 
 const shopStore = useShopStore()
-const MISSING_IMAGE_URL = '/products/image-missing.svg'
-
-const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
+const hasProductImage = (imageUrl: string) => imageUrl.trim().length > 0
 
 const editingProductId = ref<number | null>(null)
 const productPendingDeleteId = ref<number | null>(null)
@@ -163,7 +161,11 @@ onBeforeUnmount(() => {
 
         <template v-else>
           <div class="admin-product-main">
-            <img :src="getProductImage(product.imageUrl)" :alt="product.name" class="admin-product-thumb" />
+            <div v-if="!hasProductImage(product.imageUrl)" class="admin-product-thumb admin-product-thumb-missing" role="img"
+              aria-label="Bild saknas">
+              Bild saknas
+            </div>
+            <img v-else :src="product.imageUrl" :alt="product.name" class="admin-product-thumb" />
             <div>
               <h4>{{ product.name }}</h4>
               <p>{{ product.description }}</p>
@@ -249,6 +251,18 @@ onBeforeUnmount(() => {
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid $color-border;
+}
+
+.admin-product-thumb-missing {
+  display: grid;
+  place-items: center;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--theme-accent);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  border-color: var(--theme-accent-border);
+  padding: 0.2rem;
 }
 
 .admin-row-actions {

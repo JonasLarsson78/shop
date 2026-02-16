@@ -75,7 +75,7 @@ const toggleForm = () => {
         </select>
       </label>
 
-      <button type="submit">Lägg till</button>
+      <button type="submit" class="button-primary">Lägg till</button>
     </form>
   </div>
 </template>

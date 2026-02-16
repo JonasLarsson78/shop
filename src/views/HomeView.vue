@@ -36,7 +36,7 @@ const heroPoints = computed(() =>
 
 <style scoped lang="scss">
 .home-hero {
-  background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.14) 100%);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
 }
 
 .home-kicker {

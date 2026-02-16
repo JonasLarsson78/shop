@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { useShopStore } from './stores/shop'
 import { adminAuthChangedEvent, isAdminAuthenticated } from './utils/adminAuth'
+import { applyTheme, getStoredTheme } from './utils/theme'
 
 const shopStore = useShopStore()
 const isAdminLoggedIn = ref(false)
@@ -12,6 +13,7 @@ const syncAdminAuthState = () => {
 
 onMounted(() => {
   syncAdminAuthState()
+  applyTheme(getStoredTheme())
   window.addEventListener('storage', syncAdminAuthState)
   window.addEventListener(adminAuthChangedEvent, syncAdminAuthState)
 })
@@ -86,11 +88,26 @@ watchEffect(() => {
 
 <style lang="scss">
 :root {
+  --theme-accent: #{$color-brand};
+  --theme-accent-soft: #{rgba($color-brand, 0.14)};
+  --theme-accent-border: #{$color-brand};
+  --theme-page-top: #{rgba($color-brand, 0.09)};
+  --theme-page-mid: #{rgba($color-muted, 0.08)};
+  --theme-topbar-top: #{rgba($color-brand, 0.08)};
+  --theme-topbar-mid: #{rgba($color-muted, 0.12)};
+  --theme-hero-top: #{rgba($color-brand, 0.09)};
+  --theme-hero-mid: #{rgba($color-muted, 0.14)};
+  --theme-button-primary-bg: #{$color-brand};
+  --theme-button-primary-text: #{$color-brand-contrast};
+  --theme-button-muted-bg: #{$color-muted};
+  --theme-button-muted-text: #{$color-brand-contrast};
+  --theme-button-danger-bg: #{$color-danger};
+  --theme-button-danger-text: #{$color-brand-contrast};
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.4;
   font-weight: 400;
   color: $color-text;
-  background: linear-gradient(180deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.08) 48%, $color-surface 100%);
+  background: linear-gradient(180deg, var(--theme-page-top) 0%, var(--theme-page-mid) 48%, $color-surface 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -104,7 +121,7 @@ watchEffect(() => {
 body {
   margin: 0;
   min-width: 320px;
-  background: linear-gradient(180deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.08) 48%, $color-surface 100%);
+  background: linear-gradient(180deg, var(--theme-page-top) 0%, var(--theme-page-mid) 48%, $color-surface 100%);
 }
 
 #app {
@@ -124,7 +141,7 @@ body {
   flex-wrap: wrap;
   gap: 1.1rem;
   margin-bottom: 1.2rem;
-  background: linear-gradient(160deg, rgba($color-brand, 0.08) 0%, rgba($color-muted, 0.12) 100%);
+  background: linear-gradient(160deg, var(--theme-topbar-top) 0%, var(--theme-topbar-mid) 100%);
   border: 1px solid $color-border;
   border-radius: $radius-lg;
   padding: 0.9rem 1rem;
@@ -169,9 +186,9 @@ body {
   }
 
   a.router-link-active {
-    background: rgba($color-brand, 0.14);
+    background: var(--theme-accent-soft);
     color: $color-text-strong;
-    border-color: $color-brand;
+    border-color: var(--theme-accent-border);
   }
 }
 
@@ -203,7 +220,7 @@ body {
   font-size: 0.76rem;
   font-weight: 700;
   background: rgba($color-brand-contrast, 0.92);
-  color: $color-brand;
+  color: var(--theme-accent);
 }
 
 .page-container {
@@ -223,7 +240,7 @@ body {
 .loading-text {
   margin: 0;
   font-size: 1.1rem;
-  color: $color-brand;
+  color: var(--theme-accent);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
@@ -232,8 +249,8 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  border: 3px solid rgba($color-brand, 0.2);
-  border-top-color: $color-brand;
+  border: 3px solid var(--theme-accent-soft);
+  border-top-color: var(--theme-accent);
   animation: spin 0.9s linear infinite;
 }
 
@@ -265,17 +282,25 @@ button {
 button,
 .button-link {
   @include button-base;
+  background: var(--theme-button-primary-bg);
+  color: var(--theme-button-primary-text);
   border-radius: $radius-sm;
   padding: 0.58rem 0.78rem;
   font-weight: 600;
 }
 
 .button-muted {
-  @include button-base($color-muted, $color-brand-contrast);
+  color: var(--theme-button-muted-text) !important;
+}
+
+.button-primary {
+  background: var(--theme-button-primary-bg) !important;
+  color: var(--theme-button-primary-text) !important;
 }
 
 .button-danger {
-  @include button-base($color-danger, $color-brand-contrast);
+  background: var(--theme-button-danger-bg) !important;
+  color: var(--theme-button-danger-text) !important;
 }
 
 .price,

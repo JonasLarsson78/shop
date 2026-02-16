@@ -180,7 +180,7 @@ const saveSettings = () => {
 
 .settings-divider {
   border: 0;
-  border-top: 3px solid rgba($color-brand, 0.3);
+  border-top: 3px solid var(--theme-accent-soft);
   margin: 0 0 0.65rem;
 }
 </style>

@@ -6,9 +6,7 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
 
 const shopStore = useShopStore()
 const route = useRoute()
-const MISSING_IMAGE_URL = '/products/image-missing.svg'
-
-const getProductImage = (imageUrl: string) => imageUrl.trim() || MISSING_IMAGE_URL
+const hasProductImage = (imageUrl: string) => imageUrl.trim().length > 0
 
 const activeGroupId = computed(() => {
   const groupQuery = route.query.group
@@ -151,7 +149,11 @@ onBeforeUnmount(() => {
 
         <div class="grid">
           <article v-for="product in visibleProducts" :key="product.id" class="card product-card">
-            <img :src="getProductImage(product.imageUrl)" :alt="product.name" class="product-image" loading="lazy" />
+            <div v-if="!hasProductImage(product.imageUrl)" class="product-image product-image-missing" role="img"
+              aria-label="Bild saknas">
+              Bild saknas
+            </div>
+            <img v-else :src="product.imageUrl" :alt="product.name" class="product-image" loading="lazy" />
             <h3>{{ product.name }}</h3>
             <p>{{ product.description }}</p>
             <p class="price">{{ product.price }} kr</p>
@@ -188,7 +190,7 @@ onBeforeUnmount(() => {
 }
 
 .shop-header {
-  background: linear-gradient(145deg, rgba($color-brand, 0.08) 0%, rgba($color-muted, 0.12) 100%);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
   display: grid;
   gap: 0.45rem;
 
@@ -280,6 +282,15 @@ onBeforeUnmount(() => {
   margin-bottom: 0.75rem;
   border: 1px solid rgba($color-brand, 0.18);
   background: linear-gradient(145deg, #ffffff 0%, rgba($color-brand, 0.08) 100%);
+}
+
+.product-image-missing {
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: var(--theme-accent);
+  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  border-color: var(--theme-accent-border);
 }
 
 .button-added {
