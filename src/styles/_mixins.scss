@@ -1,0 +1,29 @@
+@use './variables' as *;
+
+@mixin card-surface($radius: 10px) {
+  border: 1px solid $color-border;
+  border-radius: $radius;
+}
+
+@mixin input-base {
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border-input;
+}
+
+@mixin button-base($background: $color-brand, $color: $color-brand-contrast) {
+  display: inline-block;
+  width: fit-content;
+  background: $background;
+  color: $color;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+@mixin mobile-down {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}

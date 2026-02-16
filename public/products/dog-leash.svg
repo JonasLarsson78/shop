@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Justerbart koppel">
+  <rect width="800" height="500" fill="#eef2ff"/>
+  <path d="M170 300 C 260 160, 430 170, 620 280" fill="none" stroke="#1f2937" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="620" cy="280" r="40" fill="none" stroke="#374151" stroke-width="16"/>
+  <text x="400" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#111827">Justerbart Koppel</text>
+</svg>
