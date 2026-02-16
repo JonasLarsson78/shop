@@ -185,19 +185,13 @@ onBeforeUnmount(() => {
               Antal
               <div class="quantity-stepper">
                 <button type="button" class="step-button" @click="decreaseSelectedQuantity(product.id)">−</button>
-                <input
-                  type="number"
-                  min="1"
-                  :value="getSelectedQuantity(product.id)"
-                  @input="setSelectedQuantity(product.id, ($event.target as HTMLInputElement).value)"
-                />
+                <input type="number" min="1" :value="getSelectedQuantity(product.id)"
+                  @input="setSelectedQuantity(product.id, ($event.target as HTMLInputElement).value)" />
                 <button type="button" class="step-button" @click="increaseSelectedQuantity(product.id)">+</button>
               </div>
             </label>
-            <button
-              :class="{ 'button-added': recentlyAddedProductIds[product.id] }"
-              @click="addProductToCart(product.id)"
-            >
+            <button :class="{ 'button-added': recentlyAddedProductIds[product.id] }"
+              @click="addProductToCart(product.id)">
               {{ recentlyAddedProductIds[product.id] ? 'Tillagd ✓' : 'Lägg i varukorg' }}
             </button>
           </article>

@@ -56,10 +56,12 @@ const increaseCartItem = (productId: string, currentQuantity: number) => {
             <label class="cart-quantity">
               Antal
               <div class="quantity-stepper">
-                <button type="button" class="step-button" @click="decreaseCartItem(item.product.id, item.quantity)">−</button>
+                <button type="button" class="step-button"
+                  @click="decreaseCartItem(item.product.id, item.quantity)">−</button>
                 <input type="number" min="1" :value="item.quantity"
                   @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))" />
-                <button type="button" class="step-button" @click="increaseCartItem(item.product.id, item.quantity)">+</button>
+                <button type="button" class="step-button"
+                  @click="increaseCartItem(item.product.id, item.quantity)">+</button>
               </div>
             </label>
 
