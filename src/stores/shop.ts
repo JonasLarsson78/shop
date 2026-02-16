@@ -548,7 +548,7 @@ export const useShopStore = defineStore('shop', {
       try {
         const options = await apiRequest<ShippingOption[]>('/api/shipping-options', { method: 'GET' })
         this.shippingOptions = options
-        if (this.selectedShippingId === null && options.length > 0) {
+        if (this.selectedShippingId === null && options.length > 0 && options[0]) {
           this.selectedShippingId = options[0].id
           this.persistState()
         }

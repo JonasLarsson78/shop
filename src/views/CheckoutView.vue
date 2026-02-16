@@ -21,7 +21,7 @@ onMounted(() => {
   if (shippingId && shopStore.shippingOptions.some(opt => opt.id === shippingId)) {
     shopStore.setSelectedShippingId(shippingId)
   } else if (shopStore.selectedShippingId === null && shopStore.shippingOptions.length > 0) {
-    shopStore.setSelectedShippingId(shopStore.shippingOptions[0].id)
+    shopStore.setSelectedShippingId(shopStore.shippingOptions[0]?.id ?? null)
   }
 })
 
