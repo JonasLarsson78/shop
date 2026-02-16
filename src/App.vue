@@ -1,7 +1,10 @@
 <template>
   <div class="app-shell">
     <header class="topbar">
-      <h1 class="brand">Doggo Shop</h1>
+      <div class="brand-wrap">
+        <p class="eyebrow">Premium Hundshop</p>
+        <h1 class="brand">Doggo Shop</h1>
+      </div>
       <nav class="nav">
         <RouterLink to="/">Start</RouterLink>
         <RouterLink to="/shop">Butik</RouterLink>
@@ -23,7 +26,7 @@
   line-height: 1.4;
   font-weight: 400;
   color: $color-text;
-  background: $color-surface-muted;
+  background: linear-gradient(180deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.08) 48%, $color-surface 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -37,6 +40,7 @@
 body {
   margin: 0;
   min-width: 320px;
+  background: linear-gradient(180deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.08) 48%, $color-surface 100%);
 }
 
 #app {
@@ -44,9 +48,9 @@ body {
 }
 
 .app-shell {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.25rem;
 }
 
 .topbar {
@@ -54,40 +58,70 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.1rem;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(160deg, rgba($color-brand, 0.08) 0%, rgba($color-muted, 0.12) 100%);
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: 0.9rem 1rem;
+}
+
+.brand-wrap {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  color: $color-text-soft;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .brand {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
+  line-height: 1.1;
 }
 
 .nav {
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 
   a {
     text-decoration: none;
     color: $color-text-strong;
-    padding: 0.4rem 0.7rem;
+    padding: 0.45rem 0.7rem;
     border-radius: $radius-sm;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+
+  a:hover {
+    border-color: $color-border;
+    background: $color-surface-muted;
   }
 
   a.router-link-active {
-    background: $color-border;
+    background: linear-gradient(120deg, $color-brand 0%, $color-muted 100%);
+    color: $color-brand-contrast;
+    border-color: $color-brand;
   }
 }
 
 .page-container {
   background: $color-surface;
+  border: 1px solid $color-border;
   border-radius: $radius-lg;
-  padding: 1rem;
+  padding: 1.15rem;
 }
 
 .card {
   @include card-surface;
   padding: 1rem;
+  background: $color-surface;
 }
 
 label {
@@ -106,6 +140,9 @@ button {
 button,
 .button-link {
   @include button-base;
+  border-radius: $radius-sm;
+  padding: 0.58rem 0.78rem;
+  font-weight: 600;
 }
 
 .button-muted {
@@ -141,6 +178,14 @@ button,
 }
 
 @media (max-width: 720px) {
+  .app-shell {
+    padding: 0.8rem;
+  }
+
+  .topbar {
+    padding: 0.8rem;
+  }
+
   .shop-layout {
     grid-template-columns: 1fr;
   }

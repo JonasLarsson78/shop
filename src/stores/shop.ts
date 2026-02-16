@@ -28,7 +28,7 @@ interface PersistedShopState {
 }
 
 const SHOP_STORAGE_KEY = 'doggo-shop-state-v1'
-const DEFAULT_PRODUCT_IMAGE = '/products/default-dog.svg'
+const DEFAULT_PRODUCT_IMAGE = 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200'
 
 const defaultGroups: ProductGroup[] = [
   { id: 'group-food', name: 'Mat & Skålar' },
@@ -43,7 +43,7 @@ const defaultProducts: Product[] = [
     name: 'Stålhundskål 1L',
     description: 'Slitstark matskål i rostfritt stål för daglig användning.',
     price: 149,
-    imageUrl: '/products/dog-bowl.svg',
+    imageUrl: 'https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&cs=tinysrgb&w=1200',
     groupId: 'group-food',
   },
   {
@@ -51,7 +51,7 @@ const defaultProducts: Product[] = [
     name: 'Justerbart Koppel',
     description: 'Mjukt men starkt koppel för promenader i alla väder.',
     price: 229,
-    imageUrl: '/products/dog-leash.svg',
+    imageUrl: 'https://images.pexels.com/photos/1490908/pexels-photo-1490908.jpeg?auto=compress&cs=tinysrgb&w=1200',
     groupId: 'group-walk',
   },
   {
@@ -59,7 +59,7 @@ const defaultProducts: Product[] = [
     name: 'Hundsäng Comfort',
     description: 'Mjuk hundsäng med tvättbart överdrag.',
     price: 699,
-    imageUrl: '/products/dog-bed.svg',
+    imageUrl: 'https://images.pexels.com/photos/4587995/pexels-photo-4587995.jpeg?auto=compress&cs=tinysrgb&w=1200',
     groupId: 'group-sleep',
   },
   {
@@ -67,7 +67,7 @@ const defaultProducts: Product[] = [
     name: 'Tuggleksak Gummi',
     description: 'Tålig leksak som aktiverar och tränar käkmuskler.',
     price: 89,
-    imageUrl: '/products/dog-toy.svg',
+    imageUrl: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200',
     groupId: 'group-play',
   },
 ]

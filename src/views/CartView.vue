@@ -2,46 +2,127 @@
 import { useShopStore } from '../stores/shop'
 
 const shopStore = useShopStore()
+const fallbackImageUrl = 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=900'
+
+const handleProductImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement | null
+
+  if (!img) {
+    return
+  }
+
+  if (img.src === fallbackImageUrl) {
+    return
+  }
+
+  img.src = fallbackImageUrl
+}
 </script>
 
 <template>
-  <section>
-    <h2>Varukorg</h2>
+  <section class="cart-page">
+    <header class="cart-header card">
+      <p class="cart-kicker">Din beställning</p>
+      <h2>Varukorg</h2>
+      <p>Granska produkterna innan du går vidare till kassan.</p>
+    </header>
 
-    <p v-if="shopStore.cartItems.length === 0">Din varukorg är tom.</p>
+    <div v-if="shopStore.cartItems.length === 0" class="cart-empty card">
+      <h3>Varukorgen är tom</h3>
+      <p>Lägg till produkter i butiken för att komma igång.</p>
+      <RouterLink class="button-link" to="/shop">Till butiken</RouterLink>
+    </div>
 
-    <div v-else class="cart-list">
-      <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item">
-        <div>
-          <h3>{{ item.product.name }}</h3>
-          <p>{{ item.product.price }} kr/st</p>
-        </div>
+    <div v-else class="cart-layout">
+      <div class="cart-list">
+        <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
+          <img :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy"
+            @error="handleProductImageError" />
 
-        <label>
-          Antal
-          <input
-            type="number"
-            min="1"
-            :value="item.quantity"
-            @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))"
-          />
-        </label>
+          <div class="cart-details">
+            <h3>{{ item.product.name }}</h3>
+            <p>{{ item.product.price }} kr/st</p>
+          </div>
 
-        <p>{{ item.subtotal }} kr</p>
-        <button @click="shopStore.removeFromCart(item.product.id)">Ta bort</button>
-      </article>
+          <div class="cart-controls">
+            <label class="cart-quantity">
+              Antal
+              <input type="number" min="1" :value="item.quantity"
+                @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))" />
+            </label>
 
-      <div class="summary">
-        <p>Delsumma: {{ shopStore.cartSubtotal }} kr</p>
-        <p>Frakt: {{ shopStore.shippingFee }} kr</p>
-        <p class="total">Totalt: {{ shopStore.cartTotal }} kr</p>
-        <RouterLink class="button-link" to="/checkout">Till kassan</RouterLink>
+            <p class="cart-subtotal">{{ item.subtotal }} kr</p>
+            <button class="button-muted" @click="shopStore.removeFromCart(item.product.id)">Ta bort</button>
+          </div>
+        </article>
       </div>
+
+      <aside class="summary card">
+        <h3>Sammanfattning</h3>
+        <div class="summary-row">
+          <span>Delsumma</span>
+          <strong>{{ shopStore.cartSubtotal }} kr</strong>
+        </div>
+        <div class="summary-row">
+          <span>Frakt</span>
+          <strong>{{ shopStore.shippingFee }} kr</strong>
+        </div>
+        <div class="summary-row total-row">
+          <span>Totalt</span>
+          <strong>{{ shopStore.cartTotal }} kr</strong>
+        </div>
+        <RouterLink class="button-link checkout-link" to="/checkout">Till kassan</RouterLink>
+      </aside>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
+.cart-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.cart-header {
+  background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.12) 100%);
+
+  h2 {
+    margin: 0.25rem 0 0.45rem;
+  }
+
+  p {
+    margin: 0;
+    color: $color-text-soft;
+  }
+}
+
+.cart-kicker {
+  margin: 0;
+  color: $color-text-soft;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.cart-empty {
+  display: grid;
+  gap: 0.7rem;
+  justify-items: start;
+
+  h3,
+  p {
+    margin: 0;
+  }
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1rem;
+  align-items: start;
+}
+
 .cart-list {
   display: grid;
   gap: 1rem;
@@ -49,23 +130,132 @@ const shopStore = useShopStore()
 
 .cart-item {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 0.6fr 0.8fr;
-  gap: 0.75rem;
-  align-items: end;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: 1rem;
+  grid-template-columns: 96px minmax(0, 1fr) minmax(290px, auto);
+  gap: 0.8rem;
+  align-items: center;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+
+  &:hover {
+    border-color: rgba($color-brand, 0.35);
+    transform: translateY(-1px);
+  }
 }
 
 .summary {
-  border-top: 1px solid $color-border;
-  padding-top: 1rem;
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: 0.65rem;
+
+  h3 {
+    margin: 0 0 0.15rem;
+  }
+}
+
+.cart-image {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  border: 1px solid rgba($color-brand, 0.2);
+}
+
+.cart-details {
+  h3,
+  p {
+    margin: 0;
+  }
+
+  p {
+    margin-top: 0.35rem;
+    color: $color-text-soft;
+  }
+}
+
+.cart-controls {
+  display: grid;
+  grid-template-columns: minmax(140px, 160px) auto;
+  grid-template-areas:
+    'quantity remove'
+    'subtotal subtotal';
+  align-items: end;
+  gap: 0.65rem;
+  justify-content: end;
+}
+
+.cart-quantity {
+  grid-area: quantity;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+
+  input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.cart-subtotal {
+  grid-area: subtotal;
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+  justify-self: end;
+}
+
+.cart-controls .button-muted {
+  grid-area: remove;
+  justify-self: end;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $color-border;
+  padding-bottom: 0.5rem;
+}
+
+.total-row {
+  border-bottom: none;
+  padding-bottom: 0.1rem;
+}
+
+.checkout-link {
+  width: 100%;
+  text-align: center;
 }
 
 @include mobile-down {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    position: static;
+  }
+
   .cart-item {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+
+  .cart-controls {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'quantity'
+      'subtotal'
+      'remove';
+    justify-content: start;
+  }
+
+  .cart-subtotal {
+    justify-self: start;
+  }
+
+  .cart-image {
+    width: 100%;
+    height: 180px;
   }
 }
 </style>
