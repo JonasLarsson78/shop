@@ -39,6 +39,7 @@ interface Settings {
 
 interface PersistedShopState {
   cart: Record<string, number>
+  selectedShippingId?: number | null
 }
 
 interface ShopSnapshot {
@@ -115,6 +116,11 @@ const loadPersistedShopState = (): PersistedShopState | null => {
 
     return {
       cart: parsedState.cart && typeof parsedState.cart === 'object' ? parsedState.cart : {},
+      selectedShippingId:
+        Object.prototype.hasOwnProperty.call(parsedState, 'selectedShippingId') &&
+        (typeof parsedState.selectedShippingId === 'number' || parsedState.selectedShippingId === null)
+          ? (parsedState.selectedShippingId as number | null)
+          : null,
     }
   } catch {
     return null
@@ -141,6 +147,7 @@ export const useShopStore = defineStore('shop', {
     dbStatus: 'loading' as 'loading' | 'connected' | 'error',
     hasInitializedData: false,
     shippingOptions: [] as ShippingOption[],
+    selectedShippingId: persistedState?.selectedShippingId ?? null as number | null,
   }),
   getters: {
     cartItems(state) {
@@ -224,6 +231,7 @@ export const useShopStore = defineStore('shop', {
     persistState() {
       saveShopState({
         cart: this.cart,
+        selectedShippingId: this.selectedShippingId ?? null,
       })
     },
     async initializeData() {
@@ -540,6 +548,10 @@ export const useShopStore = defineStore('shop', {
       try {
         const options = await apiRequest<ShippingOption[]>('/api/shipping-options', { method: 'GET' })
         this.shippingOptions = options
+        if (this.selectedShippingId === null && options.length > 0) {
+          this.selectedShippingId = options[0].id
+          this.persistState()
+        }
       } catch (error) {
         console.error('Failed to fetch shipping options:', error)
       }
@@ -576,9 +588,18 @@ export const useShopStore = defineStore('shop', {
           body: JSON.stringify({ id }),
         })
         this.shippingOptions = this.shippingOptions.filter(o => o.id !== id)
+        if (this.selectedShippingId === id) {
+          // select first available or null
+          this.selectedShippingId = this.shippingOptions[0]?.id ?? null
+          this.persistState()
+        }
       } catch (error) {
         console.error('Failed to delete shipping option:', error)
       }
+    },
+    setSelectedShippingId(id: number | null) {
+      this.selectedShippingId = id
+      this.persistState()
     },
   },
 })

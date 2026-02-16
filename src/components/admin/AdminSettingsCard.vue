@@ -28,6 +28,9 @@ const settingsForm = reactive({
 
 const newShipping = ref({ name: '', price: 0 })
 
+// Track deletion/loading state per shipping option id
+const deleting = reactive<Record<string, boolean>>({})
+
 const saveSettings = () => {
   shopStore.updateSettings({
     storeName: settingsForm.storeName,
@@ -63,7 +66,25 @@ const updateShipping = async (option: any) => {
 }
 
 const deleteShipping = async (id: number) => {
-  await shopStore.deleteShippingOption(id)
+  const idx = shopStore.shippingOptions.findIndex((o: any) => o.id === id)
+  if (idx === -1) return
+
+  // Optimistic remove
+  const removed = shopStore.shippingOptions[idx]
+  shopStore.shippingOptions.splice(idx, 1)
+  deleting[id] = true
+
+  try {
+    await shopStore.deleteShippingOption(id)
+  } catch (err) {
+    // rollback on error
+    if (removed !== undefined) {
+      shopStore.shippingOptions.splice(idx, 0, removed)
+    }
+    console.error('Failed to delete shipping option, rolled back:', err)
+  } finally {
+    deleting[id] = false
+  }
 }
 
 // Hämta fraktalternativ när komponenten mountas
@@ -188,17 +209,24 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
 
     <div class="shipping-options">
       <h4>Fraktalternativ</h4>
-      <ul>
+      <ol>
         <li v-for="option in shopStore.shippingOptions" :key="option.id">
-          <input v-model="option.name" @blur="updateShipping(option)" placeholder="Namn" />
-          <input v-model.number="option.price" @blur="updateShipping(option)" type="number" min="0"
-            style="width: 80px" /> kr
-          <button type="button" @click="deleteShipping(option.id)">Ta bort</button>
+          <input class="ship-name" v-model="option.name" @blur="updateShipping(option)" placeholder="Namn"
+            :disabled="deleting[option.id]" />
+          <div class="ship-right">
+            <input class="ship-price" v-model.number="option.price" @blur="updateShipping(option)" type="number" min="0"
+              :disabled="deleting[option.id]" />
+            <span class="kr">kr</span>
+            <button class="btn-remove" type="button" @click="deleteShipping(option.id)" :disabled="deleting[option.id]">
+              <span v-if="deleting[option.id]">Tar bort...</span>
+              <span v-else>Ta bort</span>
+            </button>
+          </div>
         </li>
-      </ul>
-      <div>
+      </ol>
+      <div class="new-shipping">
         <input v-model="newShipping.name" placeholder="Nytt fraktalternativ" />
-        <input v-model.number="newShipping.price" type="number" min="0" style="width: 80px" placeholder="Pris" />
+        <input v-model.number="newShipping.price" type="number" min="0" class="ship-price" placeholder="Pris" />
         <button type="button" @click="addShipping">Lägg till</button>
       </div>
     </div>
@@ -218,5 +246,71 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
   border: 0;
   border-top: 3px solid var(--theme-accent-soft);
   margin: 0 0 0.65rem;
+}
+
+.shipping-options {
+  margin-bottom: 1.5rem;
+
+  ol {
+    list-style: decimal;
+    list-style-position: outside;
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .ship-name {
+    flex: 1 1 auto;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+  }
+
+  .ship-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 0.75rem;
+  }
+
+  .ship-price {
+    width: 90px;
+    padding: 0.25rem 0.4rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    text-align: right;
+  }
+
+  .kr {
+    font-size: 0.9rem;
+    color: $color-text-soft;
+  }
+
+  .btn-remove {
+    background: transparent;
+    border: none;
+    color: var(--theme-accent);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .new-shipping {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    align-items: center;
+  }
+}
+
+.card>button[type="submit"] {
+  margin-top: 1.25rem;
 }
 </style>

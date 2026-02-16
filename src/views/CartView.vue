@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useShopStore } from '../stores/shop'
-import { ref, computed, watch, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const shopStore = useShopStore()
 const hasProductImage = (imageUrl: string) => imageUrl.trim().length > 0
@@ -13,17 +13,10 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
   shopStore.updateCartItem(productId, currentQuantity + 1)
 }
 
-const selectedShippingId = ref(shopStore.shippingOptions[0]?.id || null)
-
-watch(
-  () => shopStore.shippingOptions,
-  (options) => {
-    if (!selectedShippingId.value && options.length > 0 && options[0]) {
-      selectedShippingId.value = options[0].id
-    }
-  },
-  { immediate: true }
-)
+const selectedShippingId = computed<number | null>({
+  get: () => shopStore.selectedShippingId,
+  set: (v) => shopStore.setSelectedShippingId(v as number | null),
+})
 
 const selectedShipping = computed(() =>
   shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)

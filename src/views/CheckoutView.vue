@@ -6,19 +6,22 @@ import { useShopStore } from '../stores/shop'
 const shopStore = useShopStore()
 const router = useRouter()
 const route = useRoute()
-const selectedShippingId = ref<number | null>(null)
+// bind to store selectedShippingId so cart and checkout share the selection
+const selectedShippingId = computed<number | null>({
+  get: () => shopStore.selectedShippingId,
+  set: (v) => shopStore.setSelectedShippingId(v as number | null),
+})
 
 onMounted(() => {
   if (!shopStore.shippingOptions.length) {
     shopStore.fetchShippingOptions()
   }
+
   const shippingId = Number(route.query.shipping)
   if (shippingId && shopStore.shippingOptions.some(opt => opt.id === shippingId)) {
-    selectedShippingId.value = shippingId
-  } else if (shopStore.shippingOptions.length > 0 && shopStore.shippingOptions[0]) {
-    selectedShippingId.value = shopStore.shippingOptions[0].id
-  } else {
-    selectedShippingId.value = null
+    shopStore.setSelectedShippingId(shippingId)
+  } else if (shopStore.selectedShippingId === null && shopStore.shippingOptions.length > 0) {
+    shopStore.setSelectedShippingId(shopStore.shippingOptions[0].id)
   }
 })
 
