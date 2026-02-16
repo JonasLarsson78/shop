@@ -18,9 +18,9 @@ const increaseCartItem = (productId: number, currentQuantity: number) => {
 <template>
   <section class="cart-page">
     <header class="cart-header card">
-      <p class="cart-kicker">Din beställning</p>
-      <h2>Varukorg</h2>
-      <p>Granska produkterna innan du går vidare till kassan.</p>
+      <p v-if="shopStore.settings.cartHeroKicker" class="cart-kicker">{{ shopStore.settings.cartHeroKicker }}</p>
+      <h2 v-if="shopStore.settings.cartHeroTitle">{{ shopStore.settings.cartHeroTitle }}</h2>
+      <p v-if="shopStore.settings.cartHeroLead">{{ shopStore.settings.cartHeroLead }}</p>
     </header>
 
     <div v-if="shopStore.cartItems.length === 0" class="cart-empty card">

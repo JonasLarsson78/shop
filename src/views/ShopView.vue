@@ -141,9 +141,9 @@ onBeforeUnmount(() => {
 
     <div class="shop-content">
       <header class="shop-header card">
-        <p class="shop-kicker">Webshop</p>
-        <h2>{{ shopStore.settings.storeName }}</h2>
-        <p>Produkter för en modern onlinebutik.</p>
+        <p v-if="shopStore.settings.shopHeroKicker" class="shop-kicker">{{ shopStore.settings.shopHeroKicker }}</p>
+        <h2 v-if="shopStore.settings.shopHeroTitle">{{ shopStore.settings.shopHeroTitle }}</h2>
+        <p v-if="shopStore.settings.shopHeroLead">{{ shopStore.settings.shopHeroLead }}</p>
       </header>
 
       <div class="group-section">

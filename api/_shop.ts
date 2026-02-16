@@ -25,6 +25,15 @@ export type ShopSettings = {
   heroPoint1: string
   heroPoint2: string
   heroPoint3: string
+  shopHeroKicker: string
+  shopHeroTitle: string
+  shopHeroLead: string
+  cartHeroKicker: string
+  cartHeroTitle: string
+  cartHeroLead: string
+  checkoutHeroKicker: string
+  checkoutHeroTitle: string
+  checkoutHeroLead: string
   shippingCost: number
   freeShippingThreshold: number
 }
@@ -172,6 +181,15 @@ const ensureSchemaAndSeedInternal = async () => {
       hero_point_1 VARCHAR(255) NOT NULL DEFAULT '',
       hero_point_2 VARCHAR(255) NOT NULL DEFAULT '',
       hero_point_3 VARCHAR(255) NOT NULL DEFAULT '',
+      shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      shop_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      shop_hero_lead TEXT NOT NULL,
+      cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      cart_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      cart_hero_lead TEXT NOT NULL,
+      checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      checkout_hero_lead TEXT NOT NULL,
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -206,6 +224,42 @@ const ensureSchemaAndSeedInternal = async () => {
     {
       name: 'hero_point_3',
       alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+    },
+    {
+      name: 'shop_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
+    },
+    {
+      name: 'shop_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
+    },
+    {
+      name: 'shop_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title",
+    },
+    {
+      name: 'cart_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
+    },
+    {
+      name: 'cart_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
+    },
+    {
+      name: 'cart_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title",
+    },
+    {
+      name: 'checkout_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
+    },
+    {
+      name: 'checkout_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
+    },
+    {
+      name: 'checkout_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
     },
   ] as const
 
@@ -363,6 +417,15 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
     heroPoint1: string
     heroPoint2: string
     heroPoint3: string
+    shopHeroKicker: string
+    shopHeroTitle: string
+    shopHeroLead: string
+    cartHeroKicker: string
+    cartHeroTitle: string
+    cartHeroLead: string
+    checkoutHeroKicker: string
+    checkoutHeroTitle: string
+    checkoutHeroLead: string
     shippingCost: number
     freeShippingThreshold: number
   }>>(`
@@ -375,6 +438,15 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
       hero_point_1 AS heroPoint1,
       hero_point_2 AS heroPoint2,
       hero_point_3 AS heroPoint3,
+      shop_hero_kicker AS shopHeroKicker,
+      shop_hero_title AS shopHeroTitle,
+      shop_hero_lead AS shopHeroLead,
+      cart_hero_kicker AS cartHeroKicker,
+      cart_hero_title AS cartHeroTitle,
+      cart_hero_lead AS cartHeroLead,
+      checkout_hero_kicker AS checkoutHeroKicker,
+      checkout_hero_title AS checkoutHeroTitle,
+      checkout_hero_lead AS checkoutHeroLead,
       shipping_cost AS shippingCost,
       free_shipping_threshold AS freeShippingThreshold
     FROM settings
@@ -401,6 +473,33 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
   const heroPoint1 = typeof payload.heroPoint1 === 'string' ? payload.heroPoint1.trim() : (currentSettings?.heroPoint1 ?? '')
   const heroPoint2 = typeof payload.heroPoint2 === 'string' ? payload.heroPoint2.trim() : (currentSettings?.heroPoint2 ?? '')
   const heroPoint3 = typeof payload.heroPoint3 === 'string' ? payload.heroPoint3.trim() : (currentSettings?.heroPoint3 ?? '')
+  const shopHeroKicker = typeof payload.shopHeroKicker === 'string'
+    ? payload.shopHeroKicker.trim()
+    : (currentSettings?.shopHeroKicker ?? '')
+  const shopHeroTitle = typeof payload.shopHeroTitle === 'string'
+    ? payload.shopHeroTitle.trim()
+    : (currentSettings?.shopHeroTitle ?? '')
+  const shopHeroLead = typeof payload.shopHeroLead === 'string'
+    ? payload.shopHeroLead.trim()
+    : (currentSettings?.shopHeroLead ?? '')
+  const cartHeroKicker = typeof payload.cartHeroKicker === 'string'
+    ? payload.cartHeroKicker.trim()
+    : (currentSettings?.cartHeroKicker ?? '')
+  const cartHeroTitle = typeof payload.cartHeroTitle === 'string'
+    ? payload.cartHeroTitle.trim()
+    : (currentSettings?.cartHeroTitle ?? '')
+  const cartHeroLead = typeof payload.cartHeroLead === 'string'
+    ? payload.cartHeroLead.trim()
+    : (currentSettings?.cartHeroLead ?? '')
+  const checkoutHeroKicker = typeof payload.checkoutHeroKicker === 'string'
+    ? payload.checkoutHeroKicker.trim()
+    : (currentSettings?.checkoutHeroKicker ?? '')
+  const checkoutHeroTitle = typeof payload.checkoutHeroTitle === 'string'
+    ? payload.checkoutHeroTitle.trim()
+    : (currentSettings?.checkoutHeroTitle ?? '')
+  const checkoutHeroLead = typeof payload.checkoutHeroLead === 'string'
+    ? payload.checkoutHeroLead.trim()
+    : (currentSettings?.checkoutHeroLead ?? '')
   const shippingCost = Number.isFinite(Number(payload.shippingCost)) ? Math.max(0, Math.floor(Number(payload.shippingCost))) : (currentSettings?.shippingCost ?? 0)
   const freeShippingThreshold = Number.isFinite(Number(payload.freeShippingThreshold))
     ? Math.max(0, Math.floor(Number(payload.freeShippingThreshold)))
@@ -417,10 +516,19 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        hero_point_1,
        hero_point_2,
        hero_point_3,
+       shop_hero_kicker,
+       shop_hero_title,
+       shop_hero_lead,
+       cart_hero_kicker,
+       cart_hero_title,
+       cart_hero_lead,
+       checkout_hero_kicker,
+       checkout_hero_title,
+       checkout_hero_lead,
        shipping_cost,
        free_shipping_threshold
      )
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        store_name = VALUES(store_name),
        sub_name = VALUES(sub_name),
@@ -430,6 +538,15 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        hero_point_1 = VALUES(hero_point_1),
        hero_point_2 = VALUES(hero_point_2),
        hero_point_3 = VALUES(hero_point_3),
+       shop_hero_kicker = VALUES(shop_hero_kicker),
+       shop_hero_title = VALUES(shop_hero_title),
+       shop_hero_lead = VALUES(shop_hero_lead),
+       cart_hero_kicker = VALUES(cart_hero_kicker),
+       cart_hero_title = VALUES(cart_hero_title),
+       cart_hero_lead = VALUES(cart_hero_lead),
+       checkout_hero_kicker = VALUES(checkout_hero_kicker),
+       checkout_hero_title = VALUES(checkout_hero_title),
+       checkout_hero_lead = VALUES(checkout_hero_lead),
        shipping_cost = VALUES(shipping_cost),
        free_shipping_threshold = VALUES(free_shipping_threshold)`,
     [
@@ -441,6 +558,15 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
       heroPoint1,
       heroPoint2,
       heroPoint3,
+      shopHeroKicker,
+      shopHeroTitle,
+      shopHeroLead,
+      cartHeroKicker,
+      cartHeroTitle,
+      cartHeroLead,
+      checkoutHeroKicker,
+      checkoutHeroTitle,
+      checkoutHeroLead,
       shippingCost,
       freeShippingThreshold,
     ],
@@ -455,6 +581,15 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
     heroPoint1,
     heroPoint2,
     heroPoint3,
+    shopHeroKicker,
+    shopHeroTitle,
+    shopHeroLead,
+    cartHeroKicker,
+    cartHeroTitle,
+    cartHeroLead,
+    checkoutHeroKicker,
+    checkoutHeroTitle,
+    checkoutHeroLead,
     shippingCost,
     freeShippingThreshold,
   }

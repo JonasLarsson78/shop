@@ -85,6 +85,15 @@ try {
       hero_point_1 VARCHAR(255) NOT NULL DEFAULT '',
       hero_point_2 VARCHAR(255) NOT NULL DEFAULT '',
       hero_point_3 VARCHAR(255) NOT NULL DEFAULT '',
+      shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      shop_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      shop_hero_lead TEXT NOT NULL,
+      cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      cart_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      cart_hero_lead TEXT NOT NULL,
+      checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '',
+      checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '',
+      checkout_hero_lead TEXT NOT NULL,
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -119,6 +128,42 @@ try {
     {
       name: 'hero_point_3',
       alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+    },
+    {
+      name: 'shop_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
+    },
+    {
+      name: 'shop_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
+    },
+    {
+      name: 'shop_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title",
+    },
+    {
+      name: 'cart_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
+    },
+    {
+      name: 'cart_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
+    },
+    {
+      name: 'cart_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title",
+    },
+    {
+      name: 'checkout_hero_kicker',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
+    },
+    {
+      name: 'checkout_hero_title',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
+    },
+    {
+      name: 'checkout_hero_lead',
+      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
     },
   ]
 

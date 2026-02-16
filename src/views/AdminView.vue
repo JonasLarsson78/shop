@@ -26,7 +26,6 @@ const handleLogout = () => {
 
 <template>
   <section>
-    <h2>Admin</h2>
     <p v-if="!isAuthenticated">Logga in för att hantera inställningar och produkter.</p>
 
     <AdminLoginCard v-if="!isAuthenticated" :auth-error="authError" @login="handleLogin" />

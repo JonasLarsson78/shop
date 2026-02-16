@@ -30,7 +30,11 @@ const placeOrder = () => {
 
 <template>
   <section>
-    <h2>Kassa</h2>
+    <div class="hero-header card">
+      <p v-if="shopStore.settings.checkoutHeroKicker" class="hero-kicker">{{ shopStore.settings.checkoutHeroKicker }}</p>
+      <h2 v-if="shopStore.settings.checkoutHeroTitle">{{ shopStore.settings.checkoutHeroTitle }}</h2>
+      <p v-if="shopStore.settings.checkoutHeroLead" class="hero-lead">{{ shopStore.settings.checkoutHeroLead }}</p>
+    </div>
 
     <p v-if="shopStore.cartItems.length === 0 && !orderPlaced">Varukorgen är tom. Lägg till produkter först.</p>
 
@@ -74,6 +78,31 @@ const placeOrder = () => {
 </template>
 
 <style scoped lang="scss">
+.hero-header {
+  margin-bottom: 1rem;
+  background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.14) 100%);
+
+  h2 {
+    margin: 0 0 0.35rem;
+    line-height: 1.2;
+  }
+}
+
+.hero-kicker {
+  margin: 0 0 0.7rem;
+  color: $color-text-soft;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.hero-lead {
+  margin: 0;
+  color: $color-text-soft;
+  max-width: 62ch;
+}
+
 .success {
   margin-top: 1rem;
   font-weight: 700;

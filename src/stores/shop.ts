@@ -23,6 +23,15 @@ interface Settings {
   heroPoint1: string
   heroPoint2: string
   heroPoint3: string
+  shopHeroKicker: string
+  shopHeroTitle: string
+  shopHeroLead: string
+  cartHeroKicker: string
+  cartHeroTitle: string
+  cartHeroLead: string
+  checkoutHeroKicker: string
+  checkoutHeroTitle: string
+  checkoutHeroLead: string
   shippingCost: number
   freeShippingThreshold: number
 }
@@ -49,6 +58,15 @@ const defaultSettings: Settings = {
   heroPoint1: 'Snabbt att hitta rätt produkter',
   heroPoint2: 'Tydliga grupper för varje behov',
   heroPoint3: 'Smidig checkout utan krångel',
+  shopHeroKicker: 'Webshop',
+  shopHeroTitle: '',
+  shopHeroLead: 'Produkter för en modern onlinebutik.',
+  cartHeroKicker: 'Din beställning',
+  cartHeroTitle: 'Varukorg',
+  cartHeroLead: 'Granska produkterna innan du går vidare till kassan.',
+  checkoutHeroKicker: 'Trygg checkout',
+  checkoutHeroTitle: 'Kassa',
+  checkoutHeroLead: 'Fyll i dina uppgifter och kontrollera ordern innan du bekräftar köpet.',
   shippingCost: 0,
   freeShippingThreshold: 0,
 }

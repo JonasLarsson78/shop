@@ -17,8 +17,8 @@ const heroPoints = computed(() =>
     <GroupMenu />
 
     <div class="home-hero card">
-      <h2 v-if="shopStore.settings.heroTitle">{{ shopStore.settings.heroTitle }}</h2>
-      <p v-if="shopStore.settings.heroKicker" class="home-kicker">{{ shopStore.settings.heroKicker }}</p>
+      <p v-if="shopStore.settings.heroKicker" class="home-kicker">{{ shopStore.settings.heroTitle }}</p>
+      <h2 v-if="shopStore.settings.heroTitle">{{ shopStore.settings.heroKicker }}</h2>
       <p v-if="shopStore.settings.heroLead" class="home-lead">{{ shopStore.settings.heroLead }}</p>
 
       <ul v-if="heroPoints.length > 0" class="home-points">
