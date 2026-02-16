@@ -275,7 +275,7 @@ onBeforeUnmount(() => {
 .product-image {
   width: 100%;
   height: 180px;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: $radius-sm;
   margin-bottom: 0.75rem;
   border: 1px solid rgba($color-brand, 0.18);
