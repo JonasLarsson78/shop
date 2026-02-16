@@ -8,6 +8,9 @@ import AdminProductsView from '../views/admin/AdminProductsView.vue'
 import AdminGroupsView from '../views/admin/AdminGroupsView.vue'
 import AdminSettingsView from '../views/admin/AdminSettingsView.vue'
 import AdminThemeView from '../views/admin/AdminThemeView.vue'
+import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
+import AccountView from '../views/AccountView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,6 +19,9 @@ const router = createRouter({
     { path: '/shop', name: 'shop', component: ShopView },
     { path: '/cart', name: 'cart', component: CartView },
     { path: '/checkout', name: 'checkout', component: CheckoutView },
+    { path: '/login', name: 'login', component: LoginView },
+    { path: '/register', name: 'register', component: RegisterView },
+    { path: '/account', name: 'account', component: AccountView, meta: { requiresAuth: true } },
     {
       path: '/admin',
       component: AdminView,
@@ -28,6 +34,29 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+// Simple auth guard: checks localStorage for persisted user
+const AUTH_KEY = 'shop-auth-v1'
+
+router.beforeEach((to) => {
+  const requiresAuth = to.matched.some((r) => r.meta && r.meta.requiresAuth)
+  if (!requiresAuth) return true
+
+  let user = null
+  try {
+    const raw = window.localStorage.getItem(AUTH_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as { user?: any }
+      user = parsed.user ?? null
+    }
+  } catch {
+    user = null
+  }
+
+  if (user) return true
+
+  return { path: '/login', query: { redirect: to.fullPath } }
 })
 
 export default router

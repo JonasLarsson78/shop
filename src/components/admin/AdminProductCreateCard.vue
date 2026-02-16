@@ -81,6 +81,28 @@ const toggleForm = () => {
 </template>
 
 <style scoped lang="scss">
+@import '../../styles/_variables.scss';
+
+/* Ensure product inputs/select/textarea follow global theme (match checkout) */
+label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.8rem;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border-input;
+  background: var(--theme-page-top, $color-surface-muted);
+  color: $color-text;
+}
+
+select { appearance: none }
+
 .create-header {
   display: flex;
   justify-content: space-between;

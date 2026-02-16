@@ -184,6 +184,27 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="scss">
+@import '../styles/_variables.scss';
+
+/* Ensure shop product inputs/select/textarea follow global theme (match checkout) */
+label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.45rem 0.55rem;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border-input;
+  background: var(--theme-page-top, $color-surface-muted);
+  color: $color-text;
+}
+
+select { appearance: none }
+
 .shop-content {
   display: grid;
   gap: 0.95rem;

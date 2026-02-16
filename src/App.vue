@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { useShopStore } from './stores/shop'
+import { useAuthStore } from './stores/auth'
 import { adminAuthChangedEvent, isAdminAuthenticated } from './utils/adminAuth'
 import { applyTheme, getStoredTheme } from './utils/theme'
 
 const shopStore = useShopStore()
 const isAdminLoggedIn = ref(false)
+const authStore = useAuthStore()
+const user = computed(() => authStore.state.user)
 
 const syncAdminAuthState = () => {
   isAdminLoggedIn.value = isAdminAuthenticated()
@@ -22,6 +25,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('storage', syncAdminAuthState)
   window.removeEventListener(adminAuthChangedEvent, syncAdminAuthState)
 })
+
+const logout = () => {
+  authStore.logout()
+}
 
 const storeName = computed(() => shopStore.settings.storeName || '')
 
@@ -70,6 +77,24 @@ watchEffect(() => {
           <span class="nav-label">
             <span class="nav-icon" aria-hidden="true">💳</span>
             <span>Kassa</span>
+          </span>
+        </RouterLink>
+        <RouterLink v-if="!user" to="/login">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">🔐</span>
+            <span>Logga in</span>
+          </span>
+        </RouterLink>
+        <RouterLink v-else to="/account">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">👤</span>
+            <span>{{ user.name || user.email }}</span>
+          </span>
+        </RouterLink>
+        <RouterLink v-if="user" to="/" @click="logout">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">⇦</span>
+            <span>Logga ut</span>
           </span>
         </RouterLink>
         <RouterLink v-if="isAdminLoggedIn" to="/admin">

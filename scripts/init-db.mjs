@@ -111,6 +111,21 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
 
+  await connection.execute(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      password_hash VARCHAR(255) NOT NULL,
+      salt VARCHAR(255) NOT NULL,
+      name VARCHAR(160) DEFAULT '',
+      address TEXT,
+      phone VARCHAR(50) DEFAULT '',
+      zip VARCHAR(30) DEFAULT '',
+      city VARCHAR(120) DEFAULT '',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `)
+
   const settingsColumnsToEnsure = [
     {
       name: 'sub_name',

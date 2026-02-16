@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useRouter, useRoute } from 'vue-router'
 import { useShopStore } from '../stores/shop'
+import BaseButton from '../components/ui/BaseButton.vue'
 
 const shopStore = useShopStore()
 const router = useRouter()
@@ -11,6 +13,8 @@ const selectedShippingId = computed<number | null>({
   get: () => shopStore.selectedShippingId,
   set: (v) => shopStore.setSelectedShippingId(v as number | null),
 })
+
+const authStore = useAuthStore()
 
 onMounted(() => {
   if (!shopStore.shippingOptions.length) {
@@ -22,6 +26,16 @@ onMounted(() => {
     shopStore.setSelectedShippingId(shippingId)
   } else if (shopStore.selectedShippingId === null && shopStore.shippingOptions.length > 0) {
     shopStore.setSelectedShippingId(shopStore.shippingOptions[0]?.id ?? null)
+  }
+
+  // Prefill checkout form from logged-in user
+  if (authStore.state.user) {
+    form.name = authStore.state.user.name ?? ''
+    form.email = authStore.state.user.email ?? ''
+    form.address = authStore.state.user.address ?? ''
+    form.phone = authStore.state.user.phone ?? ''
+    form.zip = authStore.state.user.zip ?? ''
+    form.city = authStore.state.user.city ?? ''
   }
 })
 
@@ -43,6 +57,9 @@ const form = reactive({
   name: '',
   email: '',
   address: '',
+  phone: '',
+  zip: '',
+  city: '',
 })
 
 const orderPlaced = ref(false)
@@ -91,7 +108,22 @@ const placeOrder = () => {
           <textarea v-model="form.address" required rows="3" />
         </label>
 
-        <button type="submit">Bekräfta köp</button>
+        <label>
+          Telefon
+          <input v-model="form.phone" type="tel" />
+        </label>
+
+        <label>
+          Postnummer
+          <input v-model="form.zip" type="text" />
+        </label>
+
+        <label>
+          Stad
+          <input v-model="form.city" type="text" />
+        </label>
+
+        <BaseButton variant="primary" type="submit">Bekräfta köp</BaseButton>
       </form>
 
       <div class="card">
@@ -125,6 +157,8 @@ const placeOrder = () => {
 </template>
 
 <style scoped lang="scss">
+@import '../styles/_variables.scss';
+
 .hero-header {
   margin-bottom: 1rem;
   background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
@@ -154,5 +188,34 @@ const placeOrder = () => {
   margin-top: 1rem;
   font-weight: 700;
   color: $color-success;
+}
+
+/* Ensure checkout inputs/select/textarea follow global theme */
+label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.8rem;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border-input;
+  background: var(--theme-page-top, $color-surface-muted);
+  color: $color-text;
+}
+
+select { appearance: none }
+
+.card { padding: 1rem }
+
+/* Align BaseButton spacing */
+.actions { margin-top: 0.6rem }
+
+@media (max-width:$breakpoint-mobile){
+  .checkout-layout { grid-template-columns: 1fr }
 }
 </style>
