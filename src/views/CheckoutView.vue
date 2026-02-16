@@ -43,10 +43,15 @@ const selectedShipping = computed(() =>
   shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)
 )
 
+const vatRate = computed(() => ((shopStore.settings && (shopStore.settings as any).vatPercent) ?? 25) / 100)
+
 const cartTotalWithShipping = computed(() => {
   const shipping = selectedShipping.value?.price ?? 0
   return shopStore.cartSubtotal + shipping
 })
+
+// VAT is included in the product prices. Calculate the VAT portion included
+const vatAmount = computed(() => Math.round(shopStore.cartSubtotal - shopStore.cartSubtotal / (1 + vatRate.value)))
 
 const shippingDisplay = computed(() => {
   if (!shopStore.shippingOptions.length) return 0
@@ -148,6 +153,7 @@ const placeOrder = () => {
         </label>
         <p>Delsumma: {{ shopStore.cartSubtotal }} kr</p>
         <p>Frakt: {{ shippingDisplay }} kr</p>
+        <p>Moms ({{ (shopStore.settings as any).vatPercent ?? 25 }}% ingår): {{ vatAmount }} kr</p>
         <p class="total">Totalt: {{ cartTotalWithShipping }} kr</p>
       </div>
     </div>

@@ -35,6 +35,7 @@ interface Settings {
   checkoutHeroLead: string
   shippingCost: number
   freeShippingThreshold: number
+  vatPercent: number
 }
 
 interface PersistedShopState {
@@ -78,6 +79,7 @@ const defaultSettings: Settings = {
   checkoutHeroLead: 'Fyll i dina uppgifter och kontrollera ordern innan du bekräftar köpet.',
   shippingCost: 0,
   freeShippingThreshold: 0,
+  vatPercent: 25,
 }
 
 const apiRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {

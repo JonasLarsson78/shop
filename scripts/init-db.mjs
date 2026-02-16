@@ -97,6 +97,7 @@ try {
       checkout_hero_lead TEXT NOT NULL,
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
+      vat_percent INT NOT NULL DEFAULT 25,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
@@ -194,6 +195,18 @@ try {
     {
       name: 'checkout_hero_lead',
       alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
+    },
+    {
+      name: 'shipping_cost',
+      alterSql: "ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead",
+    },
+    {
+      name: 'free_shipping_threshold',
+      alterSql: "ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost",
+    },
+    {
+      name: 'vat_percent',
+      alterSql: "ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold",
     },
   ]
 

@@ -86,7 +86,9 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
 .product-detail {
   display: grid;
@@ -95,27 +97,69 @@ select { appearance: none }
   align-items: start;
 }
 
-.media img { width: 100%; height: 100%; object-fit: cover; border-radius: $radius-sm }
-.image-missing { display:grid; place-items:center; height:320px; background:$color-surface-muted; border-radius:$radius-sm }
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: $radius-sm
+}
 
-.info h2 { margin:0 0 0.4rem }
-.price { font-weight:700; margin:0 0 0.6rem }
-.description { color:$color-text; margin:0 0 1rem; white-space:pre-wrap }
+.image-missing {
+  display: grid;
+  place-items: center;
+  height: 320px;
+  background: $color-surface-muted;
+  border-radius: $radius-sm
+}
 
-.product-quantity { margin:0 0 1rem }
-.quantity-stepper { display:grid; grid-template-columns:2rem 3.75rem 2rem; gap:0.35rem; align-items:center }
-.quantity-stepper input { width: 3.75rem; text-align: center }
+.info h2 {
+  margin: 0 0 0.4rem
+}
+
+.price {
+  font-weight: 700;
+  margin: 0 0 0.6rem
+}
+
+.description {
+  color: $color-text;
+  margin: 0 0 1rem;
+  white-space: pre-wrap
+}
+
+.product-quantity {
+  margin: 0 0 1rem
+}
+
+.quantity-stepper {
+  display: grid;
+  grid-template-columns: 2rem 3.75rem 2rem;
+  gap: 0.35rem;
+  align-items: center
+}
+
+.quantity-stepper input {
+  width: 3.75rem;
+  text-align: center
+}
+
 .step-button {
-  width:2rem;
-  height:2rem;
+  width: 2rem;
+  height: 2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.actions { display:flex; gap:0.6rem; margin-top:0.6rem }
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.6rem
+}
 
 @include mobile-down {
-  .product-detail { grid-template-columns: 1fr }
+  .product-detail {
+    grid-template-columns: 1fr
+  }
 }
 </style>

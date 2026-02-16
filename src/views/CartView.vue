@@ -53,13 +53,8 @@ onMounted(() => {
     <div v-else class="cart-layout">
       <div class="cart-list">
         <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <RouterLink
-            :to="`/product/${item.product.id}`"
-            v-if="!hasProductImage(item.product.imageUrl)"
-            class="cart-image cart-image-missing"
-            role="img"
-            aria-label="Bild saknas"
-          >
+          <RouterLink :to="`/product/${item.product.id}`" v-if="!hasProductImage(item.product.imageUrl)"
+            class="cart-image cart-image-missing" role="img" aria-label="Bild saknas">
             Bild saknas
           </RouterLink>
 

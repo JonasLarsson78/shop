@@ -24,6 +24,7 @@ const settingsForm = reactive({
   checkoutHeroTitle: shopStore.settings.checkoutHeroTitle,
   checkoutHeroLead: shopStore.settings.checkoutHeroLead,
   freeShippingThreshold: shopStore.settings.freeShippingThreshold,
+  vatPercent: (shopStore.settings as any).vatPercent ?? 25,
 })
 
 const newShipping = ref({ name: '', price: 0 })
@@ -52,6 +53,7 @@ const saveSettings = () => {
     checkoutHeroTitle: settingsForm.checkoutHeroTitle,
     checkoutHeroLead: settingsForm.checkoutHeroLead,
     freeShippingThreshold: Number(settingsForm.freeShippingThreshold),
+    vatPercent: Number(settingsForm.vatPercent),
   })
 }
 
@@ -205,6 +207,11 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
     <label>
       Fri frakt över (kr)
       <input v-model.number="settingsForm.freeShippingThreshold" min="0" required type="number" />
+    </label>
+
+    <label>
+      Momsprocent (%)
+      <input v-model.number="settingsForm.vatPercent" min="0" required type="number" />
     </label>
 
     <div class="shipping-options">

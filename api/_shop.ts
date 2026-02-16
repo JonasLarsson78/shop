@@ -37,6 +37,7 @@ export type ShopSettings = {
   checkoutHeroLead: string
   shippingCost: number
   freeShippingThreshold: number
+  vatPercent: number
 }
 
 type VercelRequest = {
@@ -222,6 +223,7 @@ const ensureSchemaAndSeedInternal = async () => {
       checkout_hero_lead TEXT NOT NULL,
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
+      vat_percent INT NOT NULL DEFAULT 25,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
@@ -294,6 +296,18 @@ const ensureSchemaAndSeedInternal = async () => {
     {
       name: 'checkout_hero_lead',
       alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
+    },
+    {
+      name: 'shipping_cost',
+      alterSql: "ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead",
+    },
+    {
+      name: 'free_shipping_threshold',
+      alterSql: "ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost",
+    },
+    {
+      name: 'vat_percent',
+      alterSql: "ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold",
     },
   ] as const
 
@@ -463,6 +477,7 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
     checkoutHeroLead: string
     shippingCost: number
     freeShippingThreshold: number
+    vatPercent: number
   }>>(`
     SELECT
       store_name AS storeName,
@@ -484,7 +499,8 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
       checkout_hero_title AS checkoutHeroTitle,
       checkout_hero_lead AS checkoutHeroLead,
       shipping_cost AS shippingCost,
-      free_shipping_threshold AS freeShippingThreshold
+      free_shipping_threshold AS freeShippingThreshold,
+      vat_percent AS vatPercent
     FROM settings
     WHERE id = 1
     LIMIT 1
@@ -541,6 +557,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
   const freeShippingThreshold = Number.isFinite(Number(payload.freeShippingThreshold))
     ? Math.max(0, Math.floor(Number(payload.freeShippingThreshold)))
     : (currentSettings?.freeShippingThreshold ?? 0)
+  const vatPercent = Number.isFinite(Number(payload.vatPercent)) ? Math.max(0, Math.floor(Number(payload.vatPercent))) : (currentSettings?.vatPercent ?? 25)
 
   await query(
     `INSERT INTO settings (
@@ -564,9 +581,10 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        checkout_hero_title,
        checkout_hero_lead,
        shipping_cost,
-       free_shipping_threshold
+       free_shipping_threshold,
+       vat_percent
      )
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        store_name = VALUES(store_name),
        sub_name = VALUES(sub_name),
@@ -587,7 +605,8 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
        checkout_hero_title = VALUES(checkout_hero_title),
        checkout_hero_lead = VALUES(checkout_hero_lead),
        shipping_cost = VALUES(shipping_cost),
-       free_shipping_threshold = VALUES(free_shipping_threshold)`,
+       free_shipping_threshold = VALUES(free_shipping_threshold),
+       vat_percent = VALUES(vat_percent)`,
     [
       storeName,
       subName,
@@ -609,6 +628,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
       checkoutHeroLead,
       shippingCost,
       freeShippingThreshold,
+      vatPercent,
     ],
   )
 
@@ -633,6 +653,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
     checkoutHeroLead,
     shippingCost,
     freeShippingThreshold,
+    vatPercent,
   }
 }
 
