@@ -101,7 +101,9 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
 .create-header {
   display: flex;

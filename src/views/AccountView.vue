@@ -37,7 +37,8 @@
           </div>
 
           <div class="actions">
-            <BaseButton variant="primary" :type="'submit'" :disabled="loading">{{ loading ? 'Sparar…' : 'Spara' }}</BaseButton>
+            <BaseButton variant="primary" :type="'submit'" :disabled="loading">{{ loading ? 'Sparar…' : 'Spara' }}
+            </BaseButton>
             <BaseButton variant="secondary" :type="'button'" @click="reset">Återställ</BaseButton>
           </div>
 
@@ -151,28 +152,122 @@ async function save() {
 <style scoped lang="scss">
 @import '../styles/_variables.scss';
 
-.account-view{padding:2rem 1rem;display:flex;justify-content:center}
-.card{max-width:820px;width:100%;padding:1.25rem;background: $color-surface;border-radius:$radius-md;box-shadow:0 6px 18px rgba(16,24,40,0.04);border:1px solid $color-border}
-.card h2{margin:0 0 12px;font-size:20px;color:$color-text-strong}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.field{display:flex;flex-direction:column}
-.field.full{grid-column:1/-1}
-.label{font-size:13px;color:$color-text-soft;margin-bottom:6px}
-input,textarea{width:100%;padding:10px 12px;border:1px solid $color-border-input;border-radius:$radius-sm;background:var(--theme-page-top, $color-surface-muted);color:$color-text;font-size:14px}
-textarea{resize:vertical}
-.account-form .field + .field{margin-top:0}
-.actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
-.btn{padding:9px 14px;border-radius:$radius-md;border:0;background:$color-brand;color:$color-brand-contrast;cursor:pointer}
-.btn.secondary{background:$color-surface-muted;color:$color-text}
-.btn:disabled{opacity:0.6;cursor:not-allowed}
-.error{color:$color-danger;margin-top:10px}
-.success{color:$color-success;margin-top:10px}
-.not-logged{color:$color-text-soft;padding:12px;background:rgba(#eef4ff,0.6);border-radius:6px}
-
-@media (max-width:$breakpoint-mobile){
-  .grid{grid-template-columns:1fr}
-  .card{padding:1rem}
-  .actions{justify-content:stretch}
+.account-view {
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center
 }
 
+.card {
+  max-width: 820px;
+  width: 100%;
+  padding: 1.25rem;
+  background: $color-surface;
+  border-radius: $radius-md;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
+  border: 1px solid $color-border
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  color: $color-text-strong
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px
+}
+
+.field {
+  display: flex;
+  flex-direction: column
+}
+
+.field.full {
+  grid-column: 1/-1
+}
+
+.label {
+  font-size: 13px;
+  color: $color-text-soft;
+  margin-bottom: 6px
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid $color-border-input;
+  border-radius: $radius-sm;
+  background: var(--theme-page-top, $color-surface-muted);
+  color: $color-text;
+  font-size: 14px
+}
+
+textarea {
+  resize: vertical
+}
+
+.account-form .field+.field {
+  margin-top: 0
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end
+}
+
+.btn {
+  padding: 9px 14px;
+  border-radius: $radius-md;
+  border: 0;
+  background: $color-brand;
+  color: $color-brand-contrast;
+  cursor: pointer
+}
+
+.btn.secondary {
+  background: $color-surface-muted;
+  color: $color-text
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed
+}
+
+.error {
+  color: $color-danger;
+  margin-top: 10px
+}
+
+.success {
+  color: $color-success;
+  margin-top: 10px
+}
+
+.not-logged {
+  color: $color-text-soft;
+  padding: 12px;
+  background: rgba(#eef4ff, 0.6);
+  border-radius: 6px
+}
+
+@media (max-width:$breakpoint-mobile) {
+  .grid {
+    grid-template-columns: 1fr
+  }
+
+  .card {
+    padding: 1rem
+  }
+
+  .actions {
+    justify-content: stretch
+  }
+}
 </style>

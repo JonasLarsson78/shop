@@ -9,5 +9,9 @@ import RegisterCard from '../components/auth/RegisterCard.vue'
 </script>
 
 <style scoped>
-.auth-view{display:grid;place-items:center;padding:2rem}
+.auth-view {
+  display: grid;
+  place-items: center;
+  padding: 2rem
+}
 </style>

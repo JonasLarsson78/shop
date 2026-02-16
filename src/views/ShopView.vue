@@ -149,13 +149,14 @@ onBeforeUnmount(() => {
 
         <div class="grid">
           <article v-for="product in visibleProducts" :key="product.id" class="card product-card">
-            <div v-if="!hasProductImage(product.imageUrl)" class="product-image product-image-missing" role="img"
-              aria-label="Bild saknas">
-              Bild saknas
-            </div>
-            <img v-else :src="product.imageUrl" :alt="product.name" class="product-image" loading="lazy" />
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description }}</p>
+            <RouterLink :to="{ name: 'product', params: { id: product.id } }" class="product-media-link">
+              <div v-if="!hasProductImage(product.imageUrl)" class="product-image product-image-missing" role="img"
+                aria-label="Bild saknas">Bild saknas</div>
+              <img v-else :src="product.imageUrl" :alt="product.name" class="product-image" loading="lazy" />
+            </RouterLink>
+            <h3>
+              <RouterLink :to="{ name: 'product', params: { id: product.id } }">{{ product.name }}</RouterLink>
+            </h3>
             <p class="price">{{ product.price }} kr</p>
             <label class="product-quantity">
               Antal
@@ -203,7 +204,9 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
 .shop-content {
   display: grid;
@@ -273,13 +276,13 @@ select { appearance: none }
 
   .quantity-stepper {
     display: grid;
-    grid-template-columns: 2rem 1fr 2rem;
+    grid-template-columns: 2rem 3.75rem 2rem;
     align-items: center;
     gap: 0.35rem;
   }
 
   input {
-    width: 100%;
+    width: 3.75rem;
     min-width: 0;
     text-align: center;
   }
@@ -317,6 +320,26 @@ select { appearance: none }
 .button-added {
   background: $color-success;
   color: $color-brand-contrast;
+}
+
+/* Style product links (image and title) to use theme instead of default browser colors */
+.product-media-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-card h3 a {
+  color: var(--theme-accent, #{$color-brand});
+  text-decoration: none;
+}
+
+.product-card h3 a:hover {
+  text-decoration: underline;
+}
+
+.product-card h3 a:visited {
+  color: var(--theme-accent, #{$color-brand});
 }
 
 .cart-toast {

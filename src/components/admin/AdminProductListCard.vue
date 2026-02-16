@@ -225,7 +225,9 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
 .admin-products-list {
   display: grid;

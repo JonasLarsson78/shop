@@ -53,16 +53,24 @@ onMounted(() => {
     <div v-else class="cart-layout">
       <div class="cart-list">
         <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <div v-if="!hasProductImage(item.product.imageUrl)" class="cart-image cart-image-missing" role="img"
-            aria-label="Bild saknas">
+          <RouterLink
+            :to="`/product/${item.product.id}`"
+            v-if="!hasProductImage(item.product.imageUrl)"
+            class="cart-image cart-image-missing"
+            role="img"
+            aria-label="Bild saknas"
+          >
             Bild saknas
-          </div>
-          <img v-else :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy" />
+          </RouterLink>
 
-          <div class="cart-details">
+          <RouterLink :to="`/product/${item.product.id}`" v-else class="cart-image-link">
+            <img :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy" />
+          </RouterLink>
+
+          <RouterLink :to="`/product/${item.product.id}`" class="cart-details">
             <h3>{{ item.product.name }}</h3>
             <p>{{ item.product.price }} kr/st</p>
-          </div>
+          </RouterLink>
 
           <div class="cart-controls">
             <label class="cart-quantity">
@@ -135,7 +143,9 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
 .cart-page {
   display: grid;
@@ -220,6 +230,31 @@ select { appearance: none }
   padding: 0.3rem;
 }
 
+/* Style links (image and title) like in the shop view */
+.cart-image-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cart-details {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cart-details h3 {
+  margin: 0;
+  color: var(--theme-accent, #{$color-brand});
+}
+
+.cart-details h3:hover {
+  text-decoration: underline;
+}
+
+.cart-details:visited h3 {
+  color: var(--theme-accent, #{$color-brand});
+}
+
 .summary {
   position: sticky;
   top: 1rem;
@@ -263,13 +298,13 @@ select { appearance: none }
 
   .quantity-stepper {
     display: grid;
-    grid-template-columns: 2rem 1fr 2rem;
+    grid-template-columns: 2rem 3.75rem 2rem;
     align-items: center;
     gap: 0.35rem;
   }
 
   input {
-    width: 100%;
+    width: 3.75rem;
     min-width: 0;
     text-align: center;
   }

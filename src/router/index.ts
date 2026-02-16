@@ -11,12 +11,14 @@ import AdminThemeView from '../views/admin/AdminThemeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import AccountView from '../views/AccountView.vue'
+import ProductView from '../views/ProductView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/shop', name: 'shop', component: ShopView },
+    { path: '/product/:id', name: 'product', component: ProductView },
     { path: '/cart', name: 'cart', component: CartView },
     { path: '/checkout', name: 'checkout', component: CheckoutView },
     { path: '/login', name: 'login', component: LoginView },

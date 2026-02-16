@@ -9,5 +9,9 @@ import LoginCard from '../components/auth/LoginCard.vue'
 </script>
 
 <style scoped>
-.auth-view{display:grid;place-items:center;padding:2rem}
+.auth-view {
+  display: grid;
+  place-items: center;
+  padding: 2rem
+}
 </style>

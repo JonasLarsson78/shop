@@ -208,14 +208,22 @@ textarea {
   color: $color-text;
 }
 
-select { appearance: none }
+select {
+  appearance: none
+}
 
-.card { padding: 1rem }
+.card {
+  padding: 1rem
+}
 
 /* Align BaseButton spacing */
-.actions { margin-top: 0.6rem }
+.actions {
+  margin-top: 0.6rem
+}
 
-@media (max-width:$breakpoint-mobile){
-  .checkout-layout { grid-template-columns: 1fr }
+@media (max-width:$breakpoint-mobile) {
+  .checkout-layout {
+    grid-template-columns: 1fr
+  }
 }
 </style>
