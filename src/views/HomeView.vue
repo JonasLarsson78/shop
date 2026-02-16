@@ -23,26 +23,12 @@ import GroupMenu from '../components/shop/GroupMenu.vue'
         <RouterLink class="button-link button-muted" to="/cart">Se varukorg</RouterLink>
       </div>
 
-      <div class="home-scenes" aria-label="Butiksmoment">
-        <figure class="scene-card">
-          <figcaption>Nyheter</figcaption>
-        </figure>
-
-        <figure class="scene-card">
-          <figcaption>Populärt</figcaption>
-        </figure>
-
-        <figure class="scene-card">
-          <figcaption>Kampanjer</figcaption>
-        </figure>
-      </div>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
 .home-hero {
-  max-width: 760px;
   background: linear-gradient(145deg, rgba($color-brand, 0.09) 0%, rgba($color-muted, 0.14) 100%);
 }
 
@@ -78,31 +64,5 @@ h2 {
   flex-wrap: wrap;
   gap: 0.6rem;
   margin-top: 1.1rem;
-}
-
-.home-scenes {
-  margin-top: 1.1rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(140px, 1fr));
-  gap: 0.65rem;
-}
-
-.scene-card {
-  margin: 0;
-  border: 1px solid rgba($color-brand, 0.22);
-  border-radius: $radius-md;
-  background: $color-surface;
-
-  figcaption {
-    padding: 0.45rem 0.6rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-}
-
-@media (max-width: 760px) {
-  .home-scenes {
-    grid-template-columns: 1fr;
-  }
 }
 </style>

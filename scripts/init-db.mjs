@@ -78,11 +78,25 @@ try {
     CREATE TABLE IF NOT EXISTS settings (
       id TINYINT PRIMARY KEY,
       store_name VARCHAR(160) NOT NULL,
+      sub_name VARCHAR(160) NOT NULL DEFAULT '',
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
+
+  const [settingsColumnRows] = await connection.execute(`
+    SELECT COLUMN_NAME AS columnName
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'settings'
+      AND COLUMN_NAME = 'sub_name'
+    LIMIT 1
+  `)
+
+  if (!Array.isArray(settingsColumnRows) || settingsColumnRows.length === 0) {
+    await connection.execute("ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name")
+  }
 
   console.log('✅ Tables created/verified: groups, products, settings')
 } finally {

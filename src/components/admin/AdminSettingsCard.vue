@@ -6,6 +6,7 @@ const shopStore = useShopStore()
 
 const settingsForm = reactive({
   storeName: shopStore.settings.storeName,
+  subName: shopStore.settings.subName,
   shippingCost: shopStore.settings.shippingCost,
   freeShippingThreshold: shopStore.settings.freeShippingThreshold,
 })
@@ -13,6 +14,7 @@ const settingsForm = reactive({
 const saveSettings = () => {
   shopStore.updateSettings({
     storeName: settingsForm.storeName,
+    subName: settingsForm.subName,
     shippingCost: Number(settingsForm.shippingCost),
     freeShippingThreshold: Number(settingsForm.freeShippingThreshold),
   })
@@ -26,6 +28,11 @@ const saveSettings = () => {
     <label>
       Butiksnamn
       <input v-model="settingsForm.storeName" required type="text" />
+    </label>
+
+    <label>
+      Underrubrik
+      <input v-model="settingsForm.subName" type="text" />
     </label>
 
     <label>

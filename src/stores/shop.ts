@@ -16,6 +16,7 @@ export interface ProductGroup {
 
 interface Settings {
   storeName: string
+  subName: string
   shippingCost: number
   freeShippingThreshold: number
 }
@@ -35,6 +36,7 @@ const DEFAULT_PRODUCT_IMAGE = ''
 
 const defaultSettings: Settings = {
   storeName: '',
+  subName: '',
   shippingCost: 0,
   freeShippingThreshold: 0,
 }

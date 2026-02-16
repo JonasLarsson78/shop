@@ -1,42 +1,84 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { useShopStore } from './stores/shop'
+import { adminAuthChangedEvent, isAdminAuthenticated } from './utils/adminAuth'
 
 const shopStore = useShopStore()
-const storeName = computed(() =>
-  shopStore.hasInitializedData ? shopStore.settings.storeName || 'Template Shop' : 'Laddar butik...',
-)
+const isAdminLoggedIn = ref(false)
+
+const syncAdminAuthState = () => {
+  isAdminLoggedIn.value = isAdminAuthenticated()
+}
+
+onMounted(() => {
+  syncAdminAuthState()
+  window.addEventListener('storage', syncAdminAuthState)
+  window.addEventListener(adminAuthChangedEvent, syncAdminAuthState)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', syncAdminAuthState)
+  window.removeEventListener(adminAuthChangedEvent, syncAdminAuthState)
+})
+
+const storeName = computed(() => shopStore.settings.storeName || '')
+
+const subName = computed(() => (shopStore.hasInitializedData ? shopStore.settings.subName || '' : ''))
 
 watchEffect(() => {
   if (typeof document !== 'undefined') {
-    document.title = storeName.value
+    document.title = subName.value || storeName.value
   }
 })
 </script>
 
 <template>
   <div class="app-shell">
-    <header class="topbar">
+    <header v-if="shopStore.hasInitializedData" class="topbar">
       <div class="brand-wrap">
-        <p class="eyebrow">Premium Shop</p>
-        <h1 class="brand">{{ storeName }}</h1>
+        <h1 v-if="storeName" class="brand">{{ storeName }}</h1>
+        <p v-if="subName" class="eyebrow">{{ subName }}</p>
       </div>
-      <nav class="nav">
-        <RouterLink to="/">Start</RouterLink>
-        <RouterLink to="/shop">Butik</RouterLink>
+      <nav v-if="shopStore.hasInitializedData" class="nav">
+        <RouterLink to="/">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Start</span>
+          </span>
+        </RouterLink>
+        <RouterLink to="/shop">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">🛍️</span>
+            <span>Butik</span>
+          </span>
+        </RouterLink>
         <RouterLink to="/cart" class="cart-link">
-          <span>Varukorg</span>
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">🛒</span>
+            <span>Varukorg</span>
+          </span>
           <span v-if="shopStore.totalItems > 0" class="cart-badge">{{ shopStore.totalItems }}</span>
         </RouterLink>
-        <RouterLink to="/checkout">Kassa</RouterLink>
-        <RouterLink to="/admin">Admin</RouterLink>
+        <RouterLink to="/checkout">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">💳</span>
+            <span>Kassa</span>
+          </span>
+        </RouterLink>
+        <RouterLink v-if="isAdminLoggedIn" to="/admin">
+          <span class="nav-label">
+            <span class="nav-icon" aria-hidden="true">🛠️</span>
+            <span>Admin</span>
+          </span>
+        </RouterLink>
       </nav>
     </header>
 
     <main class="page-container">
       <RouterView v-if="shopStore.hasInitializedData" />
-      <div v-else class="loading-state" aria-label="Laddar butik">
+      <div v-else class="loading-state">
         <div class="loader" />
+        <p class="loading-text">Förbereder butiken…</p>
       </div>
     </main>
   </div>
@@ -127,10 +169,21 @@ body {
   }
 
   a.router-link-active {
-    background: linear-gradient(120deg, $color-brand 0%, $color-muted 100%);
-    color: $color-brand-contrast;
+    background: rgba($color-brand, 0.14);
+    color: $color-text-strong;
     border-color: $color-brand;
   }
+}
+
+.nav-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav-icon {
+  font-size: 0.95em;
+  line-height: 1;
 }
 
 .cart-link {
@@ -164,6 +217,15 @@ body {
   min-height: 260px;
   display: grid;
   place-items: center;
+  gap: 0.7rem;
+}
+
+.loading-text {
+  margin: 0;
+  font-size: 1.1rem;
+  color: $color-brand;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .loader {
