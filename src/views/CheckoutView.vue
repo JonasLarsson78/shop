@@ -206,7 +206,6 @@ const placeOrder = async () => {
 </template>
 
 <style scoped lang="scss">
-
 .hero-header {
   margin-bottom: 1rem;
   background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);

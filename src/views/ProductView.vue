@@ -66,7 +66,6 @@ const goBack = () => {
 </template>
 
 <style scoped lang="scss">
-
 /* Match checkout / site input and button styling */
 label {
   display: grid;
