@@ -13,6 +13,17 @@ type Order = {
   status: string
   createdAt: string
   items?: Array<{ productId?: number; name?: string; quantity?: number; price?: number; subtotal?: number }>
+  shippingName?: string
+  shipping_name?: string
+  shippingOptionName?: string
+  shipping_option_name?: string
+  shippingOptionId?: number
+  shipping_option_id?: number
+  shippingPrice?: number
+  shipping_price?: number
+  shippingCost?: number
+  shipping_cost?: number
+  shippingOptionPrice?: number
 }
 
 const orders = ref<Order[]>([])
@@ -105,7 +116,7 @@ onMounted(fetchOrders)
                 </td>
                 <td>{{ o.id }}</td>
                 <td>{{ o.customerName }}</td>
-                <td>{{ (o.total / 100).toFixed(2) }} kr</td>
+                <td>{{ (o.total).toFixed(2) }} kr</td>
                 <td>{{ o.status }}</td>
                 <td>{{ new Date(o.createdAt).toLocaleString() }}</td>
                 <td>
@@ -124,7 +135,7 @@ onMounted(fetchOrders)
                     <ul>
                       <li v-for="(it, idx) in o.items || []" :key="idx">
                         {{ it.name || ('#' + (it.productId || '?')) }} x {{ it.quantity || 0 }} — {{ ((it.subtotal ||
-                          (it.price && it.quantity ? it.price * it.quantity : 0)) / 100).toFixed(2) }} kr
+                          (it.price && it.quantity ? it.price * it.quantity : 0))).toFixed(2) }} kr
                       </li>
                     </ul>
 
@@ -135,6 +146,13 @@ onMounted(fetchOrders)
                       <div><strong>Postnummer:</strong> {{ o.zip || '-' }}</div>
                       <div><strong>Stad:</strong> {{ o.city || '-' }}</div>
                       <div><strong>Telefon:</strong> {{ o.phone || '-' }}</div>
+                      <div class="shipping-line">
+                        <strong>Frakt:</strong>
+                        <span class="shipping-name">{{ o.shippingName || o.shipping_name || o.shippingOptionName ||
+                          o.shipping_option_name || (o.shippingOptionId ? ('#' + o.shippingOptionId) :
+                            (o.shipping_option_id ? ('#' + o.shipping_option_id) : '-')) }}</span>
+                        <span class="shipping-price">{{ (o.shippingOptionPrice || 0) }} kr</span>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -201,6 +219,26 @@ table {
     background: #ffefc2;
     color: #8a6d00;
     border: 1px solid #ffe8a8;
+  }
+
+  .shipping-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    color: $color-text;
+  }
+
+  .shipping-name {
+    font-weight: 600;
+    color: $color-text-strong;
+    margin-left: 6px;
+  }
+
+  .shipping-price {
+    margin-left: auto;
+    font-weight: 800;
+    color: $color-text;
   }
 
 }

@@ -185,7 +185,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="scss">
-@import '../styles/_variables.scss';
 
 /* Ensure shop product inputs/select/textarea follow global theme (match checkout) */
 label {

@@ -66,7 +66,6 @@ const goBack = () => {
 </template>
 
 <style scoped lang="scss">
-@import '../styles/_variables.scss';
 
 /* Match checkout / site input and button styling */
 label {

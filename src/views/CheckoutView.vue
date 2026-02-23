@@ -94,6 +94,7 @@ const placeOrder = async () => {
   const payload = {
     customerName: form.name,
     email: form.email,
+    userId: authStore.state.user?.id ?? null,
     address: form.address,
     phone: form.phone,
     zip: form.zip,
@@ -205,7 +206,6 @@ const placeOrder = async () => {
 </template>
 
 <style scoped lang="scss">
-@import '../styles/_variables.scss';
 
 .hero-header {
   margin-bottom: 1rem;

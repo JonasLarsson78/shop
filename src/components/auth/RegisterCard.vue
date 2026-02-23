@@ -86,7 +86,7 @@ function goLogin() {
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/_variables.scss';
+@use '../../styles/_variables.scss' as *;
 
 .auth-card {
   border: 1px solid $color-border;

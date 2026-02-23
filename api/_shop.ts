@@ -190,6 +190,7 @@ const ensureSchemaAndSeedInternal = async () => {
       id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
       customer_name VARCHAR(160) NOT NULL,
       email VARCHAR(255) NOT NULL,
+      user_id INT UNSIGNED NULL,
       address TEXT,
       phone VARCHAR(50) DEFAULT '',
       zip VARCHAR(30) DEFAULT '',
@@ -702,17 +703,51 @@ export type Order = {
   updatedAt: string
 }
 
-export const listOrders = async (): Promise<Order[]> => {
+// ...existing code...
+export const listOrders = async (filters?: { userId?: number; email?: string }): Promise<Order[]> => {
+  let where = ''
+  const params: any[] = []
+  if (filters) {
+    if (filters.userId) {
+      where += 'user_id = ?'
+      params.push(filters.userId)
+    }
+    if (filters.email) {
+      if (where) where += ' AND '
+      where += 'email = ?'
+      params.push(filters.email)
+    }
+  }
   const rows = await query<Array<any>>(`
-    SELECT id, customer_name AS customerName, email, address, phone, zip, city, items, total, shipping_option_id AS shippingOptionId, status, created_at AS createdAt, updated_at AS updatedAt
-    FROM orders
-    ORDER BY created_at DESC
-  `)
-
-  return rows.map((r) => ({
-    ...r,
-    items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : r.items,
-  }))
+    SELECT o.id, o.customer_name AS customerName, o.email, o.address, o.phone, o.zip, o.city, o.items, o.total, o.shipping_option_id AS shippingOptionId, o.status, o.created_at AS createdAt, o.updated_at AS updatedAt, o.user_id,
+           so.name AS shippingOptionName, so.price AS shippingOptionPrice
+    FROM orders o
+    LEFT JOIN shipping_options so ON o.shipping_option_id = so.id
+    ${where ? 'WHERE ' + where : ''}
+    ORDER BY o.created_at DESC
+  `, params)
+  try {
+    return rows.map((r) => {
+      let parsedItems = r.items;
+      try {
+        if (typeof r.items === 'string') {
+          parsedItems = JSON.parse(r.items || '[]');
+        }
+      } catch (err) {
+        console.error('Failed to parse items for order:', r.id, err);
+        parsedItems = [];
+      }
+      return {
+        ...r,
+        items: parsedItems,
+        shippingOptionName: r.shippingOptionName || null,
+        shippingOptionPrice: typeof r.shippingOptionPrice === 'number' ? r.shippingOptionPrice : null,
+      };
+    });
+  } catch (err) {
+    console.error('Error mapping orders:', err);
+    throw err;
+  }
 }
 
 export const createOrder = async (rawPayload: unknown): Promise<Order> => {
@@ -726,14 +761,15 @@ export const createOrder = async (rawPayload: unknown): Promise<Order> => {
   const items = Array.isArray(payload.items) ? payload.items : []
   const total = Number.isFinite(Number(payload.total)) ? Math.max(0, Math.floor(Number(payload.total))) : 0
   const shippingOptionId = Number.isFinite(Number(payload.shippingOptionId)) ? Math.floor(Number(payload.shippingOptionId)) : null
+  const userId = Number.isFinite(Number(payload.userId)) ? Math.floor(Number(payload.userId)) : null
 
   if (!customerName || !email || items.length === 0) {
     throw new Error('Invalid order payload')
   }
 
   const result = await query<ResultSetHeader>(
-    'INSERT INTO orders (customer_name, email, address, phone, zip, city, items, total, shipping_option_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [customerName, email, address, phone, zip, city, JSON.stringify(items), total, shippingOptionId, 'pending'],
+    'INSERT INTO orders (customer_name, email, user_id, address, phone, zip, city, items, total, shipping_option_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [customerName, email, userId, address, phone, zip, city, JSON.stringify(items), total, shippingOptionId, 'pending'],
   )
 
   const id = result.insertId
@@ -752,6 +788,7 @@ export const createOrder = async (rawPayload: unknown): Promise<Order> => {
     status: 'pending',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    userId,
   }
 }
 

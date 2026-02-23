@@ -118,7 +118,6 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-@import '../styles/_variables.scss';
 
 /* Ensure cart inputs/select/textarea follow global theme (match checkout) */
 label {
