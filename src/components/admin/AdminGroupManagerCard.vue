@@ -57,7 +57,11 @@ const getGroupProductCount = (groupId: number) =>
       </button>
     </div>
 
-    <form v-if="isCreateExpanded" class="group-create-form" @submit.prevent="addGroup">
+    <form
+      v-if="isCreateExpanded"
+      class="group-create-form"
+      @submit.prevent="addGroup"
+    >
       <label>
         Ny grupp
         <input v-model="groupForm.name" required type="text" />
@@ -68,13 +72,23 @@ const getGroupProductCount = (groupId: number) =>
     <p v-if="shopStore.groups.length === 0">Inga grupper ännu.</p>
 
     <div v-else class="group-list">
-      <article v-for="group in shopStore.groups" :key="group.id" class="group-item">
-        <form v-if="editingGroupId === group.id" class="group-edit-form" @submit.prevent="saveEditGroup(group.id)">
+      <article
+        v-for="group in shopStore.groups"
+        :key="group.id"
+        class="group-item"
+      >
+        <form
+          v-if="editingGroupId === group.id"
+          class="group-edit-form"
+          @submit.prevent="saveEditGroup(group.id)"
+        >
           <input v-model="editGroupName" required type="text" />
 
           <div class="row-actions">
             <button type="submit">Spara</button>
-            <button type="button" class="button-muted" @click="cancelEditGroup">Avbryt</button>
+            <button type="button" class="button-muted" @click="cancelEditGroup">
+              Avbryt
+            </button>
           </div>
         </form>
 
@@ -85,8 +99,16 @@ const getGroupProductCount = (groupId: number) =>
           </div>
 
           <div class="row-actions">
-            <button type="button" @click="startEditGroup(group.id, group.name)">Edit</button>
-            <button type="button" class="button-danger" @click="removeGroup(group.id)">Delete</button>
+            <button type="button" @click="startEditGroup(group.id, group.name)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="button-danger"
+              @click="removeGroup(group.id)"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </article>

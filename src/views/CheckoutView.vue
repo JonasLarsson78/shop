@@ -22,9 +22,15 @@ onMounted(() => {
   }
 
   const shippingId = Number(route.query.shipping)
-  if (shippingId && shopStore.shippingOptions.some(opt => opt.id === shippingId)) {
+  if (
+    shippingId &&
+    shopStore.shippingOptions.some((opt) => opt.id === shippingId)
+  ) {
     shopStore.setSelectedShippingId(shippingId)
-  } else if (shopStore.selectedShippingId === null && shopStore.shippingOptions.length > 0) {
+  } else if (
+    shopStore.selectedShippingId === null &&
+    shopStore.shippingOptions.length > 0
+  ) {
     shopStore.setSelectedShippingId(shopStore.shippingOptions[0]?.id ?? null)
   }
 
@@ -40,10 +46,13 @@ onMounted(() => {
 })
 
 const selectedShipping = computed(() =>
-  shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)
+  shopStore.shippingOptions.find((opt) => opt.id === selectedShippingId.value)
 )
 
-const vatRate = computed(() => ((shopStore.settings && (shopStore.settings as any).vatPercent) ?? 25) / 100)
+const vatRate = computed(
+  () =>
+    ((shopStore.settings && (shopStore.settings as any).vatPercent) ?? 25) / 100
+)
 
 const cartTotalWithShipping = computed(() => {
   const shipping = selectedShipping.value?.price ?? 0
@@ -51,7 +60,11 @@ const cartTotalWithShipping = computed(() => {
 })
 
 // VAT is included in the product prices. Calculate the VAT portion included
-const vatAmount = computed(() => Math.round(shopStore.cartSubtotal - shopStore.cartSubtotal / (1 + vatRate.value)))
+const vatAmount = computed(() =>
+  Math.round(
+    shopStore.cartSubtotal - shopStore.cartSubtotal / (1 + vatRate.value)
+  )
+)
 
 const shippingDisplay = computed(() => {
   if (!shopStore.shippingOptions.length) return 0
@@ -83,7 +96,7 @@ const placeOrder = async () => {
 
   placing.value = true
 
-  const items = shopStore.cartItems.map(i => ({
+  const items = shopStore.cartItems.map((i) => ({
     productId: i.product.id,
     name: i.product.name,
     quantity: i.quantity,
@@ -105,7 +118,11 @@ const placeOrder = async () => {
   }
 
   try {
-    const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
     if (!res.ok) {
       const body = await res.json().catch(() => null)
       throw new Error(body?.error || `Order request failed: ${res.status}`)
@@ -129,13 +146,20 @@ const placeOrder = async () => {
 <template>
   <section>
     <div class="hero-header card">
-      <p v-if="shopStore.settings.checkoutHeroKicker" class="hero-kicker">{{ shopStore.settings.checkoutHeroKicker }}
+      <p v-if="shopStore.settings.checkoutHeroKicker" class="hero-kicker">
+        {{ shopStore.settings.checkoutHeroKicker }}
       </p>
-      <h2 v-if="shopStore.settings.checkoutHeroTitle">{{ shopStore.settings.checkoutHeroTitle }}</h2>
-      <p v-if="shopStore.settings.checkoutHeroLead" class="hero-lead">{{ shopStore.settings.checkoutHeroLead }}</p>
+      <h2 v-if="shopStore.settings.checkoutHeroTitle">
+        {{ shopStore.settings.checkoutHeroTitle }}
+      </h2>
+      <p v-if="shopStore.settings.checkoutHeroLead" class="hero-lead">
+        {{ shopStore.settings.checkoutHeroLead }}
+      </p>
     </div>
 
-    <p v-if="shopStore.cartItems.length === 0 && !orderPlaced">Varukorgen är tom. Lägg till produkter först.</p>
+    <p v-if="shopStore.cartItems.length === 0 && !orderPlaced">
+      Varukorgen är tom. Lägg till produkter först.
+    </p>
 
     <div v-else class="checkout-layout">
       <form v-if="!orderPlaced" class="card" @submit.prevent="placeOrder">
@@ -178,14 +202,19 @@ const placeOrder = async () => {
         <h3>Orderöversikt</h3>
         <ul>
           <li v-for="item in shopStore.cartItems" :key="item.product.id">
-            {{ item.product.name }} x {{ item.quantity }} = {{ item.subtotal }} kr
+            {{ item.product.name }} x {{ item.quantity }} =
+            {{ item.subtotal }} kr
           </li>
         </ul>
         <label>
           Fraktalternativ
           <template v-if="shopStore.shippingOptions.length">
             <select v-model="selectedShippingId">
-              <option v-for="option in shopStore.shippingOptions" :key="option.id" :value="option.id">
+              <option
+                v-for="option in shopStore.shippingOptions"
+                :key="option.id"
+                :value="option.id"
+              >
                 {{ option.name }} ({{ option.price }} kr)
               </option>
             </select>
@@ -196,19 +225,28 @@ const placeOrder = async () => {
         </label>
         <p>Delsumma: {{ shopStore.cartSubtotal }} kr</p>
         <p>Frakt: {{ shippingDisplay }} kr</p>
-        <p>Moms ({{ (shopStore.settings as any).vatPercent ?? 25 }}% ingår): {{ vatAmount }} kr</p>
+        <p>
+          Moms ({{ (shopStore.settings as any).vatPercent ?? 25 }}% ingår):
+          {{ vatAmount }} kr
+        </p>
         <p class="total">Totalt: {{ cartTotalWithShipping }} kr</p>
       </div>
     </div>
 
-    <p v-if="orderPlaced" class="success">Tack för din beställning! Du skickas tillbaka till butiken.</p>
+    <p v-if="orderPlaced" class="success">
+      Tack för din beställning! Du skickas tillbaka till butiken.
+    </p>
   </section>
 </template>
 
 <style scoped lang="scss">
 .hero-header {
   margin-bottom: 1rem;
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
 
   h2 {
     margin: 0 0 0.35rem;
@@ -256,21 +294,21 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .card {
-  padding: 1rem
+  padding: 1rem;
 }
 
 /* Align BaseButton spacing */
 .actions {
-  margin-top: 0.6rem
+  margin-top: 0.6rem;
 }
 
-@media (max-width:$breakpoint-mobile) {
+@media (max-width: $breakpoint-mobile) {
   .checkout-layout {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 }
 </style>

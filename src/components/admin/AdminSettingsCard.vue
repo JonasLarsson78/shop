@@ -59,12 +59,18 @@ const saveSettings = () => {
 
 const addShipping = async () => {
   if (!newShipping.value.name || newShipping.value.price < 0) return
-  await shopStore.addShippingOption({ name: newShipping.value.name, price: newShipping.value.price })
+  await shopStore.addShippingOption({
+    name: newShipping.value.name,
+    price: newShipping.value.price,
+  })
   newShipping.value = { name: '', price: 0 }
 }
 
 const updateShipping = async (option: any) => {
-  await shopStore.updateShippingOption(option.id, { name: option.name, price: option.price })
+  await shopStore.updateShippingOption(option.id, {
+    name: option.name,
+    price: option.price,
+  })
 }
 
 const deleteShipping = async (id: number) => {
@@ -111,7 +117,11 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
 
     <label>
       Bild-URL (ersätter namn + underrubrik)
-      <input v-model="settingsForm.brandImageUrl" type="text" placeholder="https://..." />
+      <input
+        v-model="settingsForm.brandImageUrl"
+        type="text"
+        placeholder="https://..."
+      />
     </label>
 
     <h4 class="settings-subheading">Startsida Hero</h4>
@@ -206,25 +216,51 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
 
     <label>
       Fri frakt över (kr)
-      <input v-model.number="settingsForm.freeShippingThreshold" min="0" required type="number" />
+      <input
+        v-model.number="settingsForm.freeShippingThreshold"
+        min="0"
+        required
+        type="number"
+      />
     </label>
 
     <label>
       Momsprocent (%)
-      <input v-model.number="settingsForm.vatPercent" min="0" required type="number" />
+      <input
+        v-model.number="settingsForm.vatPercent"
+        min="0"
+        required
+        type="number"
+      />
     </label>
 
     <div class="shipping-options">
       <h4>Fraktalternativ</h4>
       <ol>
         <li v-for="option in shopStore.shippingOptions" :key="option.id">
-          <input class="ship-name" v-model="option.name" @blur="updateShipping(option)" placeholder="Namn"
-            :disabled="deleting[option.id]" />
+          <input
+            class="ship-name"
+            v-model="option.name"
+            @blur="updateShipping(option)"
+            placeholder="Namn"
+            :disabled="deleting[option.id]"
+          />
           <div class="ship-right">
-            <input class="ship-price" v-model.number="option.price" @blur="updateShipping(option)" type="number" min="0"
-              :disabled="deleting[option.id]" />
+            <input
+              class="ship-price"
+              v-model.number="option.price"
+              @blur="updateShipping(option)"
+              type="number"
+              min="0"
+              :disabled="deleting[option.id]"
+            />
             <span class="kr">kr</span>
-            <button class="btn-remove" type="button" @click="deleteShipping(option.id)" :disabled="deleting[option.id]">
+            <button
+              class="btn-remove"
+              type="button"
+              @click="deleteShipping(option.id)"
+              :disabled="deleting[option.id]"
+            >
               <span v-if="deleting[option.id]">Tar bort...</span>
               <span v-else>Ta bort</span>
             </button>
@@ -233,7 +269,13 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
       </ol>
       <div class="new-shipping">
         <input v-model="newShipping.name" placeholder="Nytt fraktalternativ" />
-        <input v-model.number="newShipping.price" type="number" min="0" class="ship-price" placeholder="Pris" />
+        <input
+          v-model.number="newShipping.price"
+          type="number"
+          min="0"
+          class="ship-price"
+          placeholder="Pris"
+        />
         <button type="button" @click="addShipping">Lägg till</button>
       </div>
     </div>
@@ -317,7 +359,7 @@ if (!shopStore.shippingOptions.length) shopStore.fetchShippingOptions()
   }
 }
 
-.card>button[type="submit"] {
+.card > button[type='submit'] {
   margin-top: 1.25rem;
 }
 </style>

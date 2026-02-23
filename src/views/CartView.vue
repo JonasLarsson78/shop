@@ -19,7 +19,7 @@ const selectedShippingId = computed<number | null>({
 })
 
 const selectedShipping = computed(() =>
-  shopStore.shippingOptions.find(opt => opt.id === selectedShippingId.value)
+  shopStore.shippingOptions.find((opt) => opt.id === selectedShippingId.value)
 )
 
 const cartTotalWithShipping = computed(() => {
@@ -39,9 +39,15 @@ onMounted(() => {
 <template>
   <section class="cart-page">
     <header class="cart-header card">
-      <p v-if="shopStore.settings.cartHeroKicker" class="cart-kicker">{{ shopStore.settings.cartHeroKicker }}</p>
-      <h2 v-if="shopStore.settings.cartHeroTitle">{{ shopStore.settings.cartHeroTitle }}</h2>
-      <p v-if="shopStore.settings.cartHeroLead">{{ shopStore.settings.cartHeroLead }}</p>
+      <p v-if="shopStore.settings.cartHeroKicker" class="cart-kicker">
+        {{ shopStore.settings.cartHeroKicker }}
+      </p>
+      <h2 v-if="shopStore.settings.cartHeroTitle">
+        {{ shopStore.settings.cartHeroTitle }}
+      </h2>
+      <p v-if="shopStore.settings.cartHeroLead">
+        {{ shopStore.settings.cartHeroLead }}
+      </p>
     </header>
 
     <div v-if="shopStore.cartItems.length === 0" class="cart-empty card">
@@ -52,14 +58,32 @@ onMounted(() => {
 
     <div v-else class="cart-layout">
       <div class="cart-list">
-        <article v-for="item in shopStore.cartItems" :key="item.product.id" class="cart-item card">
-          <RouterLink :to="`/product/${item.product.id}`" v-if="!hasProductImage(item.product.imageUrl)"
-            class="cart-image cart-image-missing" role="img" aria-label="Bild saknas">
+        <article
+          v-for="item in shopStore.cartItems"
+          :key="item.product.id"
+          class="cart-item card"
+        >
+          <RouterLink
+            :to="`/product/${item.product.id}`"
+            v-if="!hasProductImage(item.product.imageUrl)"
+            class="cart-image cart-image-missing"
+            role="img"
+            aria-label="Bild saknas"
+          >
             Bild saknas
           </RouterLink>
 
-          <RouterLink :to="`/product/${item.product.id}`" v-else class="cart-image-link">
-            <img :src="item.product.imageUrl" :alt="item.product.name" class="cart-image" loading="lazy" />
+          <RouterLink
+            :to="`/product/${item.product.id}`"
+            v-else
+            class="cart-image-link"
+          >
+            <img
+              :src="item.product.imageUrl"
+              :alt="item.product.name"
+              class="cart-image"
+              loading="lazy"
+            />
           </RouterLink>
 
           <RouterLink :to="`/product/${item.product.id}`" class="cart-details">
@@ -71,17 +95,41 @@ onMounted(() => {
             <label class="cart-quantity">
               Antal
               <div class="quantity-stepper">
-                <button type="button" class="step-button"
-                  @click="decreaseCartItem(item.product.id, item.quantity)">−</button>
-                <input type="number" min="1" :value="item.quantity"
-                  @input="shopStore.updateCartItem(item.product.id, Number(($event.target as HTMLInputElement).value))" />
-                <button type="button" class="step-button"
-                  @click="increaseCartItem(item.product.id, item.quantity)">+</button>
+                <button
+                  type="button"
+                  class="step-button"
+                  @click="decreaseCartItem(item.product.id, item.quantity)"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  :value="item.quantity"
+                  @input="
+                    shopStore.updateCartItem(
+                      item.product.id,
+                      Number(($event.target as HTMLInputElement).value)
+                    )
+                  "
+                />
+                <button
+                  type="button"
+                  class="step-button"
+                  @click="increaseCartItem(item.product.id, item.quantity)"
+                >
+                  +
+                </button>
               </div>
             </label>
 
             <p class="cart-subtotal">{{ item.subtotal }} kr</p>
-            <button class="button-muted" @click="shopStore.removeFromCart(item.product.id)">Ta bort</button>
+            <button
+              class="button-muted"
+              @click="shopStore.removeFromCart(item.product.id)"
+            >
+              Ta bort
+            </button>
           </div>
         </article>
       </div>
@@ -96,7 +144,11 @@ onMounted(() => {
           <span>Frakt</span>
           <template v-if="shopStore.shippingOptions.length">
             <select v-model="selectedShippingId">
-              <option v-for="option in shopStore.shippingOptions" :key="option.id" :value="option.id">
+              <option
+                v-for="option in shopStore.shippingOptions"
+                :key="option.id"
+                :value="option.id"
+              >
                 {{ option.name }} ({{ option.price }} kr)
               </option>
             </select>
@@ -109,9 +161,12 @@ onMounted(() => {
           <span>Totalt</span>
           <strong>{{ cartTotalWithShipping }} kr</strong>
         </div>
-        <RouterLink class="button-link checkout-link"
+        <RouterLink
+          class="button-link checkout-link"
           :to="{ path: '/checkout', query: { shipping: selectedShippingId } }"
-          :disabled="!shopStore.shippingOptions.length">Till kassan</RouterLink>
+          :disabled="!shopStore.shippingOptions.length"
+          >Till kassan</RouterLink
+        >
       </aside>
     </div>
   </section>
@@ -137,7 +192,7 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .cart-page {
@@ -146,7 +201,11 @@ select {
 }
 
 .cart-header {
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
 
   h2 {
     margin: 0.25rem 0 0.45rem;
@@ -195,7 +254,9 @@ select {
   grid-template-columns: 96px minmax(0, 1fr) minmax(290px, auto);
   gap: 0.8rem;
   align-items: center;
-  transition: border-color 0.18s ease, transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease;
 
   &:hover {
     border-color: rgba($color-brand, 0.35);
@@ -218,7 +279,11 @@ select {
   font-weight: 700;
   text-align: center;
   color: var(--theme-accent);
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
   border-color: var(--theme-accent-border);
   padding: 0.3rem;
 }
@@ -260,7 +325,6 @@ select {
 }
 
 .cart-details {
-
   h3,
   p {
     margin: 0;
@@ -372,6 +436,5 @@ select {
   .cart-subtotal {
     justify-self: start;
   }
-
 }
 </style>

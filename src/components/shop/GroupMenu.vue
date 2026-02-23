@@ -10,11 +10,15 @@ const groupLinks = computed(() => {
     .map((group: ProductGroup) => ({
       id: group.id,
       name: group.name,
-      count: shopStore.products.filter((product: Product) => product.groupId === group.id).length,
+      count: shopStore.products.filter(
+        (product: Product) => product.groupId === group.id
+      ).length,
     }))
     .filter((group: { count: number }) => group.count > 0)
 
-  const ungroupedCount = shopStore.products.filter((product: Product) => !product.groupId).length
+  const ungroupedCount = shopStore.products.filter(
+    (product: Product) => !product.groupId
+  ).length
 
   return {
     groupsWithProducts,
@@ -28,20 +32,35 @@ const groupLinks = computed(() => {
     <p class="group-menu-kicker">Navigera</p>
     <h3>Produktgrupper</h3>
 
-    <RouterLink class="group-menu-link" :to="{ path: '/shop' }"
-      :class="{ active: $route.path === '/shop' && !$route.query.group }">
+    <RouterLink
+      class="group-menu-link"
+      :to="{ path: '/shop' }"
+      :class="{ active: $route.path === '/shop' && !$route.query.group }"
+    >
       Alla produkter
     </RouterLink>
 
-    <RouterLink v-for="group in groupLinks.groupsWithProducts" :key="group.id" class="group-menu-link"
-      :class="{ active: $route.path === '/shop' && $route.query.group === String(group.id) }"
-      :to="{ path: '/shop', query: { group: String(group.id) } }">
+    <RouterLink
+      v-for="group in groupLinks.groupsWithProducts"
+      :key="group.id"
+      class="group-menu-link"
+      :class="{
+        active:
+          $route.path === '/shop' && $route.query.group === String(group.id),
+      }"
+      :to="{ path: '/shop', query: { group: String(group.id) } }"
+    >
       {{ group.name }}
     </RouterLink>
 
-    <RouterLink v-if="groupLinks.ungroupedCount > 0" class="group-menu-link"
-      :class="{ active: $route.path === '/shop' && $route.query.group === 'ungrouped' }"
-      :to="{ path: '/shop', query: { group: 'ungrouped' } }">
+    <RouterLink
+      v-if="groupLinks.ungroupedCount > 0"
+      class="group-menu-link"
+      :class="{
+        active: $route.path === '/shop' && $route.query.group === 'ungrouped',
+      }"
+      :to="{ path: '/shop', query: { group: 'ungrouped' } }"
+    >
       Övrigt
     </RouterLink>
   </aside>
@@ -52,7 +71,11 @@ const groupLinks = computed(() => {
   align-self: start;
   position: sticky;
   top: 1rem;
-  background: linear-gradient(155deg, $color-surface 0%, $color-surface-muted 100%);
+  background: linear-gradient(
+    155deg,
+    $color-surface 0%,
+    $color-surface-muted 100%
+  );
 
   h3 {
     margin: 0.2rem 0 0.8rem;
@@ -79,7 +102,10 @@ const groupLinks = computed(() => {
   border: 1px solid $color-border;
   border-radius: $radius-sm;
   text-decoration: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 
   &:hover {
     border-color: $color-text-soft;

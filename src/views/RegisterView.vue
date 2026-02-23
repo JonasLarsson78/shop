@@ -12,6 +12,6 @@ import RegisterCard from '../components/auth/RegisterCard.vue'
 .auth-view {
   display: grid;
   place-items: center;
-  padding: 2rem
+  padding: 2rem;
 }
 </style>

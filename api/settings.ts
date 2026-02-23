@@ -1,4 +1,10 @@
-import { ensureSchemaAndSeed, getSettings, parseBody, sendMethodNotAllowed, updateSettings } from './_shop'
+import {
+  ensureSchemaAndSeed,
+  getSettings,
+  parseBody,
+  sendMethodNotAllowed,
+  updateSettings,
+} from './_shop'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET' && req.method !== 'PUT') {
@@ -18,6 +24,13 @@ export default async function handler(req: any, res: any) {
     const settings = await updateSettings(parseBody(req))
     res.status(200).json(settings)
   } catch (error) {
-    res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to handle settings request' })
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle settings request',
+      })
   }
 }

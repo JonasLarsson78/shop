@@ -9,13 +9,21 @@
 
       <label class="field">
         <span class="label">Lösenord</span>
-        <input v-model="password" type="password" required autocomplete="current-password" />
+        <input
+          v-model="password"
+          type="password"
+          required
+          autocomplete="current-password"
+        />
       </label>
 
       <div class="actions">
-        <BaseButton variant="primary" :type="'submit'" :disabled="loading">{{ loading ? 'Loggar in…' : 'Logga in' }}
+        <BaseButton variant="primary" :type="'submit'" :disabled="loading"
+          >{{ loading ? 'Loggar in…' : 'Logga in' }}
         </BaseButton>
-        <BaseButton variant="secondary" :type="'button'" @click="goRegister">Registrera</BaseButton>
+        <BaseButton variant="secondary" :type="'button'" @click="goRegister"
+          >Registrera</BaseButton
+        >
       </div>
 
       <p class="error" v-if="error">{{ error }}</p>
@@ -72,19 +80,19 @@ function goRegister() {
 .auth-card h3 {
   margin: 0 0 12px;
   font-size: 18px;
-  color: $color-text-strong
+  color: $color-text-strong;
 }
 
 .field {
   display: block;
-  margin-bottom: 10px
+  margin-bottom: 10px;
 }
 
 .label {
   display: block;
   margin-bottom: 6px;
   font-size: 13px;
-  color: $color-text-soft
+  color: $color-text-soft;
 }
 
 input {
@@ -93,13 +101,13 @@ input {
   border: 1px solid $color-border-input;
   border-radius: 6px;
   background: $color-surface-muted;
-  color: $color-text
+  color: $color-text;
 }
 
 .actions {
   display: flex;
   gap: 8px;
-  margin-top: 12px
+  margin-top: 12px;
 }
 
 .btn {
@@ -108,40 +116,40 @@ input {
   border: 0;
   background: $color-brand;
   color: $color-brand-contrast;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .btn.secondary {
   background: $color-surface-muted;
-  color: $color-text
+  color: $color-text;
 }
 
 .btn:disabled {
   opacity: 0.6;
-  cursor: not-allowed
+  cursor: not-allowed;
 }
 
 .error {
   color: $color-danger;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
-@media (max-width:$breakpoint-mobile) {
+@media (max-width: $breakpoint-mobile) {
   .auth-card {
     max-width: 100%;
-    padding: 12px
+    padding: 12px;
   }
 
   .actions {
-    flex-direction: column
+    flex-direction: column;
   }
 
   .btn {
-    width: 100%
+    width: 100%;
   }
 
   .btn.secondary {
-    width: 100%
+    width: 100%;
   }
 }
 </style>

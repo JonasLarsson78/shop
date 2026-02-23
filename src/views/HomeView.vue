@@ -6,9 +6,11 @@ import { useShopStore } from '../stores/shop'
 const shopStore = useShopStore()
 
 const heroPoints = computed(() =>
-  [shopStore.settings.heroPoint1, shopStore.settings.heroPoint2, shopStore.settings.heroPoint3].filter(
-    (point) => point.trim().length > 0,
-  ),
+  [
+    shopStore.settings.heroPoint1,
+    shopStore.settings.heroPoint2,
+    shopStore.settings.heroPoint3,
+  ].filter((point) => point.trim().length > 0)
 )
 </script>
 
@@ -17,9 +19,15 @@ const heroPoints = computed(() =>
     <GroupMenu />
 
     <div class="home-hero card">
-      <p v-if="shopStore.settings.heroKicker" class="home-kicker">{{ shopStore.settings.heroTitle }}</p>
-      <h2 v-if="shopStore.settings.heroTitle">{{ shopStore.settings.heroKicker }}</h2>
-      <p v-if="shopStore.settings.heroLead" class="home-lead">{{ shopStore.settings.heroLead }}</p>
+      <p v-if="shopStore.settings.heroKicker" class="home-kicker">
+        {{ shopStore.settings.heroTitle }}
+      </p>
+      <h2 v-if="shopStore.settings.heroTitle">
+        {{ shopStore.settings.heroKicker }}
+      </h2>
+      <p v-if="shopStore.settings.heroLead" class="home-lead">
+        {{ shopStore.settings.heroLead }}
+      </p>
 
       <ul v-if="heroPoints.length > 0" class="home-points">
         <li v-for="point in heroPoints" :key="point">{{ point }}</li>
@@ -27,16 +35,21 @@ const heroPoints = computed(() =>
 
       <div class="home-actions">
         <RouterLink class="button-link" to="/shop">Gå till butiken</RouterLink>
-        <RouterLink class="button-link button-muted" to="/cart">Se varukorg</RouterLink>
+        <RouterLink class="button-link button-muted" to="/cart"
+          >Se varukorg</RouterLink
+        >
       </div>
-
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
 .home-hero {
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
 }
 
 .home-kicker {

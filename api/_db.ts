@@ -38,7 +38,10 @@ const getPool = () => {
   return pool
 }
 
-export const query = async <T = unknown>(sql: string, params: unknown[] = []) => {
+export const query = async <T = unknown>(
+  sql: string,
+  params: unknown[] = []
+) => {
   const [rows] = await getPool().query(sql, params)
   return rows as T
 }

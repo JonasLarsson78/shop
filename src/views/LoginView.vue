@@ -12,6 +12,6 @@ import LoginCard from '../components/auth/LoginCard.vue'
 .auth-view {
   display: grid;
   place-items: center;
-  padding: 2rem
+  padding: 2rem;
 }
 </style>

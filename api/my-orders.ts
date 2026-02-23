@@ -15,6 +15,13 @@ export default async function handler(req: any, res: any) {
     const orders = await listOrders(filters)
     res.status(200).json(Array.isArray(orders) ? orders : [])
   } catch (error) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch user orders' })
+    res
+      .status(500)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch user orders',
+      })
   }
 }

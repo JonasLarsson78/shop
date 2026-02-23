@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { getStoredTheme, isValidHex, setTheme, themeOptions, type ThemeMode } from '../../utils/theme'
+import {
+  getStoredTheme,
+  isValidHex,
+  setTheme,
+  themeOptions,
+  type ThemeMode,
+} from '../../utils/theme'
 
 const savedTheme = getStoredTheme()
 const selectedMode = ref<ThemeMode>(savedTheme.mode)
@@ -9,7 +15,10 @@ const customMutedHex = ref(savedTheme.customMutedHex)
 const customDangerHex = ref(savedTheme.customDangerHex)
 
 const customColorsValid = computed(
-  () => isValidHex(customAccentHex.value) && isValidHex(customMutedHex.value) && isValidHex(customDangerHex.value),
+  () =>
+    isValidHex(customAccentHex.value) &&
+    isValidHex(customMutedHex.value) &&
+    isValidHex(customDangerHex.value)
 )
 
 const applyPresetTheme = (mode: ThemeMode) => {
@@ -56,13 +65,24 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
   <section>
     <div class="card theme-card">
       <h3>Tema</h3>
-      <p class="theme-help">Välj ett färdigt tema eller ange egna färger. Custom aktiveras automatiskt när du ändrar
-        färgerna.</p>
+      <p class="theme-help">
+        Välj ett färdigt tema eller ange egna färger. Custom aktiveras
+        automatiskt när du ändrar färgerna.
+      </p>
 
       <div class="theme-options">
-        <button v-for="option in themeOptions" :key="option.id" type="button" class="theme-option"
+        <button
+          v-for="option in themeOptions"
+          :key="option.id"
+          type="button"
+          class="theme-option"
           :class="{ 'theme-option-active': selectedMode === option.id }"
-          @click="option.id === 'custom' ? applyCustomTheme() : applyPresetTheme(option.id)">
+          @click="
+            option.id === 'custom'
+              ? applyCustomTheme()
+              : applyPresetTheme(option.id)
+          "
+        >
           {{ option.label }}
         </button>
       </div>
@@ -72,8 +92,16 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
         <label>
           Primär (knappar/länkar)
           <div class="color-input-row">
-            <input v-model="customAccentHex" type="text" placeholder="#4f46e5" />
-            <input v-model="customAccentHex" class="color-picker" type="color" />
+            <input
+              v-model="customAccentHex"
+              type="text"
+              placeholder="#4f46e5"
+            />
+            <input
+              v-model="customAccentHex"
+              class="color-picker"
+              type="color"
+            />
           </div>
         </label>
         <label>
@@ -86,13 +114,29 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
         <label>
           Danger (röda knappar)
           <div class="color-input-row">
-            <input v-model="customDangerHex" type="text" placeholder="#be123c" />
-            <input v-model="customDangerHex" class="color-picker" type="color" />
+            <input
+              v-model="customDangerHex"
+              type="text"
+              placeholder="#be123c"
+            />
+            <input
+              v-model="customDangerHex"
+              class="color-picker"
+              type="color"
+            />
           </div>
         </label>
-        <p v-if="!customColorsValid" class="theme-error">Ange giltiga hex-koder, t.ex. #4f46e5.</p>
-        <button type="button" class="button-primary" :disabled="!customColorsValid" @click="applyCustomTheme">Använd
-          custom</button>
+        <p v-if="!customColorsValid" class="theme-error">
+          Ange giltiga hex-koder, t.ex. #4f46e5.
+        </p>
+        <button
+          type="button"
+          class="button-primary"
+          :disabled="!customColorsValid"
+          @click="applyCustomTheme"
+        >
+          Använd custom
+        </button>
       </div>
     </div>
   </section>

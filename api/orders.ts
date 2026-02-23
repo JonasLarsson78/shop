@@ -1,4 +1,11 @@
-import { ensureSchemaAndSeed, listOrders, createOrder, updateOrderStatus, parseBody, sendMethodNotAllowed } from './_shop'
+import {
+  ensureSchemaAndSeed,
+  listOrders,
+  createOrder,
+  updateOrderStatus,
+  parseBody,
+  sendMethodNotAllowed,
+} from './_shop'
 
 export default async function handler(req: any, res: any) {
   if (!['GET', 'POST', 'PATCH'].includes(req.method)) {
@@ -32,6 +39,13 @@ export default async function handler(req: any, res: any) {
       return
     }
   } catch (error) {
-    res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to handle orders request' })
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle orders request',
+      })
   }
 }

@@ -17,7 +17,9 @@ const editForm = reactive({
 })
 
 const startEditProduct = (productId: number) => {
-  const product = shopStore.products.find((item: Product) => item.id === productId)
+  const product = shopStore.products.find(
+    (item: Product) => item.id === productId
+  )
 
   if (!product) {
     return
@@ -76,7 +78,9 @@ const getGroupName = (groupId: number | null) => {
     return 'Ingen grupp'
   }
 
-  const group = shopStore.groups.find((item: ProductGroup) => item.id === groupId)
+  const group = shopStore.groups.find(
+    (item: ProductGroup) => item.id === groupId
+  )
   return group?.name ?? 'Ingen grupp'
 }
 
@@ -118,9 +122,16 @@ onBeforeUnmount(() => {
         <span>Åtgärder</span>
       </div>
 
-      <article v-for="product in shopStore.products" :key="product.id" class="admin-product-row">
-        <form v-if="editingProductId === product.id" class="admin-product-edit-row"
-          @submit.prevent="saveEditProduct(product.id)">
+      <article
+        v-for="product in shopStore.products"
+        :key="product.id"
+        class="admin-product-row"
+      >
+        <form
+          v-if="editingProductId === product.id"
+          class="admin-product-edit-row"
+          @submit.prevent="saveEditProduct(product.id)"
+        >
           <div class="admin-edit-grid">
             <label>
               Produktnamn
@@ -131,7 +142,11 @@ onBeforeUnmount(() => {
               Grupp
               <select v-model="editForm.groupId">
                 <option value="">Ingen grupp</option>
-                <option v-for="group in shopStore.groups" :key="group.id" :value="group.id">
+                <option
+                  v-for="group in shopStore.groups"
+                  :key="group.id"
+                  :value="group.id"
+                >
                   {{ group.name }}
                 </option>
               </select>
@@ -139,7 +154,12 @@ onBeforeUnmount(() => {
 
             <label>
               Pris (kr)
-              <input v-model.number="editForm.price" min="1" required type="number" />
+              <input
+                v-model.number="editForm.price"
+                min="1"
+                required
+                type="number"
+              />
             </label>
 
             <label>
@@ -161,11 +181,20 @@ onBeforeUnmount(() => {
 
         <template v-else>
           <div class="admin-product-main">
-            <div v-if="!hasProductImage(product.imageUrl)" class="admin-product-thumb admin-product-thumb-missing"
-              role="img" aria-label="Bild saknas">
+            <div
+              v-if="!hasProductImage(product.imageUrl)"
+              class="admin-product-thumb admin-product-thumb-missing"
+              role="img"
+              aria-label="Bild saknas"
+            >
               Bild saknas
             </div>
-            <img v-else :src="product.imageUrl" :alt="product.name" class="admin-product-thumb" />
+            <img
+              v-else
+              :src="product.imageUrl"
+              :alt="product.name"
+              class="admin-product-thumb"
+            />
             <div>
               <h4>{{ product.name }}</h4>
               <p>{{ product.description }}</p>
@@ -179,8 +208,14 @@ onBeforeUnmount(() => {
           <p class="price">{{ product.price }} kr</p>
 
           <div class="row-actions admin-row-actions">
-            <button type="button" @click="startEditProduct(product.id)">Edit</button>
-            <button type="button" class="button-danger" @click="askDeleteProduct(product.id)">
+            <button type="button" @click="startEditProduct(product.id)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="button-danger"
+              @click="askDeleteProduct(product.id)"
+            >
               Delete
             </button>
           </div>
@@ -189,14 +224,30 @@ onBeforeUnmount(() => {
     </div>
 
     <Transition name="modal-fade">
-      <div v-if="productPendingDeleteId" class="modal-backdrop" @click.self="closeDeleteModal">
+      <div
+        v-if="productPendingDeleteId"
+        class="modal-backdrop"
+        @click.self="closeDeleteModal"
+      >
         <div class="modal-card">
           <h3>Ta bort produkt</h3>
           <p>Är du säker på att du vill ta bort produkten?</p>
 
           <div class="row-actions">
-            <button type="button" class="button-muted" @click="closeDeleteModal">Avbryt</button>
-            <button type="button" class="button-danger" @click="confirmDeleteProduct">Ta bort</button>
+            <button
+              type="button"
+              class="button-muted"
+              @click="closeDeleteModal"
+            >
+              Avbryt
+            </button>
+            <button
+              type="button"
+              class="button-danger"
+              @click="confirmDeleteProduct"
+            >
+              Ta bort
+            </button>
           </div>
         </div>
       </div>
@@ -226,7 +277,7 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .admin-products-list {
@@ -284,7 +335,11 @@ select {
   font-weight: 700;
   text-align: center;
   color: var(--theme-accent);
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
   border-color: var(--theme-accent-border);
   padding: 0.2rem;
 }
@@ -350,7 +405,9 @@ select {
 
 .modal-fade-enter-active .modal-card,
 .modal-fade-leave-active .modal-card {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .modal-fade-enter-from,

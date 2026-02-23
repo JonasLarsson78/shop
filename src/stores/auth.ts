@@ -33,7 +33,15 @@ const save = (state: { user: User | null }) => {
 export const useAuthStore = defineStore('auth', () => {
   const state = ref(load())
 
-  const register = async (payload: { email: string; password: string; name?: string; address?: string; phone?: string; zip?: string; city?: string }) => {
+  const register = async (payload: {
+    email: string
+    password: string
+    name?: string
+    address?: string
+    phone?: string
+    zip?: string
+    city?: string
+  }) => {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

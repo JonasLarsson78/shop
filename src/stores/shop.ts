@@ -64,7 +64,8 @@ const defaultSettings: Settings = {
   brandImageUrl: '',
   heroKicker: 'Modern webshop',
   heroTitle: 'Stilren template för en modern butik',
-  heroLead: 'Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen på några sekunder.',
+  heroLead:
+    'Utvalda favoriter för vardagliga behov. Filtrera snabbt via grupper och fyll varukorgen på några sekunder.',
   heroPoint1: 'Snabbt att hitta rätt produkter',
   heroPoint2: 'Tydliga grupper för varje behov',
   heroPoint3: 'Smidig checkout utan krångel',
@@ -76,7 +77,8 @@ const defaultSettings: Settings = {
   cartHeroLead: 'Granska produkterna innan du går vidare till kassan.',
   checkoutHeroKicker: 'Trygg checkout',
   checkoutHeroTitle: 'Kassa',
-  checkoutHeroLead: 'Fyll i dina uppgifter och kontrollera ordern innan du bekräftar köpet.',
+  checkoutHeroLead:
+    'Fyll i dina uppgifter och kontrollera ordern innan du bekräftar köpet.',
   shippingCost: 0,
   freeShippingThreshold: 0,
   vatPercent: 25,
@@ -117,10 +119,17 @@ const loadPersistedShopState = (): PersistedShopState | null => {
     }
 
     return {
-      cart: parsedState.cart && typeof parsedState.cart === 'object' ? parsedState.cart : {},
+      cart:
+        parsedState.cart && typeof parsedState.cart === 'object'
+          ? parsedState.cart
+          : {},
       selectedShippingId:
-        Object.prototype.hasOwnProperty.call(parsedState, 'selectedShippingId') &&
-        (typeof parsedState.selectedShippingId === 'number' || parsedState.selectedShippingId === null)
+        Object.prototype.hasOwnProperty.call(
+          parsedState,
+          'selectedShippingId'
+        ) &&
+        (typeof parsedState.selectedShippingId === 'number' ||
+          parsedState.selectedShippingId === null)
           ? (parsedState.selectedShippingId as number | null)
           : null,
     }
@@ -149,14 +158,17 @@ export const useShopStore = defineStore('shop', {
     dbStatus: 'loading' as 'loading' | 'connected' | 'error',
     hasInitializedData: false,
     shippingOptions: [] as ShippingOption[],
-    selectedShippingId: persistedState?.selectedShippingId ?? null as number | null,
+    selectedShippingId:
+      persistedState?.selectedShippingId ?? (null as number | null),
   }),
   getters: {
     cartItems(state) {
       return Object.entries(state.cart)
         .map(([productId, quantity]) => {
           const numericProductId = Number(productId)
-          const product = state.products.find((item) => item.id === numericProductId)
+          const product = state.products.find(
+            (item) => item.id === numericProductId
+          )
 
           if (!product) {
             return null
@@ -168,57 +180,85 @@ export const useShopStore = defineStore('shop', {
             subtotal: product.price * quantity,
           }
         })
-        .filter((item): item is { product: Product; quantity: number; subtotal: number } => item !== null)
+        .filter(
+          (
+            item
+          ): item is { product: Product; quantity: number; subtotal: number } =>
+            item !== null
+        )
     },
     cartSubtotal(state) {
-      return Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const numericProductId = Number(productId)
-        const product = state.products.find((item) => item.id === numericProductId)
+      return Object.entries(state.cart).reduce(
+        (total, [productId, quantity]) => {
+          const numericProductId = Number(productId)
+          const product = state.products.find(
+            (item) => item.id === numericProductId
+          )
 
-        if (!product) {
-          return total
-        }
+          if (!product) {
+            return total
+          }
 
-        return total + product.price * quantity
-      }, 0)
+          return total + product.price * quantity
+        },
+        0
+      )
     },
     shippingFee(state) {
-      const cartItemCount = Object.values(state.cart).reduce((total, qty) => total + qty, 0)
+      const cartItemCount = Object.values(state.cart).reduce(
+        (total, qty) => total + qty,
+        0
+      )
 
       if (cartItemCount === 0) {
         return 0
       }
 
-      const subtotal = Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const numericProductId = Number(productId)
-        const product = state.products.find((item) => item.id === numericProductId)
+      const subtotal = Object.entries(state.cart).reduce(
+        (total, [productId, quantity]) => {
+          const numericProductId = Number(productId)
+          const product = state.products.find(
+            (item) => item.id === numericProductId
+          )
 
-        if (!product) {
-          return total
-        }
+          if (!product) {
+            return total
+          }
 
-        return total + product.price * quantity
-      }, 0)
+          return total + product.price * quantity
+        },
+        0
+      )
 
-      return subtotal >= state.settings.freeShippingThreshold ? 0 : state.settings.shippingCost
+      return subtotal >= state.settings.freeShippingThreshold
+        ? 0
+        : state.settings.shippingCost
     },
     cartTotal(state) {
-      const subtotal = Object.entries(state.cart).reduce((total, [productId, quantity]) => {
-        const numericProductId = Number(productId)
-        const product = state.products.find((item) => item.id === numericProductId)
+      const subtotal = Object.entries(state.cart).reduce(
+        (total, [productId, quantity]) => {
+          const numericProductId = Number(productId)
+          const product = state.products.find(
+            (item) => item.id === numericProductId
+          )
 
-        if (!product) {
-          return total
-        }
+          if (!product) {
+            return total
+          }
 
-        return total + product.price * quantity
-      }, 0)
+          return total + product.price * quantity
+        },
+        0
+      )
 
       if (subtotal === 0) {
         return 0
       }
 
-      const shipping = subtotal >= state.settings.freeShippingThreshold ? 0 : state.settings.shippingCost
+      const shipping =
+        subtotal >= state.settings.freeShippingThreshold
+          ? 0
+          : state.settings.shippingCost
 
       return subtotal + shipping
     },
@@ -257,7 +297,9 @@ export const useShopStore = defineStore('shop', {
       }
     },
     addToCart(productId: number, quantity = 1) {
-      const safeQuantity = Number.isFinite(quantity) ? Math.max(1, Math.floor(quantity)) : 1
+      const safeQuantity = Number.isFinite(quantity)
+        ? Math.max(1, Math.floor(quantity))
+        : 1
       const key = toCartKey(productId)
       this.cart[key] = (this.cart[key] ?? 0) + safeQuantity
       this.persistState()
@@ -284,12 +326,17 @@ export const useShopStore = defineStore('shop', {
     },
     applyLocalAddProduct(payload: Omit<Product, 'id'>) {
       const id = Date.now()
-      const groupExists = payload.groupId ? this.groups.some((group) => group.id === payload.groupId) : true
+      const groupExists = payload.groupId
+        ? this.groups.some((group) => group.id === payload.groupId)
+        : true
 
       this.products.push({
         id,
         ...payload,
-        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+        imageUrl:
+          payload.imageUrl.trim().length > 0
+            ? payload.imageUrl
+            : DEFAULT_PRODUCT_IMAGE,
         groupId: groupExists ? payload.groupId : null,
       })
 
@@ -298,7 +345,10 @@ export const useShopStore = defineStore('shop', {
     async addProduct(payload: Omit<Product, 'id'>) {
       const safePayload = {
         ...payload,
-        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+        imageUrl:
+          payload.imageUrl.trim().length > 0
+            ? payload.imageUrl
+            : DEFAULT_PRODUCT_IMAGE,
       }
 
       try {
@@ -316,8 +366,12 @@ export const useShopStore = defineStore('shop', {
       this.persistState()
     },
     applyLocalUpdateProduct(productId: number, payload: Omit<Product, 'id'>) {
-      const productIndex = this.products.findIndex((product) => product.id === productId)
-      const groupExists = payload.groupId ? this.groups.some((group) => group.id === payload.groupId) : true
+      const productIndex = this.products.findIndex(
+        (product) => product.id === productId
+      )
+      const groupExists = payload.groupId
+        ? this.groups.some((group) => group.id === payload.groupId)
+        : true
 
       if (productIndex === -1) {
         return
@@ -326,7 +380,10 @@ export const useShopStore = defineStore('shop', {
       this.products[productIndex] = {
         id: productId,
         ...payload,
-        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+        imageUrl:
+          payload.imageUrl.trim().length > 0
+            ? payload.imageUrl
+            : DEFAULT_PRODUCT_IMAGE,
         groupId: groupExists ? payload.groupId : null,
       }
 
@@ -335,16 +392,24 @@ export const useShopStore = defineStore('shop', {
     async updateProduct(productId: number, payload: Omit<Product, 'id'>) {
       const safePayload = {
         ...payload,
-        imageUrl: payload.imageUrl.trim().length > 0 ? payload.imageUrl : DEFAULT_PRODUCT_IMAGE,
+        imageUrl:
+          payload.imageUrl.trim().length > 0
+            ? payload.imageUrl
+            : DEFAULT_PRODUCT_IMAGE,
       }
 
       try {
-        const updated = await apiRequest<Product>(`/api/products/${productId}`, {
-          method: 'PUT',
-          body: JSON.stringify(safePayload),
-        })
+        const updated = await apiRequest<Product>(
+          `/api/products/${productId}`,
+          {
+            method: 'PUT',
+            body: JSON.stringify(safePayload),
+          }
+        )
 
-        const productIndex = this.products.findIndex((product) => product.id === productId)
+        const productIndex = this.products.findIndex(
+          (product) => product.id === productId
+        )
         if (productIndex === -1) {
           return
         }
@@ -358,7 +423,9 @@ export const useShopStore = defineStore('shop', {
       this.persistState()
     },
     applyLocalDeleteProduct(productId: number) {
-      this.products = this.products.filter((product) => product.id !== productId)
+      this.products = this.products.filter(
+        (product) => product.id !== productId
+      )
 
       const key = toCartKey(productId)
       if (this.cart[key]) {
@@ -368,7 +435,9 @@ export const useShopStore = defineStore('shop', {
       this.persistState()
     },
     async deleteProduct(productId: number) {
-      const productIndex = this.products.findIndex((product) => product.id === productId)
+      const productIndex = this.products.findIndex(
+        (product) => product.id === productId
+      )
 
       if (productIndex === -1) {
         return
@@ -472,12 +541,17 @@ export const useShopStore = defineStore('shop', {
       }
 
       try {
-        const updated = await apiRequest<ProductGroup>(`/api/groups/${groupId}`, {
-          method: 'PUT',
-          body: JSON.stringify({ name: trimmedName }),
-        })
+        const updated = await apiRequest<ProductGroup>(
+          `/api/groups/${groupId}`,
+          {
+            method: 'PUT',
+            body: JSON.stringify({ name: trimmedName }),
+          }
+        )
 
-        const groupIndex = this.groups.findIndex((group) => group.id === groupId)
+        const groupIndex = this.groups.findIndex(
+          (group) => group.id === groupId
+        )
         if (groupIndex === -1) {
           return
         }
@@ -498,7 +572,7 @@ export const useShopStore = defineStore('shop', {
               ...product,
               groupId: null,
             }
-          : product,
+          : product
       )
 
       this.persistState()
@@ -514,7 +588,7 @@ export const useShopStore = defineStore('shop', {
               ...product,
               groupId: null,
             }
-          : product,
+          : product
       )
 
       this.persistState()
@@ -548,9 +622,16 @@ export const useShopStore = defineStore('shop', {
     },
     async fetchShippingOptions() {
       try {
-        const options = await apiRequest<ShippingOption[]>('/api/shipping-options', { method: 'GET' })
+        const options = await apiRequest<ShippingOption[]>(
+          '/api/shipping-options',
+          { method: 'GET' }
+        )
         this.shippingOptions = options
-        if (this.selectedShippingId === null && options.length > 0 && options[0]) {
+        if (
+          this.selectedShippingId === null &&
+          options.length > 0 &&
+          options[0]
+        ) {
           this.selectedShippingId = options[0].id
           this.persistState()
         }
@@ -560,22 +641,31 @@ export const useShopStore = defineStore('shop', {
     },
     async addShippingOption(payload: { name: string; price: number }) {
       try {
-        const option = await apiRequest<ShippingOption>('/api/shipping-options', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        })
+        const option = await apiRequest<ShippingOption>(
+          '/api/shipping-options',
+          {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          }
+        )
         this.shippingOptions.push(option)
       } catch (error) {
         console.error('Failed to add shipping option:', error)
       }
     },
-    async updateShippingOption(id: number, payload: { name: string; price: number }) {
+    async updateShippingOption(
+      id: number,
+      payload: { name: string; price: number }
+    ) {
       try {
-        const option = await apiRequest<ShippingOption>('/api/shipping-options', {
-          method: 'PUT',
-          body: JSON.stringify({ id, ...payload }),
-        })
-        const idx = this.shippingOptions.findIndex(o => o.id === id)
+        const option = await apiRequest<ShippingOption>(
+          '/api/shipping-options',
+          {
+            method: 'PUT',
+            body: JSON.stringify({ id, ...payload }),
+          }
+        )
+        const idx = this.shippingOptions.findIndex((o) => o.id === id)
         if (idx !== -1) {
           this.shippingOptions[idx] = option
         }
@@ -589,7 +679,7 @@ export const useShopStore = defineStore('shop', {
           method: 'DELETE',
           body: JSON.stringify({ id }),
         })
-        this.shippingOptions = this.shippingOptions.filter(o => o.id !== id)
+        this.shippingOptions = this.shippingOptions.filter((o) => o.id !== id)
         if (this.selectedShippingId === id) {
           // select first available or null
           this.selectedShippingId = this.shippingOptions[0]?.id ?? null

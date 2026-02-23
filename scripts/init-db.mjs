@@ -18,7 +18,13 @@ const connection = await mysql.createConnection({
   charset: 'utf8mb4',
 })
 
-const numericSqlTypes = new Set(['tinyint', 'smallint', 'mediumint', 'int', 'bigint'])
+const numericSqlTypes = new Set([
+  'tinyint',
+  'smallint',
+  'mediumint',
+  'int',
+  'bigint',
+])
 
 try {
   const [columnRows] = await connection.execute(`
@@ -36,13 +42,13 @@ try {
 
   const hasLegacyType = Array.isArray(columnRows)
     ? columnRows.some((column) => {
-      if (!column || typeof column !== 'object' || !('dataType' in column)) {
-        return false
-      }
+        if (!column || typeof column !== 'object' || !('dataType' in column)) {
+          return false
+        }
 
-      const dataType = String(column.dataType).toLowerCase()
-      return !numericSqlTypes.has(dataType)
-    })
+        const dataType = String(column.dataType).toLowerCase()
+        return !numericSqlTypes.has(dataType)
+      })
     : false
 
   if (hasLegacyType) {
@@ -130,83 +136,103 @@ try {
   const settingsColumnsToEnsure = [
     {
       name: 'sub_name',
-      alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
     },
     {
       name: 'brand_image_url',
-      alterSql: "ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name',
     },
     {
       name: 'hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
     },
     {
       name: 'hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
     },
     {
       name: 'hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title',
     },
     {
       name: 'hero_point_1',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
     },
     {
       name: 'hero_point_2',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
     },
     {
       name: 'hero_point_3',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
     },
     {
       name: 'shop_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
     },
     {
       name: 'shop_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
     },
     {
       name: 'shop_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title',
     },
     {
       name: 'cart_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
     },
     {
       name: 'cart_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
     },
     {
       name: 'cart_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title',
     },
     {
       name: 'checkout_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
     },
     {
       name: 'checkout_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
     },
     {
       name: 'checkout_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title',
     },
     {
       name: 'shipping_cost',
-      alterSql: "ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead',
     },
     {
       name: 'free_shipping_threshold',
-      alterSql: "ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost',
     },
     {
       name: 'vat_percent',
-      alterSql: "ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold',
     },
   ]
 
@@ -218,7 +244,7 @@ try {
          AND TABLE_NAME = 'settings'
          AND COLUMN_NAME = ?
        LIMIT 1`,
-      [column.name],
+      [column.name]
     )
 
     if (!Array.isArray(columnRows) || columnRows.length === 0) {
@@ -226,7 +252,9 @@ try {
     }
   }
 
-  console.log('✅ Tables created/verified: groups, products, settings, shipping_options')
+  console.log(
+    '✅ Tables created/verified: groups, products, settings, shipping_options'
+  )
 } finally {
   await connection.end()
 }

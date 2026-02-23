@@ -12,7 +12,13 @@ type Order = {
   total: number
   status: string
   createdAt: string
-  items?: Array<{ productId?: number; name?: string; quantity?: number; price?: number; subtotal?: number }>
+  items?: Array<{
+    productId?: number
+    name?: string
+    quantity?: number
+    price?: number
+    subtotal?: number
+  }>
   shippingName?: string
   shipping_name?: string
   shippingOptionName?: string
@@ -60,7 +66,11 @@ const fetchOrders = async () => {
 
 const setStatus = async (orderId: number, status: string) => {
   try {
-    const res = await fetch('/api/orders', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: orderId, status }) })
+    const res = await fetch('/api/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: orderId, status }),
+    })
     if (!res.ok) throw new Error('Failed to update order')
     await fetchOrders()
   } catch (err: any) {
@@ -116,15 +126,22 @@ onMounted(fetchOrders)
                 </td>
                 <td>{{ o.id }}</td>
                 <td>{{ o.customerName }}</td>
-                <td>{{ (o.total).toFixed(2) }} kr</td>
+                <td>{{ o.total.toFixed(2) }} kr</td>
                 <td>{{ o.status }}</td>
                 <td>{{ new Date(o.createdAt).toLocaleString() }}</td>
                 <td>
-                  <button type="button" @click="setStatus(o.id, 'processing')">Processing</button>
-                  <button type="button" @click="setStatus(o.id, 'shipped')">Shipped</button>
-                  <button type="button" @click="setStatus(o.id, 'cancelled')">Cancel</button>
-                  <button type="button" @click="toggleDetails(o.id)">{{ expandedOrderIds.includes(o.id) ? 'Dölj' :
-                    'Visa' }}</button>
+                  <button type="button" @click="setStatus(o.id, 'processing')">
+                    Processing
+                  </button>
+                  <button type="button" @click="setStatus(o.id, 'shipped')">
+                    Shipped
+                  </button>
+                  <button type="button" @click="setStatus(o.id, 'cancelled')">
+                    Cancel
+                  </button>
+                  <button type="button" @click="toggleDetails(o.id)">
+                    {{ expandedOrderIds.includes(o.id) ? 'Dölj' : 'Visa' }}
+                  </button>
                 </td>
               </tr>
 
@@ -134,8 +151,17 @@ onMounted(fetchOrders)
                     <h4>Produkter</h4>
                     <ul>
                       <li v-for="(it, idx) in o.items || []" :key="idx">
-                        {{ it.name || ('#' + (it.productId || '?')) }} x {{ it.quantity || 0 }} — {{ ((it.subtotal ||
-                          (it.price && it.quantity ? it.price * it.quantity : 0))).toFixed(2) }} kr
+                        {{ it.name || '#' + (it.productId || '?') }} x
+                        {{ it.quantity || 0 }} —
+                        {{
+                          (
+                            it.subtotal ||
+                            (it.price && it.quantity
+                              ? it.price * it.quantity
+                              : 0)
+                          ).toFixed(2)
+                        }}
+                        kr
                       </li>
                     </ul>
 
@@ -148,10 +174,20 @@ onMounted(fetchOrders)
                       <div><strong>Telefon:</strong> {{ o.phone || '-' }}</div>
                       <div class="shipping-line">
                         <strong>Frakt:</strong>
-                        <span class="shipping-name">{{ o.shippingName || o.shipping_name || o.shippingOptionName ||
-                          o.shipping_option_name || (o.shippingOptionId ? ('#' + o.shippingOptionId) :
-                            (o.shipping_option_id ? ('#' + o.shipping_option_id) : '-')) }}</span>
-                        <span class="shipping-price">{{ (o.shippingOptionPrice || 0) }} kr</span>
+                        <span class="shipping-name">{{
+                          o.shippingName ||
+                          o.shipping_name ||
+                          o.shippingOptionName ||
+                          o.shipping_option_name ||
+                          (o.shippingOptionId
+                            ? '#' + o.shippingOptionId
+                            : o.shipping_option_id
+                              ? '#' + o.shipping_option_id
+                              : '-')
+                        }}</span>
+                        <span class="shipping-price"
+                          >{{ o.shippingOptionPrice || 0 }} kr</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -240,7 +276,6 @@ table {
     font-weight: 800;
     color: $color-text;
   }
-
 }
 
 .error {

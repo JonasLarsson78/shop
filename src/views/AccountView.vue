@@ -37,16 +37,19 @@
           </div>
 
           <div class="actions">
-            <BaseButton variant="primary" :type="'submit'" :disabled="loading">{{ loading ? 'Sparar…' : 'Spara' }}
+            <BaseButton variant="primary" :type="'submit'" :disabled="loading"
+              >{{ loading ? 'Sparar…' : 'Spara' }}
             </BaseButton>
-            <BaseButton variant="secondary" :type="'button'" @click="reset">Återställ</BaseButton>
+            <BaseButton variant="secondary" :type="'button'" @click="reset"
+              >Återställ</BaseButton
+            >
           </div>
 
           <p class="error" v-if="error">{{ error }}</p>
           <p class="success" v-if="success">{{ success }}</p>
         </form>
 
-        <div class="card orders-card" style="margin-top:1rem">
+        <div class="card orders-card" style="margin-top: 1rem">
           <h3>Dina ordrar</h3>
           <div v-if="ordersLoading">Laddar ordrar…</div>
           <div v-if="ordersError" class="error">{{ ordersError }}</div>
@@ -64,38 +67,82 @@
               <template v-for="o in orders" :key="o.id">
                 <tr>
                   <td class="col-id">{{ o.id }}</td>
-                  <td class="col-total">{{ (o.total).toFixed(2) }} kr</td>
-                  <td class="col-status"><span class="status" :data-status="o.status">{{ o.status }}</span></td>
-                  <td class="col-created">{{ new Date(o.createdAt).toLocaleString() }}</td>
+                  <td class="col-total">{{ o.total.toFixed(2) }} kr</td>
+                  <td class="col-status">
+                    <span class="status" :data-status="o.status">{{
+                      o.status
+                    }}</span>
+                  </td>
+                  <td class="col-created">
+                    {{ new Date(o.createdAt).toLocaleString() }}
+                  </td>
                   <td class="col-details">
-                    <button type="button" @click="toggleDetails(o.id)">{{ expandedOrderIds.includes(o.id) ? 'Dölj' :
-                      'Visa' }}</button>
+                    <button type="button" @click="toggleDetails(o.id)">
+                      {{ expandedOrderIds.includes(o.id) ? 'Dölj' : 'Visa' }}
+                    </button>
                   </td>
                 </tr>
 
-                <tr class="order-products" v-if="expandedOrderIds.includes(o.id)">
+                <tr
+                  class="order-products"
+                  v-if="expandedOrderIds.includes(o.id)"
+                >
                   <td colspan="5">
                     <div class="products-list">
                       <h4>Produkter</h4>
                       <ul class="product-items">
-                        <li v-for="(it, idx) in o.items || []" :key="idx" class="product-item">
-                          <div class="pi-name">{{ it.name || ('#' + (it.productId || '?')) }}</div>
+                        <li
+                          v-for="(it, idx) in o.items || []"
+                          :key="idx"
+                          class="product-item"
+                        >
+                          <div class="pi-name">
+                            {{ it.name || '#' + (it.productId || '?') }}
+                          </div>
                           <div class="pi-qty">x{{ it.quantity || 0 }}</div>
-                          <div class="pi-price">{{ ((it.subtotal || (it.price && it.quantity ? it.price * it.quantity :
-                            0))).toFixed(2) }} kr</div>
+                          <div class="pi-price">
+                            {{
+                              (
+                                it.subtotal ||
+                                (it.price && it.quantity
+                                  ? it.price * it.quantity
+                                  : 0)
+                              ).toFixed(2)
+                            }}
+                            kr
+                          </div>
                         </li>
                       </ul>
-                      <div class="shipping-line" style="margin-top:8px">
+                      <div class="shipping-line" style="margin-top: 8px">
                         <strong>Frakt:</strong>
-                        <span class="shipping-name">{{ o.shippingName || o.shipping_name || o.shippingOptionName ||
-                          o.shipping_option_name || (o.shippingOptionId ? ('#' + o.shippingOptionId) :
-                            (o.shipping_option_id ? ('#' + o.shipping_option_id) : '-')) }}</span>
-                        <span class="shipping-price">{{ (o.shippingOptionPrice || o.shippingPrice || o.shipping_price ||
-                          o.shipping_cost || o.shippingCost || 0) }} kr</span>
+                        <span class="shipping-name">{{
+                          o.shippingName ||
+                          o.shipping_name ||
+                          o.shippingOptionName ||
+                          o.shipping_option_name ||
+                          (o.shippingOptionId
+                            ? '#' + o.shippingOptionId
+                            : o.shipping_option_id
+                              ? '#' + o.shipping_option_id
+                              : '-')
+                        }}</span>
+                        <span class="shipping-price"
+                          >{{
+                            o.shippingOptionPrice ||
+                            o.shippingPrice ||
+                            o.shipping_price ||
+                            o.shipping_cost ||
+                            o.shippingCost ||
+                            0
+                          }}
+                          kr</span
+                        >
                       </div>
                       <div class="products-total">
                         <span>Totalt:</span>
-                        <span class="pt-price">{{ (o.total).toFixed(2) }} kr</span>
+                        <span class="pt-price"
+                          >{{ o.total.toFixed(2) }} kr</span
+                        >
                       </div>
                     </div>
                   </td>
@@ -165,14 +212,15 @@ const fetchMyOrders = async () => {
     const q = new URLSearchParams()
     q.set('userId', String(auth.state.user.id))
     if (auth.state.user.email) q.set('email', auth.state.user.email)
-    const res = await fetch(`/api/my-orders?${q.toString()}`, { signal: abortController.signal })
+    const res = await fetch(`/api/my-orders?${q.toString()}`, {
+      signal: abortController.signal,
+    })
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
 
       throw new Error(body.error || `Failed to fetch orders: ${res.status}`)
     }
     orders.value = await res.json()
-
   } catch (err: any) {
     if (err?.name === 'AbortError') return
     ordersError.value = err?.message || String(err)
@@ -265,7 +313,7 @@ async function save() {
 .account-view {
   padding: 2rem 1rem;
   display: flex;
-  justify-content: center
+  justify-content: center;
 }
 
 .card {
@@ -275,34 +323,34 @@ async function save() {
   background: $color-surface;
   border-radius: $radius-md;
   box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
-  border: 1px solid $color-border
+  border: 1px solid $color-border;
 }
 
 .card h2 {
   margin: 0 0 12px;
   font-size: 20px;
-  color: $color-text-strong
+  color: $color-text-strong;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px
+  gap: 12px;
 }
 
 .field {
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 .field.full {
-  grid-column: 1/-1
+  grid-column: 1/-1;
 }
 
 .label {
   font-size: 13px;
   color: $color-text-soft;
-  margin-bottom: 6px
+  margin-bottom: 6px;
 }
 
 input,
@@ -313,22 +361,22 @@ textarea {
   border-radius: $radius-sm;
   background: var(--theme-page-top, $color-surface-muted);
   color: $color-text;
-  font-size: 14px
+  font-size: 14px;
 }
 
 textarea {
-  resize: vertical
+  resize: vertical;
 }
 
-.account-form .field+.field {
-  margin-top: 0
+.account-form .field + .field {
+  margin-top: 0;
 }
 
 .actions {
   display: flex;
   gap: 10px;
   margin-top: 16px;
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 
 .btn {
@@ -337,34 +385,34 @@ textarea {
   border: 0;
   background: $color-brand;
   color: $color-brand-contrast;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .btn.secondary {
   background: $color-surface-muted;
-  color: $color-text
+  color: $color-text;
 }
 
 .btn:disabled {
   opacity: 0.6;
-  cursor: not-allowed
+  cursor: not-allowed;
 }
 
 .error {
   color: $color-danger;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .success {
   color: $color-success;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .not-logged {
   color: $color-text-soft;
   padding: 12px;
   background: rgba(#eef4ff, 0.6);
-  border-radius: 6px
+  border-radius: 6px;
 }
 
 /* Orders list styles */
@@ -398,19 +446,19 @@ textarea {
 
 .orders-table .col-id {
   width: 4rem;
-  font-weight: 700
+  font-weight: 700;
 }
 
 .orders-table .col-total {
-  width: 8rem
+  width: 8rem;
 }
 
 .orders-table .col-status {
-  width: 8rem
+  width: 8rem;
 }
 
 .orders-table .col-created {
-  width: 12rem
+  width: 12rem;
 }
 
 .status {
@@ -423,24 +471,24 @@ textarea {
   color: #1f3b8a;
 }
 
-.status[data-status="pending"] {
+.status[data-status='pending'] {
   background: #fff8e6;
-  color: #8a6d00
+  color: #8a6d00;
 }
 
-.status[data-status="processing"] {
+.status[data-status='processing'] {
   background: #eef2ff;
-  color: #0b5cff
+  color: #0b5cff;
 }
 
-.status[data-status="shipped"] {
+.status[data-status='shipped'] {
   background: #ecfdf5;
-  color: #056a38
+  color: #056a38;
 }
 
-.status[data-status="cancelled"] {
+.status[data-status='cancelled'] {
   background: #fff0f0;
-  color: #8a1f1f
+  color: #8a1f1f;
 }
 
 details summary {
@@ -519,21 +567,20 @@ details summary {
 
 ul {
   margin: 0.5rem 0 0 0;
-  padding-left: 1.2rem
+  padding-left: 1.2rem;
 }
 
-
-@media (max-width:$breakpoint-mobile) {
+@media (max-width: $breakpoint-mobile) {
   .grid {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 
   .card {
-    padding: 1rem
+    padding: 1rem;
   }
 
   .actions {
-    justify-content: stretch
+    justify-content: stretch;
   }
 }
 </style>

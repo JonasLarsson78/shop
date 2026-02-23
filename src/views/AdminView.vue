@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { isAdminAuthenticated, loginAdmin, logoutAdmin } from '../utils/adminAuth'
+import {
+  isAdminAuthenticated,
+  loginAdmin,
+  logoutAdmin,
+} from '../utils/adminAuth'
 import AdminLoginCard from '../components/admin/AdminLoginCard.vue'
 
 const isAuthenticated = ref(isAdminAuthenticated())
@@ -48,9 +52,15 @@ onUnmounted(() => {
 
 <template>
   <section>
-    <p v-if="!isAuthenticated">Logga in för att hantera inställningar och produkter.</p>
+    <p v-if="!isAuthenticated">
+      Logga in för att hantera inställningar och produkter.
+    </p>
 
-    <AdminLoginCard v-if="!isAuthenticated" :auth-error="authError" @login="handleLogin" />
+    <AdminLoginCard
+      v-if="!isAuthenticated"
+      :auth-error="authError"
+      @login="handleLogin"
+    />
 
     <template v-else>
       <div class="admin-shell">
@@ -62,7 +72,11 @@ onUnmounted(() => {
         <nav class="admin-section-nav">
           <RouterLink to="/admin/products">Produkter</RouterLink>
           <RouterLink to="/admin/groups">Grupper</RouterLink>
-          <RouterLink to="/admin/orders">Ordrar <span v-if="pendingCount > 0" class="badge">{{ pendingCount }}</span>
+          <RouterLink to="/admin/orders"
+            >Ordrar
+            <span v-if="pendingCount > 0" class="badge">{{
+              pendingCount
+            }}</span>
           </RouterLink>
           <RouterLink to="/admin/settings">Inställningar</RouterLink>
           <RouterLink to="/admin/theme">Tema</RouterLink>

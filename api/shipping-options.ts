@@ -16,7 +16,9 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === 'GET') {
-      const options = await query<ShippingOption[]>('SELECT id, name, price FROM shipping_options ORDER BY id ASC')
+      const options = await query<ShippingOption[]>(
+        'SELECT id, name, price FROM shipping_options ORDER BY id ASC'
+      )
       res.status(200).json(options)
       return
     }
@@ -31,7 +33,9 @@ export default async function handler(req: any, res: any) {
         'INSERT INTO shipping_options (name, price) VALUES (?, ?)',
         [name, Math.floor(price)]
       )
-      res.status(201).json({ id: result.insertId, name, price: Math.floor(price) })
+      res
+        .status(201)
+        .json({ id: result.insertId, name, price: Math.floor(price) })
       return
     }
 
@@ -41,7 +45,10 @@ export default async function handler(req: any, res: any) {
         res.status(400).json({ error: 'Invalid payload' })
         return
       }
-      await query('UPDATE shipping_options SET name = ?, price = ? WHERE id = ?', [name, Math.floor(price), id])
+      await query(
+        'UPDATE shipping_options SET name = ?, price = ? WHERE id = ?',
+        [name, Math.floor(price), id]
+      )
       res.status(200).json({ id, name, price: Math.floor(price) })
       return
     }
@@ -57,6 +64,13 @@ export default async function handler(req: any, res: any) {
       return
     }
   } catch (error) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to handle shipping options' })
+    res
+      .status(500)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle shipping options',
+      })
   }
 }

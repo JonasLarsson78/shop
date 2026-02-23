@@ -93,8 +93,13 @@ export const getQueryId = (req: VercelRequest): number | null => {
   return null
 }
 
-export const sendMethodNotAllowed = (res: VercelResponse, allowed: string[]) => {
-  res.status(405).json({ error: `Method not allowed. Allowed: ${allowed.join(', ')}` })
+export const sendMethodNotAllowed = (
+  res: VercelResponse,
+  allowed: string[]
+) => {
+  res
+    .status(405)
+    .json({ error: `Method not allowed. Allowed: ${allowed.join(', ')}` })
 }
 
 const normalizeGroupId = async (groupId: unknown) => {
@@ -108,17 +113,28 @@ const normalizeGroupId = async (groupId: unknown) => {
     return null
   }
 
-  const rows = await query<Array<{ id: number }>>('SELECT id FROM `groups` WHERE id = ? LIMIT 1', [normalizedGroupId])
+  const rows = await query<Array<{ id: number }>>(
+    'SELECT id FROM `groups` WHERE id = ? LIMIT 1',
+    [normalizedGroupId]
+  )
   return rows.length > 0 ? normalizedGroupId : null
 }
 
 let schemaReady = false
 let schemaInitPromise: Promise<void> | null = null
 
-const numericSqlTypes = new Set(['tinyint', 'smallint', 'mediumint', 'int', 'bigint'])
+const numericSqlTypes = new Set([
+  'tinyint',
+  'smallint',
+  'mediumint',
+  'int',
+  'bigint',
+])
 
 const resetLegacyStringIdTablesIfNeeded = async () => {
-  const columns = await query<Array<{ tableName: string; columnName: string; dataType: string }>>(`
+  const columns = await query<
+    Array<{ tableName: string; columnName: string; dataType: string }>
+  >(`
     SELECT
       TABLE_NAME AS tableName,
       COLUMN_NAME AS columnName,
@@ -135,7 +151,9 @@ const resetLegacyStringIdTablesIfNeeded = async () => {
     return
   }
 
-  const hasLegacyType = columns.some((column) => !numericSqlTypes.has(column.dataType.toLowerCase()))
+  const hasLegacyType = columns.some(
+    (column) => !numericSqlTypes.has(column.dataType.toLowerCase())
+  )
 
   if (!hasLegacyType) {
     return
@@ -148,7 +166,6 @@ const resetLegacyStringIdTablesIfNeeded = async () => {
 }
 
 const ensureSchemaAndSeedInternal = async () => {
-
   await resetLegacyStringIdTablesIfNeeded()
 
   await query(`
@@ -251,83 +268,103 @@ const ensureSchemaAndSeedInternal = async () => {
   const settingsColumnsToEnsure = [
     {
       name: 'sub_name',
-      alterSql: "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN sub_name VARCHAR(160) NOT NULL DEFAULT '' AFTER store_name",
     },
     {
       name: 'brand_image_url',
-      alterSql: "ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN brand_image_url TEXT NULL AFTER sub_name',
     },
     {
       name: 'hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER brand_image_url",
     },
     {
       name: 'hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_kicker",
     },
     {
       name: 'hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN hero_lead TEXT NULL AFTER hero_title',
     },
     {
       name: 'hero_point_1',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_1 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_lead",
     },
     {
       name: 'hero_point_2',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_2 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_1",
     },
     {
       name: 'hero_point_3',
-      alterSql: "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN hero_point_3 VARCHAR(255) NOT NULL DEFAULT '' AFTER hero_point_2",
     },
     {
       name: 'shop_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN shop_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER hero_point_3",
     },
     {
       name: 'shop_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN shop_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER shop_hero_kicker",
     },
     {
       name: 'shop_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN shop_hero_lead TEXT NULL AFTER shop_hero_title',
     },
     {
       name: 'cart_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN cart_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER shop_hero_lead",
     },
     {
       name: 'cart_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN cart_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER cart_hero_kicker",
     },
     {
       name: 'cart_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN cart_hero_lead TEXT NULL AFTER cart_hero_title',
     },
     {
       name: 'checkout_hero_kicker',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN checkout_hero_kicker VARCHAR(160) NOT NULL DEFAULT '' AFTER cart_hero_lead",
     },
     {
       name: 'checkout_hero_title',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN checkout_hero_title VARCHAR(255) NOT NULL DEFAULT '' AFTER checkout_hero_kicker",
     },
     {
       name: 'checkout_hero_lead',
-      alterSql: "ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN checkout_hero_lead TEXT NULL AFTER checkout_hero_title',
     },
     {
       name: 'shipping_cost',
-      alterSql: "ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN shipping_cost INT NOT NULL DEFAULT 0 AFTER checkout_hero_lead',
     },
     {
       name: 'free_shipping_threshold',
-      alterSql: "ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN free_shipping_threshold INT NOT NULL DEFAULT 0 AFTER shipping_cost',
     },
     {
       name: 'vat_percent',
-      alterSql: "ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold",
+      alterSql:
+        'ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold',
     },
   ] as const
 
@@ -339,14 +376,13 @@ const ensureSchemaAndSeedInternal = async () => {
          AND TABLE_NAME = 'settings'
          AND COLUMN_NAME = ?
        LIMIT 1`,
-      [column.name],
+      [column.name]
     )
 
     if (!existingColumn[0]) {
       await query(column.alterSql)
     }
   }
-
 }
 
 export const ensureSchemaAndSeed = async () => {
@@ -369,7 +405,16 @@ export const ensureSchemaAndSeed = async () => {
 }
 
 export const listProducts = async (): Promise<Product[]> => {
-  const rows = await query<Array<{ id: number; name: string; description: string; price: number; imageUrl: string; groupId: number | null }>>(`
+  const rows = await query<
+    Array<{
+      id: number
+      name: string
+      description: string
+      price: number
+      imageUrl: string
+      groupId: number | null
+    }>
+  >(`
     SELECT id, name, description, price, image_url AS imageUrl, group_id AS groupId
     FROM products
     ORDER BY created_at ASC
@@ -381,9 +426,13 @@ export const listProducts = async (): Promise<Product[]> => {
 export const createProduct = async (rawPayload: unknown): Promise<Product> => {
   const payload = asRecord(rawPayload)
   const name = typeof payload.name === 'string' ? payload.name.trim() : ''
-  const description = typeof payload.description === 'string' ? payload.description.trim() : ''
+  const description =
+    typeof payload.description === 'string' ? payload.description.trim() : ''
   const price = Number(payload.price)
-  const imageUrl = typeof payload.imageUrl === 'string' && payload.imageUrl.trim() ? payload.imageUrl.trim() : DEFAULT_PRODUCT_IMAGE
+  const imageUrl =
+    typeof payload.imageUrl === 'string' && payload.imageUrl.trim()
+      ? payload.imageUrl.trim()
+      : DEFAULT_PRODUCT_IMAGE
 
   if (!name || !description || !Number.isFinite(price) || price < 0) {
     throw new Error('Invalid product payload')
@@ -393,7 +442,7 @@ export const createProduct = async (rawPayload: unknown): Promise<Product> => {
 
   const result = await query<ResultSetHeader>(
     'INSERT INTO products (name, description, price, image_url, group_id) VALUES (?, ?, ?, ?, ?)',
-    [name, description, Math.floor(price), imageUrl, groupId],
+    [name, description, Math.floor(price), imageUrl, groupId]
   )
 
   const id = result.insertId
@@ -408,12 +457,19 @@ export const createProduct = async (rawPayload: unknown): Promise<Product> => {
   }
 }
 
-export const updateProduct = async (productId: number, rawPayload: unknown): Promise<Product> => {
+export const updateProduct = async (
+  productId: number,
+  rawPayload: unknown
+): Promise<Product> => {
   const payload = asRecord(rawPayload)
   const name = typeof payload.name === 'string' ? payload.name.trim() : ''
-  const description = typeof payload.description === 'string' ? payload.description.trim() : ''
+  const description =
+    typeof payload.description === 'string' ? payload.description.trim() : ''
   const price = Number(payload.price)
-  const imageUrl = typeof payload.imageUrl === 'string' && payload.imageUrl.trim() ? payload.imageUrl.trim() : DEFAULT_PRODUCT_IMAGE
+  const imageUrl =
+    typeof payload.imageUrl === 'string' && payload.imageUrl.trim()
+      ? payload.imageUrl.trim()
+      : DEFAULT_PRODUCT_IMAGE
 
   if (!name || !description || !Number.isFinite(price) || price < 0) {
     throw new Error('Invalid product payload')
@@ -423,7 +479,7 @@ export const updateProduct = async (productId: number, rawPayload: unknown): Pro
 
   await query(
     'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, group_id = ? WHERE id = ?',
-    [name, description, Math.floor(price), imageUrl, groupId, productId],
+    [name, description, Math.floor(price), imageUrl, groupId, productId]
   )
 
   return {
@@ -441,11 +497,15 @@ export const deleteProduct = async (productId: number) => {
 }
 
 export const listGroups = async (): Promise<ProductGroup[]> => {
-  const rows = await query<Array<{ id: number; name: string }>>('SELECT id, name FROM `groups` ORDER BY created_at ASC')
+  const rows = await query<Array<{ id: number; name: string }>>(
+    'SELECT id, name FROM `groups` ORDER BY created_at ASC'
+  )
   return rows
 }
 
-export const createGroup = async (rawPayload: unknown): Promise<ProductGroup> => {
+export const createGroup = async (
+  rawPayload: unknown
+): Promise<ProductGroup> => {
   const payload = asRecord(rawPayload)
   const name = typeof payload.name === 'string' ? payload.name.trim() : ''
 
@@ -453,13 +513,19 @@ export const createGroup = async (rawPayload: unknown): Promise<ProductGroup> =>
     throw new Error('Invalid group payload')
   }
 
-  const result = await query<ResultSetHeader>('INSERT INTO `groups` (name) VALUES (?)', [name])
+  const result = await query<ResultSetHeader>(
+    'INSERT INTO `groups` (name) VALUES (?)',
+    [name]
+  )
   const id = result.insertId
 
   return { id, name }
 }
 
-export const updateGroup = async (groupId: number, rawPayload: unknown): Promise<ProductGroup> => {
+export const updateGroup = async (
+  groupId: number,
+  rawPayload: unknown
+): Promise<ProductGroup> => {
   const payload = asRecord(rawPayload)
   const name = typeof payload.name === 'string' ? payload.name.trim() : ''
 
@@ -476,29 +542,31 @@ export const deleteGroup = async (groupId: number) => {
 }
 
 export const getSettings = async (): Promise<ShopSettings | null> => {
-  const rows = await query<Array<{
-    storeName: string
-    subName: string
-    brandImageUrl: string
-    heroKicker: string
-    heroTitle: string
-    heroLead: string
-    heroPoint1: string
-    heroPoint2: string
-    heroPoint3: string
-    shopHeroKicker: string
-    shopHeroTitle: string
-    shopHeroLead: string
-    cartHeroKicker: string
-    cartHeroTitle: string
-    cartHeroLead: string
-    checkoutHeroKicker: string
-    checkoutHeroTitle: string
-    checkoutHeroLead: string
-    shippingCost: number
-    freeShippingThreshold: number
-    vatPercent: number
-  }>>(`
+  const rows = await query<
+    Array<{
+      storeName: string
+      subName: string
+      brandImageUrl: string
+      heroKicker: string
+      heroTitle: string
+      heroLead: string
+      heroPoint1: string
+      heroPoint2: string
+      heroPoint3: string
+      shopHeroKicker: string
+      shopHeroTitle: string
+      shopHeroLead: string
+      cartHeroKicker: string
+      cartHeroTitle: string
+      cartHeroLead: string
+      checkoutHeroKicker: string
+      checkoutHeroTitle: string
+      checkoutHeroLead: string
+      shippingCost: number
+      freeShippingThreshold: number
+      vatPercent: number
+    }>
+  >(`
     SELECT
       store_name AS storeName,
       sub_name AS subName,
@@ -533,51 +601,95 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
   return rows[0]
 }
 
-export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings> => {
+export const updateSettings = async (
+  rawPayload: unknown
+): Promise<ShopSettings> => {
   const payload = asRecord(rawPayload)
   const currentSettings = await getSettings()
 
-  const storeName = typeof payload.storeName === 'string' && payload.storeName.trim() ? payload.storeName.trim() : (currentSettings?.storeName ?? '')
-  const subName = typeof payload.subName === 'string' ? payload.subName.trim() : (currentSettings?.subName ?? '')
-  const brandImageUrl = typeof payload.brandImageUrl === 'string' ? payload.brandImageUrl.trim() : (currentSettings?.brandImageUrl ?? '')
-  const heroKicker = typeof payload.heroKicker === 'string' ? payload.heroKicker.trim() : (currentSettings?.heroKicker ?? '')
-  const heroTitle = typeof payload.heroTitle === 'string' ? payload.heroTitle.trim() : (currentSettings?.heroTitle ?? '')
-  const heroLead = typeof payload.heroLead === 'string' ? payload.heroLead.trim() : (currentSettings?.heroLead ?? '')
-  const heroPoint1 = typeof payload.heroPoint1 === 'string' ? payload.heroPoint1.trim() : (currentSettings?.heroPoint1 ?? '')
-  const heroPoint2 = typeof payload.heroPoint2 === 'string' ? payload.heroPoint2.trim() : (currentSettings?.heroPoint2 ?? '')
-  const heroPoint3 = typeof payload.heroPoint3 === 'string' ? payload.heroPoint3.trim() : (currentSettings?.heroPoint3 ?? '')
-  const shopHeroKicker = typeof payload.shopHeroKicker === 'string'
-    ? payload.shopHeroKicker.trim()
-    : (currentSettings?.shopHeroKicker ?? '')
-  const shopHeroTitle = typeof payload.shopHeroTitle === 'string'
-    ? payload.shopHeroTitle.trim()
-    : (currentSettings?.shopHeroTitle ?? '')
-  const shopHeroLead = typeof payload.shopHeroLead === 'string'
-    ? payload.shopHeroLead.trim()
-    : (currentSettings?.shopHeroLead ?? '')
-  const cartHeroKicker = typeof payload.cartHeroKicker === 'string'
-    ? payload.cartHeroKicker.trim()
-    : (currentSettings?.cartHeroKicker ?? '')
-  const cartHeroTitle = typeof payload.cartHeroTitle === 'string'
-    ? payload.cartHeroTitle.trim()
-    : (currentSettings?.cartHeroTitle ?? '')
-  const cartHeroLead = typeof payload.cartHeroLead === 'string'
-    ? payload.cartHeroLead.trim()
-    : (currentSettings?.cartHeroLead ?? '')
-  const checkoutHeroKicker = typeof payload.checkoutHeroKicker === 'string'
-    ? payload.checkoutHeroKicker.trim()
-    : (currentSettings?.checkoutHeroKicker ?? '')
-  const checkoutHeroTitle = typeof payload.checkoutHeroTitle === 'string'
-    ? payload.checkoutHeroTitle.trim()
-    : (currentSettings?.checkoutHeroTitle ?? '')
-  const checkoutHeroLead = typeof payload.checkoutHeroLead === 'string'
-    ? payload.checkoutHeroLead.trim()
-    : (currentSettings?.checkoutHeroLead ?? '')
-  const shippingCost = Number.isFinite(Number(payload.shippingCost)) ? Math.max(0, Math.floor(Number(payload.shippingCost))) : (currentSettings?.shippingCost ?? 0)
-  const freeShippingThreshold = Number.isFinite(Number(payload.freeShippingThreshold))
+  const storeName =
+    typeof payload.storeName === 'string' && payload.storeName.trim()
+      ? payload.storeName.trim()
+      : (currentSettings?.storeName ?? '')
+  const subName =
+    typeof payload.subName === 'string'
+      ? payload.subName.trim()
+      : (currentSettings?.subName ?? '')
+  const brandImageUrl =
+    typeof payload.brandImageUrl === 'string'
+      ? payload.brandImageUrl.trim()
+      : (currentSettings?.brandImageUrl ?? '')
+  const heroKicker =
+    typeof payload.heroKicker === 'string'
+      ? payload.heroKicker.trim()
+      : (currentSettings?.heroKicker ?? '')
+  const heroTitle =
+    typeof payload.heroTitle === 'string'
+      ? payload.heroTitle.trim()
+      : (currentSettings?.heroTitle ?? '')
+  const heroLead =
+    typeof payload.heroLead === 'string'
+      ? payload.heroLead.trim()
+      : (currentSettings?.heroLead ?? '')
+  const heroPoint1 =
+    typeof payload.heroPoint1 === 'string'
+      ? payload.heroPoint1.trim()
+      : (currentSettings?.heroPoint1 ?? '')
+  const heroPoint2 =
+    typeof payload.heroPoint2 === 'string'
+      ? payload.heroPoint2.trim()
+      : (currentSettings?.heroPoint2 ?? '')
+  const heroPoint3 =
+    typeof payload.heroPoint3 === 'string'
+      ? payload.heroPoint3.trim()
+      : (currentSettings?.heroPoint3 ?? '')
+  const shopHeroKicker =
+    typeof payload.shopHeroKicker === 'string'
+      ? payload.shopHeroKicker.trim()
+      : (currentSettings?.shopHeroKicker ?? '')
+  const shopHeroTitle =
+    typeof payload.shopHeroTitle === 'string'
+      ? payload.shopHeroTitle.trim()
+      : (currentSettings?.shopHeroTitle ?? '')
+  const shopHeroLead =
+    typeof payload.shopHeroLead === 'string'
+      ? payload.shopHeroLead.trim()
+      : (currentSettings?.shopHeroLead ?? '')
+  const cartHeroKicker =
+    typeof payload.cartHeroKicker === 'string'
+      ? payload.cartHeroKicker.trim()
+      : (currentSettings?.cartHeroKicker ?? '')
+  const cartHeroTitle =
+    typeof payload.cartHeroTitle === 'string'
+      ? payload.cartHeroTitle.trim()
+      : (currentSettings?.cartHeroTitle ?? '')
+  const cartHeroLead =
+    typeof payload.cartHeroLead === 'string'
+      ? payload.cartHeroLead.trim()
+      : (currentSettings?.cartHeroLead ?? '')
+  const checkoutHeroKicker =
+    typeof payload.checkoutHeroKicker === 'string'
+      ? payload.checkoutHeroKicker.trim()
+      : (currentSettings?.checkoutHeroKicker ?? '')
+  const checkoutHeroTitle =
+    typeof payload.checkoutHeroTitle === 'string'
+      ? payload.checkoutHeroTitle.trim()
+      : (currentSettings?.checkoutHeroTitle ?? '')
+  const checkoutHeroLead =
+    typeof payload.checkoutHeroLead === 'string'
+      ? payload.checkoutHeroLead.trim()
+      : (currentSettings?.checkoutHeroLead ?? '')
+  const shippingCost = Number.isFinite(Number(payload.shippingCost))
+    ? Math.max(0, Math.floor(Number(payload.shippingCost)))
+    : (currentSettings?.shippingCost ?? 0)
+  const freeShippingThreshold = Number.isFinite(
+    Number(payload.freeShippingThreshold)
+  )
     ? Math.max(0, Math.floor(Number(payload.freeShippingThreshold)))
     : (currentSettings?.freeShippingThreshold ?? 0)
-  const vatPercent = Number.isFinite(Number(payload.vatPercent)) ? Math.max(0, Math.floor(Number(payload.vatPercent))) : (currentSettings?.vatPercent ?? 25)
+  const vatPercent = Number.isFinite(Number(payload.vatPercent))
+    ? Math.max(0, Math.floor(Number(payload.vatPercent)))
+    : (currentSettings?.vatPercent ?? 25)
 
   await query(
     `INSERT INTO settings (
@@ -649,7 +761,7 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
       shippingCost,
       freeShippingThreshold,
       vatPercent,
-    ],
+    ]
   )
 
   return {
@@ -678,7 +790,11 @@ export const updateSettings = async (rawPayload: unknown): Promise<ShopSettings>
 }
 
 export const getShopSnapshot = async () => {
-  const [products, groups, settings] = await Promise.all([listProducts(), listGroups(), getSettings()])
+  const [products, groups, settings] = await Promise.all([
+    listProducts(),
+    listGroups(),
+    getSettings(),
+  ])
 
   return {
     products,
@@ -704,7 +820,10 @@ export type Order = {
 }
 
 // ...existing code...
-export const listOrders = async (filters?: { userId?: number; email?: string }): Promise<Order[]> => {
+export const listOrders = async (filters?: {
+  userId?: number
+  email?: string
+}): Promise<Order[]> => {
   let where = ''
   const params: any[] = []
   if (filters) {
@@ -718,50 +837,64 @@ export const listOrders = async (filters?: { userId?: number; email?: string }):
       params.push(filters.email)
     }
   }
-  const rows = await query<Array<any>>(`
+  const rows = await query<Array<any>>(
+    `
     SELECT o.id, o.customer_name AS customerName, o.email, o.address, o.phone, o.zip, o.city, o.items, o.total, o.shipping_option_id AS shippingOptionId, o.status, o.created_at AS createdAt, o.updated_at AS updatedAt, o.user_id,
            so.name AS shippingOptionName, so.price AS shippingOptionPrice
     FROM orders o
     LEFT JOIN shipping_options so ON o.shipping_option_id = so.id
     ${where ? 'WHERE ' + where : ''}
     ORDER BY o.created_at DESC
-  `, params)
+  `,
+    params
+  )
   try {
     return rows.map((r) => {
-      let parsedItems = r.items;
+      let parsedItems = r.items
       try {
         if (typeof r.items === 'string') {
-          parsedItems = JSON.parse(r.items || '[]');
+          parsedItems = JSON.parse(r.items || '[]')
         }
       } catch (err) {
-        console.error('Failed to parse items for order:', r.id, err);
-        parsedItems = [];
+        console.error('Failed to parse items for order:', r.id, err)
+        parsedItems = []
       }
       return {
         ...r,
         items: parsedItems,
         shippingOptionName: r.shippingOptionName || null,
-        shippingOptionPrice: typeof r.shippingOptionPrice === 'number' ? r.shippingOptionPrice : null,
-      };
-    });
+        shippingOptionPrice:
+          typeof r.shippingOptionPrice === 'number'
+            ? r.shippingOptionPrice
+            : null,
+      }
+    })
   } catch (err) {
-    console.error('Error mapping orders:', err);
-    throw err;
+    console.error('Error mapping orders:', err)
+    throw err
   }
 }
 
 export const createOrder = async (rawPayload: unknown): Promise<Order> => {
   const payload = asRecord(rawPayload)
-  const customerName = typeof payload.customerName === 'string' ? payload.customerName.trim() : ''
+  const customerName =
+    typeof payload.customerName === 'string' ? payload.customerName.trim() : ''
   const email = typeof payload.email === 'string' ? payload.email.trim() : ''
-  const address = typeof payload.address === 'string' ? payload.address.trim() : ''
+  const address =
+    typeof payload.address === 'string' ? payload.address.trim() : ''
   const phone = typeof payload.phone === 'string' ? payload.phone.trim() : ''
   const zip = typeof payload.zip === 'string' ? payload.zip.trim() : ''
   const city = typeof payload.city === 'string' ? payload.city.trim() : ''
   const items = Array.isArray(payload.items) ? payload.items : []
-  const total = Number.isFinite(Number(payload.total)) ? Math.max(0, Math.floor(Number(payload.total))) : 0
-  const shippingOptionId = Number.isFinite(Number(payload.shippingOptionId)) ? Math.floor(Number(payload.shippingOptionId)) : null
-  const userId = Number.isFinite(Number(payload.userId)) ? Math.floor(Number(payload.userId)) : null
+  const total = Number.isFinite(Number(payload.total))
+    ? Math.max(0, Math.floor(Number(payload.total)))
+    : 0
+  const shippingOptionId = Number.isFinite(Number(payload.shippingOptionId))
+    ? Math.floor(Number(payload.shippingOptionId))
+    : null
+  const userId = Number.isFinite(Number(payload.userId))
+    ? Math.floor(Number(payload.userId))
+    : null
 
   if (!customerName || !email || items.length === 0) {
     throw new Error('Invalid order payload')
@@ -769,7 +902,19 @@ export const createOrder = async (rawPayload: unknown): Promise<Order> => {
 
   const result = await query<ResultSetHeader>(
     'INSERT INTO orders (customer_name, email, user_id, address, phone, zip, city, items, total, shipping_option_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [customerName, email, userId, address, phone, zip, city, JSON.stringify(items), total, shippingOptionId, 'pending'],
+    [
+      customerName,
+      email,
+      userId,
+      address,
+      phone,
+      zip,
+      city,
+      JSON.stringify(items),
+      total,
+      shippingOptionId,
+      'pending',
+    ]
   )
 
   const id = result.insertId
@@ -792,9 +937,15 @@ export const createOrder = async (rawPayload: unknown): Promise<Order> => {
   }
 }
 
-export const updateOrderStatus = async (orderId: number, rawPayload: unknown): Promise<Order> => {
+export const updateOrderStatus = async (
+  orderId: number,
+  rawPayload: unknown
+): Promise<Order> => {
   const payload = asRecord(rawPayload)
-  const status = typeof payload.status === 'string' && payload.status.trim() ? payload.status.trim() : null
+  const status =
+    typeof payload.status === 'string' && payload.status.trim()
+      ? payload.status.trim()
+      : null
 
   if (!status) {
     throw new Error('Invalid status')
@@ -802,7 +953,10 @@ export const updateOrderStatus = async (orderId: number, rawPayload: unknown): P
 
   await query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId])
 
-  const rows = await query<Array<any>>('SELECT id, customer_name AS customerName, email, address, phone, zip, city, items, total, shipping_option_id AS shippingOptionId, status, created_at AS createdAt, updated_at AS updatedAt FROM orders WHERE id = ? LIMIT 1', [orderId])
+  const rows = await query<Array<any>>(
+    'SELECT id, customer_name AS customerName, email, address, phone, zip, city, items, total, shipping_option_id AS shippingOptionId, status, created_at AS createdAt, updated_at AS updatedAt FROM orders WHERE id = ? LIMIT 1',
+    [orderId]
+  )
 
   if (!rows[0]) {
     throw new Error('Order not found')

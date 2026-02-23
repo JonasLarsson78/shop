@@ -1,6 +1,10 @@
 <template>
-  <button :type="type" :class="['base-btn', variant]
-    " :disabled="disabled" @click="$emit('click')">
+  <button
+    :type="type"
+    :class="['base-btn', variant]"
+    :disabled="disabled"
+    @click="$emit('click')"
+  >
     <slot />
   </button>
 </template>
@@ -42,12 +46,12 @@ defineEmits(['click'])
 
 .base-btn:disabled {
   opacity: 0.6;
-  cursor: not-allowed
+  cursor: not-allowed;
 }
 
-@media (max-width:$breakpoint-mobile) {
+@media (max-width: $breakpoint-mobile) {
   .base-btn {
-    width: 100%
+    width: 100%;
   }
 }
 </style>

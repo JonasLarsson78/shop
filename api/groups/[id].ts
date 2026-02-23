@@ -1,4 +1,11 @@
-import { deleteGroup, ensureSchemaAndSeed, getQueryId, parseBody, sendMethodNotAllowed, updateGroup } from '../_shop'
+import {
+  deleteGroup,
+  ensureSchemaAndSeed,
+  getQueryId,
+  parseBody,
+  sendMethodNotAllowed,
+  updateGroup,
+} from '../_shop'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'PUT' && req.method !== 'DELETE') {
@@ -25,6 +32,13 @@ export default async function handler(req: any, res: any) {
     const group = await updateGroup(groupId, parseBody(req))
     res.status(200).json(group)
   } catch (error) {
-    res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to handle group request' })
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle group request',
+      })
   }
 }

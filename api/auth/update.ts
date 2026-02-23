@@ -43,7 +43,10 @@ export default async function handler(req: any, res: any) {
 
     await query(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, params)
 
-    const rows: any = await query('SELECT id, email, name, address, phone, zip, city FROM users WHERE id = ? LIMIT 1', [id])
+    const rows: any = await query(
+      'SELECT id, email, name, address, phone, zip, city FROM users WHERE id = ? LIMIT 1',
+      [id]
+    )
     if (!Array.isArray(rows) || rows.length === 0) {
       res.status(404).json({ error: 'User not found' })
       return

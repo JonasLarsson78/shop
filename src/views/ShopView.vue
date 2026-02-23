@@ -28,7 +28,8 @@ const activeGroupId = computed(() => {
   return parsedId
 })
 
-const isValidGroup = (groupId: number) => shopStore.groups.some((group) => group.id === groupId)
+const isValidGroup = (groupId: number) =>
+  shopStore.groups.some((group) => group.id === groupId)
 
 const visibleProducts = computed(() => {
   if (activeGroupId.value === 'all') {
@@ -43,7 +44,9 @@ const visibleProducts = computed(() => {
     return shopStore.products
   }
 
-  return shopStore.products.filter((product) => product.groupId === activeGroupId.value)
+  return shopStore.products.filter(
+    (product) => product.groupId === activeGroupId.value
+  )
 })
 
 const activeGroupName = computed(() => {
@@ -82,11 +85,16 @@ const getSelectedQuantity = (productId: number) => {
 
 const setSelectedQuantity = (productId: number, rawValue: string) => {
   const parsedValue = Number(rawValue)
-  selectedQuantities.value[productId] = Number.isFinite(parsedValue) ? Math.max(1, Math.floor(parsedValue)) : 1
+  selectedQuantities.value[productId] = Number.isFinite(parsedValue)
+    ? Math.max(1, Math.floor(parsedValue))
+    : 1
 }
 
 const decreaseSelectedQuantity = (productId: number) => {
-  selectedQuantities.value[productId] = Math.max(1, getSelectedQuantity(productId) - 1)
+  selectedQuantities.value[productId] = Math.max(
+    1,
+    getSelectedQuantity(productId) - 1
+  )
 }
 
 const increaseSelectedQuantity = (productId: number) => {
@@ -98,7 +106,9 @@ const addProductToCart = (productId: number) => {
   shopStore.addToCart(productId, quantity)
   recentlyAddedProductIds.value[productId] = true
 
-  const addedProduct = shopStore.products.find((product) => product.id === productId)
+  const addedProduct = shopStore.products.find(
+    (product) => product.id === productId
+  )
   toastMessage.value = `${quantity} st ${addedProduct?.name ?? 'produkt'} tillagd i varukorgen`
   showToast.value = true
 
@@ -139,42 +149,99 @@ onBeforeUnmount(() => {
 
     <div class="shop-content">
       <header class="shop-header card">
-        <p v-if="shopStore.settings.shopHeroKicker" class="shop-kicker">{{ shopStore.settings.shopHeroKicker }}</p>
-        <h2 v-if="shopStore.settings.shopHeroTitle">{{ shopStore.settings.shopHeroTitle }}</h2>
-        <p v-if="shopStore.settings.shopHeroLead">{{ shopStore.settings.shopHeroLead }}</p>
+        <p v-if="shopStore.settings.shopHeroKicker" class="shop-kicker">
+          {{ shopStore.settings.shopHeroKicker }}
+        </p>
+        <h2 v-if="shopStore.settings.shopHeroTitle">
+          {{ shopStore.settings.shopHeroTitle }}
+        </h2>
+        <p v-if="shopStore.settings.shopHeroLead">
+          {{ shopStore.settings.shopHeroLead }}
+        </p>
       </header>
 
       <div class="group-section">
         <h3 class="group-title">{{ activeGroupName }}</h3>
 
         <div class="grid">
-          <article v-for="product in visibleProducts" :key="product.id" class="card product-card">
-            <RouterLink :to="{ name: 'product', params: { id: product.id } }" class="product-media-link">
-              <div v-if="!hasProductImage(product.imageUrl)" class="product-image product-image-missing" role="img"
-                aria-label="Bild saknas">Bild saknas</div>
-              <img v-else :src="product.imageUrl" :alt="product.name" class="product-image" loading="lazy" />
+          <article
+            v-for="product in visibleProducts"
+            :key="product.id"
+            class="card product-card"
+          >
+            <RouterLink
+              :to="{ name: 'product', params: { id: product.id } }"
+              class="product-media-link"
+            >
+              <div
+                v-if="!hasProductImage(product.imageUrl)"
+                class="product-image product-image-missing"
+                role="img"
+                aria-label="Bild saknas"
+              >
+                Bild saknas
+              </div>
+              <img
+                v-else
+                :src="product.imageUrl"
+                :alt="product.name"
+                class="product-image"
+                loading="lazy"
+              />
             </RouterLink>
             <h3>
-              <RouterLink :to="{ name: 'product', params: { id: product.id } }">{{ product.name }}</RouterLink>
+              <RouterLink
+                :to="{ name: 'product', params: { id: product.id } }"
+                >{{ product.name }}</RouterLink
+              >
             </h3>
             <p class="price">{{ product.price }} kr</p>
             <label class="product-quantity">
               Antal
               <div class="quantity-stepper">
-                <button type="button" class="step-button" @click="decreaseSelectedQuantity(product.id)">−</button>
-                <input type="number" min="1" :value="getSelectedQuantity(product.id)"
-                  @input="setSelectedQuantity(product.id, ($event.target as HTMLInputElement).value)" />
-                <button type="button" class="step-button" @click="increaseSelectedQuantity(product.id)">+</button>
+                <button
+                  type="button"
+                  class="step-button"
+                  @click="decreaseSelectedQuantity(product.id)"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  :value="getSelectedQuantity(product.id)"
+                  @input="
+                    setSelectedQuantity(
+                      product.id,
+                      ($event.target as HTMLInputElement).value
+                    )
+                  "
+                />
+                <button
+                  type="button"
+                  class="step-button"
+                  @click="increaseSelectedQuantity(product.id)"
+                >
+                  +
+                </button>
               </div>
             </label>
-            <button :class="{ 'button-added': recentlyAddedProductIds[product.id] }"
-              @click="addProductToCart(product.id)">
-              {{ recentlyAddedProductIds[product.id] ? 'Tillagd ✓' : 'Lägg i varukorg' }}
+            <button
+              :class="{ 'button-added': recentlyAddedProductIds[product.id] }"
+              @click="addProductToCart(product.id)"
+            >
+              {{
+                recentlyAddedProductIds[product.id]
+                  ? 'Tillagd ✓'
+                  : 'Lägg i varukorg'
+              }}
             </button>
           </article>
         </div>
 
-        <p v-if="visibleProducts.length === 0">Inga produkter i denna grupp ännu.</p>
+        <p v-if="visibleProducts.length === 0">
+          Inga produkter i denna grupp ännu.
+        </p>
       </div>
     </div>
 
@@ -203,7 +270,7 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .shop-content {
@@ -212,7 +279,11 @@ select {
 }
 
 .shop-header {
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
   display: grid;
   gap: 0.45rem;
 
@@ -241,7 +312,7 @@ select {
   gap: 1rem;
 }
 
-.group-section+.group-section {
+.group-section + .group-section {
   margin-top: 1.2rem;
 }
 
@@ -253,7 +324,9 @@ select {
   display: grid;
   grid-template-rows: auto auto 1fr auto auto auto;
   gap: 0.45rem;
-  transition: transform 0.18s ease, border-color 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -303,7 +376,11 @@ select {
   border-radius: $radius-sm;
   margin-bottom: 0.75rem;
   border: 1px solid rgba($color-brand, 0.18);
-  background: linear-gradient(145deg, #ffffff 0%, rgba($color-brand, 0.08) 100%);
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    rgba($color-brand, 0.08) 100%
+  );
 }
 
 .product-image-missing {
@@ -311,7 +388,11 @@ select {
   place-items: center;
   font-weight: 700;
   color: var(--theme-accent);
-  background: linear-gradient(145deg, var(--theme-hero-top) 0%, var(--theme-hero-mid) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--theme-hero-top) 0%,
+    var(--theme-hero-mid) 100%
+  );
   border-color: var(--theme-accent-border);
 }
 
@@ -355,7 +436,9 @@ select {
 
 .cart-toast-enter-active,
 .cart-toast-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .cart-toast-enter-from,

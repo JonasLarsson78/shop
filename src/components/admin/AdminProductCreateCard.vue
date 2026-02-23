@@ -57,19 +57,32 @@ const toggleForm = () => {
 
       <label>
         Pris (kr)
-        <input v-model.number="productForm.price" min="1" required type="number" />
+        <input
+          v-model.number="productForm.price"
+          min="1"
+          required
+          type="number"
+        />
       </label>
 
       <label>
         Bild-URL
-        <input v-model="productForm.imageUrl" placeholder="https://..." type="text" />
+        <input
+          v-model="productForm.imageUrl"
+          placeholder="https://..."
+          type="text"
+        />
       </label>
 
       <label>
         Grupp
         <select v-model="productForm.groupId">
           <option value="">Ingen grupp</option>
-          <option v-for="group in shopStore.groups" :key="group.id" :value="group.id">
+          <option
+            v-for="group in shopStore.groups"
+            :key="group.id"
+            :value="group.id"
+          >
             {{ group.name }}
           </option>
         </select>
@@ -102,7 +115,7 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .create-header {

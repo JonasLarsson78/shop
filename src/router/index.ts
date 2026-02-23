@@ -24,16 +24,29 @@ const router = createRouter({
     { path: '/checkout', name: 'checkout', component: CheckoutView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/register', name: 'register', component: RegisterView },
-    { path: '/account', name: 'account', component: AccountView, meta: { requiresAuth: true } },
+    {
+      path: '/account',
+      name: 'account',
+      component: AccountView,
+      meta: { requiresAuth: true },
+    },
     {
       path: '/admin',
       component: AdminView,
       children: [
         { path: '', redirect: '/admin/products' },
-        { path: 'products', name: 'admin-products', component: AdminProductsView },
+        {
+          path: 'products',
+          name: 'admin-products',
+          component: AdminProductsView,
+        },
         { path: 'groups', name: 'admin-groups', component: AdminGroupsView },
         { path: 'orders', name: 'admin-orders', component: AdminOrdersView },
-        { path: 'settings', name: 'admin-settings', component: AdminSettingsView },
+        {
+          path: 'settings',
+          name: 'admin-settings',
+          component: AdminSettingsView,
+        },
         { path: 'theme', name: 'admin-theme', component: AdminThemeView },
       ],
     },

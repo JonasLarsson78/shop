@@ -1,4 +1,10 @@
-import { createProduct, ensureSchemaAndSeed, listProducts, parseBody, sendMethodNotAllowed } from './_shop'
+import {
+  createProduct,
+  ensureSchemaAndSeed,
+  listProducts,
+  parseBody,
+  sendMethodNotAllowed,
+} from './_shop'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -18,6 +24,13 @@ export default async function handler(req: any, res: any) {
     const product = await createProduct(parseBody(req))
     res.status(201).json(product)
   } catch (error) {
-    res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to handle products request' })
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle products request',
+      })
   }
 }

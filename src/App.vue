@@ -32,9 +32,15 @@ const logout = () => {
 
 const storeName = computed(() => shopStore.settings.storeName || '')
 
-const subName = computed(() => (shopStore.hasInitializedData ? shopStore.settings.subName || '' : ''))
+const subName = computed(() =>
+  shopStore.hasInitializedData ? shopStore.settings.subName || '' : ''
+)
 
-const brandImageUrl = computed(() => (shopStore.hasInitializedData ? shopStore.settings.brandImageUrl?.trim() || '' : ''))
+const brandImageUrl = computed(() =>
+  shopStore.hasInitializedData
+    ? shopStore.settings.brandImageUrl?.trim() || ''
+    : ''
+)
 
 watchEffect(() => {
   if (typeof document !== 'undefined') {
@@ -47,7 +53,12 @@ watchEffect(() => {
   <div class="app-shell">
     <header v-if="shopStore.hasInitializedData" class="topbar">
       <div class="brand-wrap">
-        <img v-if="brandImageUrl" :src="brandImageUrl" :alt="storeName || 'Butik'" class="brand-image" />
+        <img
+          v-if="brandImageUrl"
+          :src="brandImageUrl"
+          :alt="storeName || 'Butik'"
+          class="brand-image"
+        />
         <template v-else>
           <h1 v-if="storeName" class="brand">{{ storeName }}</h1>
           <p v-if="subName" class="eyebrow">{{ subName }}</p>
@@ -71,7 +82,9 @@ watchEffect(() => {
             <span class="nav-icon" aria-hidden="true">🛒</span>
             <span>Varukorg</span>
           </span>
-          <span v-if="shopStore.totalItems > 0" class="cart-badge">{{ shopStore.totalItems }}</span>
+          <span v-if="shopStore.totalItems > 0" class="cart-badge">{{
+            shopStore.totalItems
+          }}</span>
         </RouterLink>
         <RouterLink to="/checkout">
           <span class="nav-label">
@@ -133,11 +146,24 @@ watchEffect(() => {
   --theme-button-muted-text: #{$color-brand-contrast};
   --theme-button-danger-bg: #{$color-danger};
   --theme-button-danger-text: #{$color-brand-contrast};
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   line-height: 1.4;
   font-weight: 400;
   color: $color-text;
-  background: linear-gradient(180deg, var(--theme-page-top) 0%, var(--theme-page-mid) 48%, $color-surface 100%);
+  background: linear-gradient(
+    180deg,
+    var(--theme-page-top) 0%,
+    var(--theme-page-mid) 48%,
+    $color-surface 100%
+  );
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -151,7 +177,12 @@ watchEffect(() => {
 body {
   margin: 0;
   min-width: 320px;
-  background: linear-gradient(180deg, var(--theme-page-top) 0%, var(--theme-page-mid) 48%, $color-surface 100%);
+  background: linear-gradient(
+    180deg,
+    var(--theme-page-top) 0%,
+    var(--theme-page-mid) 48%,
+    $color-surface 100%
+  );
 }
 
 #app {
@@ -171,7 +202,11 @@ body {
   flex-wrap: wrap;
   gap: 1.1rem;
   margin-bottom: 1.2rem;
-  background: linear-gradient(160deg, var(--theme-topbar-top) 0%, var(--theme-topbar-mid) 100%);
+  background: linear-gradient(
+    160deg,
+    var(--theme-topbar-top) 0%,
+    var(--theme-topbar-mid) 100%
+  );
   border: 1px solid $color-border;
   border-radius: $radius-lg;
   padding: 0.9rem 1rem;
@@ -214,7 +249,10 @@ body {
     padding: 0.45rem 0.7rem;
     border-radius: $radius-sm;
     border: 1px solid transparent;
-    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   a:hover {

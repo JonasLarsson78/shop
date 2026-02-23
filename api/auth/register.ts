@@ -10,7 +10,8 @@ export default async function handler(req: any, res: any) {
 
   try {
     const body = parseBody(req)
-    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+    const email =
+      typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
     const password = typeof body.password === 'string' ? body.password : ''
     const name = typeof body.name === 'string' ? body.name.trim() : ''
     const address = typeof body.address === 'string' ? body.address.trim() : ''
@@ -24,7 +25,10 @@ export default async function handler(req: any, res: any) {
     }
 
     // check existing
-    const existing = await query('SELECT id FROM users WHERE email = ? LIMIT 1', [email])
+    const existing = await query(
+      'SELECT id FROM users WHERE email = ? LIMIT 1',
+      [email]
+    )
     if (Array.isArray(existing) && existing.length > 0) {
       res.status(409).json({ error: 'User already exists' })
       return
@@ -32,17 +36,23 @@ export default async function handler(req: any, res: any) {
 
     // create salt and hash
     const salt = crypto.randomBytes(16).toString('hex')
-    const hash = crypto.pbkdf2Sync(password, salt, 310000, 32, 'sha256').toString('hex')
+    const hash = crypto
+      .pbkdf2Sync(password, salt, 310000, 32, 'sha256')
+      .toString('hex')
 
     const result: any = await query(
       'INSERT INTO users (email, password_hash, salt, name, address, phone, zip, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [email, hash, salt, name, address, phone, zip, city],
+      [email, hash, salt, name, address, phone, zip, city]
     )
 
     const id = result.insertId
 
     res.status(201).json({ id, email, name, address, phone, zip, city })
   } catch (error) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to register' })
+    res
+      .status(500)
+      .json({
+        error: error instanceof Error ? error.message : 'Failed to register',
+      })
   }
 }

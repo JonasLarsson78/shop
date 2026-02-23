@@ -9,11 +9,15 @@ const router = useRouter()
 const shopStore = useShopStore()
 
 const id = Number(route.params.id)
-const product = computed(() => shopStore.products.find(p => p.id === id))
+const product = computed(() => shopStore.products.find((p) => p.id === id))
 
 const quantity = ref(1)
-const decrease = () => { quantity.value = Math.max(1, quantity.value - 1) }
-const increase = () => { quantity.value = quantity.value + 1 }
+const decrease = () => {
+  quantity.value = Math.max(1, quantity.value - 1)
+}
+const increase = () => {
+  quantity.value = quantity.value + 1
+}
 const addToCart = () => {
   if (!product.value) return
   shopStore.addToCart(product.value.id, quantity.value)
@@ -38,7 +42,11 @@ const goBack = () => {
 
     <div v-else class="card product-detail">
       <div class="media">
-        <img v-if="product.imageUrl" :src="product.imageUrl" :alt="product.name" />
+        <img
+          v-if="product.imageUrl"
+          :src="product.imageUrl"
+          :alt="product.name"
+        />
         <div v-else class="image-missing">Bild saknas</div>
       </div>
 
@@ -50,15 +58,23 @@ const goBack = () => {
         <label class="product-quantity">
           Antal
           <div class="quantity-stepper">
-            <button type="button" class="step-button" @click="decrease">−</button>
+            <button type="button" class="step-button" @click="decrease">
+              −
+            </button>
             <input type="number" min="1" v-model.number="quantity" />
-            <button type="button" class="step-button" @click="increase">+</button>
+            <button type="button" class="step-button" @click="increase">
+              +
+            </button>
           </div>
         </label>
 
         <div class="actions">
-          <BaseButton variant="secondary" type="button" @click="goBack">Tillbaka</BaseButton>
-          <BaseButton variant="primary" type="button" @click="addToCart">Lägg i varukorg</BaseButton>
+          <BaseButton variant="secondary" type="button" @click="goBack"
+            >Tillbaka</BaseButton
+          >
+          <BaseButton variant="primary" type="button" @click="addToCart"
+            >Lägg i varukorg</BaseButton
+          >
         </div>
       </div>
     </div>
@@ -85,7 +101,7 @@ textarea {
 }
 
 select {
-  appearance: none
+  appearance: none;
 }
 
 .product-detail {
@@ -99,7 +115,7 @@ select {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: $radius-sm
+  border-radius: $radius-sm;
 }
 
 .image-missing {
@@ -107,38 +123,38 @@ select {
   place-items: center;
   height: 320px;
   background: $color-surface-muted;
-  border-radius: $radius-sm
+  border-radius: $radius-sm;
 }
 
 .info h2 {
-  margin: 0 0 0.4rem
+  margin: 0 0 0.4rem;
 }
 
 .price {
   font-weight: 700;
-  margin: 0 0 0.6rem
+  margin: 0 0 0.6rem;
 }
 
 .description {
   color: $color-text;
   margin: 0 0 1rem;
-  white-space: pre-wrap
+  white-space: pre-wrap;
 }
 
 .product-quantity {
-  margin: 0 0 1rem
+  margin: 0 0 1rem;
 }
 
 .quantity-stepper {
   display: grid;
   grid-template-columns: 2rem 3.75rem 2rem;
   gap: 0.35rem;
-  align-items: center
+  align-items: center;
 }
 
 .quantity-stepper input {
   width: 3.75rem;
-  text-align: center
+  text-align: center;
 }
 
 .step-button {
@@ -152,12 +168,12 @@ select {
 .actions {
   display: flex;
   gap: 0.6rem;
-  margin-top: 0.6rem
+  margin-top: 0.6rem;
 }
 
 @include mobile-down {
   .product-detail {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 }
 </style>

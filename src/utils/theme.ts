@@ -14,7 +14,7 @@ type ThemePalette = {
 }
 
 const THEME_STORAGE_KEY = 'template-shop-theme-v1'
-const DEFAULT_CUSTOM_ACCENT_HEX = '#4f46e5'
+const DEFAULT_CUSTOM_ACCENT_HEX = '#65ae6e'
 const DEFAULT_CUSTOM_MUTED_HEX = '#0f766e'
 const DEFAULT_CUSTOM_DANGER_HEX = '#be123c'
 
@@ -43,7 +43,11 @@ export const themeOptions: Array<{ id: ThemeMode; label: string }> = [
   { id: 'custom', label: 'Custom' },
 ]
 
-const isThemeMode = (value: unknown): value is ThemeMode => value === 'default' || value === 'teal' || value === 'rose' || value === 'custom'
+const isThemeMode = (value: unknown): value is ThemeMode =>
+  value === 'default' ||
+  value === 'teal' ||
+  value === 'rose' ||
+  value === 'custom'
 
 const normalizeHex = (value: string) => {
   const trimmed = value.trim()
@@ -73,22 +77,28 @@ const parseStoredTheme = (raw: string | null): ThemeSelection | null => {
   }
 
   try {
-    const parsed = JSON.parse(raw) as Partial<ThemeSelection> & { customHex?: unknown }
+    const parsed = JSON.parse(raw) as Partial<ThemeSelection> & {
+      customHex?: unknown
+    }
 
     if (!isThemeMode(parsed.mode)) {
       return null
     }
 
-    const legacyCustomHex = typeof parsed.customHex === 'string' ? normalizeHex(parsed.customHex) : ''
-    const customAccentHex = typeof parsed.customAccentHex === 'string'
-      ? normalizeHex(parsed.customAccentHex)
-      : legacyCustomHex
-    const customMutedHex = typeof parsed.customMutedHex === 'string'
-      ? normalizeHex(parsed.customMutedHex)
-      : DEFAULT_CUSTOM_MUTED_HEX
-    const customDangerHex = typeof parsed.customDangerHex === 'string'
-      ? normalizeHex(parsed.customDangerHex)
-      : DEFAULT_CUSTOM_DANGER_HEX
+    const legacyCustomHex =
+      typeof parsed.customHex === 'string' ? normalizeHex(parsed.customHex) : ''
+    const customAccentHex =
+      typeof parsed.customAccentHex === 'string'
+        ? normalizeHex(parsed.customAccentHex)
+        : legacyCustomHex
+    const customMutedHex =
+      typeof parsed.customMutedHex === 'string'
+        ? normalizeHex(parsed.customMutedHex)
+        : DEFAULT_CUSTOM_MUTED_HEX
+    const customDangerHex =
+      typeof parsed.customDangerHex === 'string'
+        ? normalizeHex(parsed.customDangerHex)
+        : DEFAULT_CUSTOM_DANGER_HEX
 
     return {
       mode: parsed.mode,
@@ -111,14 +121,18 @@ export const getStoredTheme = (): ThemeSelection => {
     }
   }
 
-  const parsedTheme = parseStoredTheme(window.localStorage.getItem(THEME_STORAGE_KEY))
+  const parsedTheme = parseStoredTheme(
+    window.localStorage.getItem(THEME_STORAGE_KEY)
+  )
 
-  return parsedTheme ?? {
-    mode: 'default',
-    customAccentHex: DEFAULT_CUSTOM_ACCENT_HEX,
-    customMutedHex: DEFAULT_CUSTOM_MUTED_HEX,
-    customDangerHex: DEFAULT_CUSTOM_DANGER_HEX,
-  }
+  return (
+    parsedTheme ?? {
+      mode: 'default',
+      customAccentHex: DEFAULT_CUSTOM_ACCENT_HEX,
+      customMutedHex: DEFAULT_CUSTOM_MUTED_HEX,
+      customDangerHex: DEFAULT_CUSTOM_DANGER_HEX,
+    }
+  )
 }
 
 const hexToRgb = (hex: string) => {
@@ -203,23 +217,38 @@ export const applyTheme = (selection: ThemeSelection) => {
   root.style.setProperty('--theme-hero-top', toRgba(palette.accent, 0.09))
   root.style.setProperty('--theme-hero-mid', toRgba(palette.secondary, 0.14))
   root.style.setProperty('--theme-button-primary-bg', palette.accent)
-  root.style.setProperty('--theme-button-primary-text', getContrastTextColor(palette.accent))
+  root.style.setProperty(
+    '--theme-button-primary-text',
+    getContrastTextColor(palette.accent)
+  )
   root.style.setProperty('--theme-button-muted-bg', palette.secondary)
-  root.style.setProperty('--theme-button-muted-text', getContrastTextColor(palette.secondary))
+  root.style.setProperty(
+    '--theme-button-muted-text',
+    getContrastTextColor(palette.secondary)
+  )
   root.style.setProperty('--theme-button-danger-bg', palette.danger)
-  root.style.setProperty('--theme-button-danger-text', getContrastTextColor(palette.danger))
+  root.style.setProperty(
+    '--theme-button-danger-text',
+    getContrastTextColor(palette.danger)
+  )
 }
 
 export const setTheme = (selection: ThemeSelection) => {
   const normalizedSelection: ThemeSelection = {
     mode: selection.mode,
-    customAccentHex: normalizeHex(selection.customAccentHex) || DEFAULT_CUSTOM_ACCENT_HEX,
-    customMutedHex: normalizeHex(selection.customMutedHex) || DEFAULT_CUSTOM_MUTED_HEX,
-    customDangerHex: normalizeHex(selection.customDangerHex) || DEFAULT_CUSTOM_DANGER_HEX,
+    customAccentHex:
+      normalizeHex(selection.customAccentHex) || DEFAULT_CUSTOM_ACCENT_HEX,
+    customMutedHex:
+      normalizeHex(selection.customMutedHex) || DEFAULT_CUSTOM_MUTED_HEX,
+    customDangerHex:
+      normalizeHex(selection.customDangerHex) || DEFAULT_CUSTOM_DANGER_HEX,
   }
 
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(normalizedSelection))
+    window.localStorage.setItem(
+      THEME_STORAGE_KEY,
+      JSON.stringify(normalizedSelection)
+    )
   }
 
   applyTheme(normalizedSelection)
