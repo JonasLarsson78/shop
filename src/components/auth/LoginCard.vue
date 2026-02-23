@@ -43,7 +43,8 @@ async function onSubmit() {
   loading.value = true
   try {
     await auth.login({ email: email.value, password: password.value })
-    const redirect = (route.query.redirect as string) || '/'
+    const redirect = (route.query.redirect as string) || '/account'
+
     await router.push(redirect)
   } catch (err: any) {
     error.value = err?.message || 'Inloggning misslyckades'

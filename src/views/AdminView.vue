@@ -55,7 +55,7 @@ onUnmounted(() => {
     <template v-else>
       <div class="admin-shell">
         <div class="admin-shell-head">
-          <p>Inloggad som admin.</p>
+          <p><b>Inloggad som:</b> Admin.</p>
           <button type="button" @click="handleLogout">Logga ut</button>
         </div>
 
