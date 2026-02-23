@@ -86,12 +86,12 @@ watchEffect(() => {
             shopStore.totalItems
           }}</span>
         </RouterLink>
-        <RouterLink to="/checkout">
+        <!-- <RouterLink to="/checkout">
           <span class="nav-label">
             <span class="nav-icon" aria-hidden="true">💳</span>
             <span>Kassa</span>
           </span>
-        </RouterLink>
+        </RouterLink> -->
         <RouterLink v-if="!user" to="/login">
           <span class="nav-label">
             <span class="nav-icon" aria-hidden="true">🔐</span>
