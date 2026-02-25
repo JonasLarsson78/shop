@@ -3,6 +3,11 @@
 import path from 'path'
 import { pathToFileURL } from 'url'
 
+// Statically import known handlers so the Vercel bundler includes them
+import myOrdersHandler from '../server/handlers/my-orders/index.js'
+import settingsHandler from '../server/handlers/settings/index.js'
+import ordersCountHandler from '../server/handlers/orders-count/index.js'
+
 export default async function handler(req: any, res: any) {
   const raw = req.query && req.query.all
   let parts: string[] = []
@@ -33,21 +38,34 @@ export default async function handler(req: any, res: any) {
     return
   }
 
-  const handlersDir = path.join(process.cwd(), 'server', 'handlers')
-  const baseFs = path.join(handlersDir, ...parts, 'index')
-
-  const tryImportFile = async (fsPath: string) => {
-    try {
-      const url = pathToFileURL(fsPath).href
-      return await import(url)
-    } catch (err) {
-      return null
-    }
+  // Map of static handlers included at build time
+  const staticHandlers: Record<string, any> = {
+    'my-orders': myOrdersHandler,
+    settings: settingsHandler,
+    'orders-count': ordersCountHandler,
   }
 
-  // Try .js then .ts (runtime may have compiled .js)
-  let mod = await tryImportFile(baseFs + '.js')
-  if (!mod) mod = await tryImportFile(baseFs + '.ts')
+  // Resolve handler: try exact join, then first segment
+  const routeKey = parts.join('/')
+  let mod = staticHandlers[routeKey] ?? staticHandlers[parts[0]]
+
+  // Fallback: try dynamic import via file URL (may not be bundled on Vercel)
+  if (!mod) {
+    const handlersDir = path.join(process.cwd(), 'server', 'handlers')
+    const baseFs = path.join(handlersDir, ...parts, 'index')
+    const tryImportFile = async (fsPath: string) => {
+      try {
+        const url = pathToFileURL(fsPath).href
+        return await import(url)
+      } catch (err) {
+        return null
+      }
+    }
+
+    // Try .js then .ts (runtime may have compiled .js)
+    mod = await tryImportFile(baseFs + '.js')
+    if (!mod) mod = await tryImportFile(baseFs + '.ts')
+  }
 
   if (!mod || typeof mod.default !== 'function') {
     res.status(404).json({ error: 'Handler not found' })
