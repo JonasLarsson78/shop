@@ -49,10 +49,8 @@ export default async function handler(req: any, res: any) {
 
     res.status(201).json({ id, email, name, address, phone, zip, city })
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: error instanceof Error ? error.message : 'Failed to register',
-      })
+    res.status(500).json({
+      error: error instanceof Error ? error.message : 'Failed to register',
+    })
   }
 }

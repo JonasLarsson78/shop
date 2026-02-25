@@ -40,22 +40,18 @@ export default async function handler(req: any, res: any) {
     }
 
     // Simple response without tokens for now; frontend keeps minimal session in localStorage
-    res
-      .status(200)
-      .json({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        address: user.address,
-        phone: user.phone,
-        zip: user.zip,
-        city: user.city,
-      })
+    res.status(200).json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      address: user.address,
+      phone: user.phone,
+      zip: user.zip,
+      city: user.city,
+    })
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: error instanceof Error ? error.message : 'Failed to login',
-      })
+    res.status(500).json({
+      error: error instanceof Error ? error.message : 'Failed to login',
+    })
   }
 }
