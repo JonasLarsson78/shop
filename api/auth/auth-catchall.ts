@@ -29,7 +29,11 @@ function getAction(req: any) {
 
   // Try headers (for edge cases)
   const h = req.headers || {}
-  for (const key of ['x-forwarded-path', 'x-now-deployment-url', 'x-original-url']) {
+  for (const key of [
+    'x-forwarded-path',
+    'x-now-deployment-url',
+    'x-original-url',
+  ]) {
     if (typeof h[key] === 'string') {
       const pm = h[key].match(/\/auth\/(\w+)/)
       if (pm && pm[1]) return pm[1]
@@ -95,11 +99,9 @@ export default async function handler(req: any, res: any) {
         city: user.city,
       })
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : 'Failed to login',
-        })
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Failed to login',
+      })
     }
     return
   }
@@ -145,11 +147,9 @@ export default async function handler(req: any, res: any) {
       const id = result.insertId
       res.status(201).json({ id, email, name, address, phone, zip, city })
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : 'Failed to register',
-        })
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Failed to register',
+      })
     }
     return
   }
