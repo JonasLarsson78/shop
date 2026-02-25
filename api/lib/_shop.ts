@@ -47,9 +47,12 @@ export const ensureSchemaAndSeed = async () => {
     const tbl = await query<any[]>("SHOW TABLES LIKE 'product_groups'")
     if (Array.isArray(tbl) && tbl.length > 0) {
       const cntRows = await query<any[]>('SELECT COUNT(*) AS cnt FROM `groups`')
-      const cnt = Array.isArray(cntRows) && cntRows[0] ? Number(cntRows[0].cnt || 0) : 0
+      const cnt =
+        Array.isArray(cntRows) && cntRows[0] ? Number(cntRows[0].cnt || 0) : 0
       if (cnt === 0) {
-        await query(`INSERT INTO \`groups\` (name) SELECT DISTINCT name FROM product_groups WHERE name NOT IN (SELECT name FROM \`groups\`)`)
+        await query(
+          `INSERT INTO \`groups\` (name) SELECT DISTINCT name FROM product_groups WHERE name NOT IN (SELECT name FROM \`groups\`)`
+        )
       }
     }
   } catch (err) {
