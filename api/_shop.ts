@@ -871,6 +871,9 @@ export type Order = {
   items: unknown
   total: number
   shippingOptionId: number | null
+  userId?: number | null
+  shippingOptionName?: string | null
+  shippingOptionPrice?: number | null
   status: string
   createdAt: string
   updatedAt: string

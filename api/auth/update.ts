@@ -1,5 +1,5 @@
-import { query } from '../_db'
-import { parseBody, sendMethodNotAllowed } from '../_shop'
+import { query } from '../_db.js'
+import { parseBody, sendMethodNotAllowed } from '../_shop.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
