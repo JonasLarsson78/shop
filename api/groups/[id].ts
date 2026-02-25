@@ -32,13 +32,11 @@ export default async function handler(req: any, res: any) {
     const group = await updateGroup(groupId, parseBody(req))
     res.status(200).json(group)
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to handle group request',
-      })
+    res.status(400).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to handle group request',
+    })
   }
 }
