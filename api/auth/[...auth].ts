@@ -3,11 +3,24 @@ import { parseBody, sendMethodNotAllowed } from '../_shop.js'
 import crypto from 'crypto'
 
 const getAction = (req: any) => {
-  const raw = req.url || ''
-  const path = raw.split('?')[0]
+  const raw = req.url || req.originalUrl || req.headers['x-now-deployment-url'] || ''
+  let path = ''
+  try {
+    // if raw is a full URL or path, get pathname
+    const url = new URL(raw, 'http://localhost')
+    path = url.pathname
+  } catch {
+    path = String(raw).split('?')[0]
+  }
   const parts = path.split('/').filter(Boolean)
-  // expect /api/auth/<action>
-  return parts[parts.length - 1] || ''
+  // expect /api/auth/<action> or just /<action>
+  const last = parts[parts.length - 1] || ''
+  if (last === 'auth' || last === 'api') {
+    // try to read from query (fallback)
+    if (req.query && typeof req.query.action === 'string') return req.query.action
+    return ''
+  }
+  return last
 }
 
 export default async function handler(req: any, res: any) {
