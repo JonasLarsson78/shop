@@ -110,12 +110,12 @@ watchEffect(() => {
             <span>Logga ut</span>
           </span>
         </RouterLink>
-        <RouterLink v-if="isAdminLoggedIn" to="/admin">
+        <!-- <RouterLink v-if="isAdminLoggedIn" to="/admin">
           <span class="nav-label">
             <span class="nav-icon" aria-hidden="true">🛠️</span>
             <span>Admin</span>
           </span>
-        </RouterLink>
+        </RouterLink> -->
       </nav>
     </header>
 
