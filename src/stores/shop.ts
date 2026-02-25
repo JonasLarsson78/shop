@@ -102,7 +102,17 @@ const apiRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {
     throw new Error(`API request failed: ${response.status}`)
   }
 
-  return (await response.json()) as T
+  // Some endpoints (DELETE) return 204 No Content — handle empty body gracefully
+  const text = await response.text()
+  if (!text) {
+    return undefined as unknown as T
+  }
+
+  try {
+    return JSON.parse(text) as T
+  } catch (err) {
+    throw new Error('API request returned invalid JSON')
+  }
 }
 
 const loadPersistedShopState = (): PersistedShopState | null => {
@@ -275,6 +285,27 @@ export const useShopStore = defineStore('shop', {
     },
   },
   actions: {
+    async fetchSettings() {
+      try {
+        const settings = await apiRequest<Settings>('/api/settings', {
+          method: 'GET',
+        })
+        // Merge with defaults and coerce types for numeric fields
+        const merged = { ...defaultSettings, ...settings } as any
+        merged.shippingCost = Number(merged.shippingCost) || 0
+        merged.freeShippingThreshold = Number(merged.freeShippingThreshold) || 0
+        merged.vatPercent = Number(merged.vatPercent) || 0
+        const validModes = ['default', 'teal', 'rose', 'custom']
+        merged.themeMode =
+          typeof merged.themeMode === 'string' &&
+          validModes.includes(merged.themeMode)
+            ? merged.themeMode
+            : 'default'
+        this.settings = merged
+      } catch (error) {
+        console.error('Failed to fetch settings:', error)
+      }
+    },
     persistState() {
       saveShopState({
         cart: this.cart,
@@ -289,7 +320,22 @@ export const useShopStore = defineStore('shop', {
 
         this.products = snapshot.products
         this.groups = snapshot.groups
-        this.settings = snapshot.settings ?? defaultSettings
+        if (snapshot.settings) {
+          const merged = { ...defaultSettings, ...snapshot.settings } as any
+          merged.shippingCost = Number(merged.shippingCost) || 0
+          merged.freeShippingThreshold =
+            Number(merged.freeShippingThreshold) || 0
+          merged.vatPercent = Number(merged.vatPercent) || 0
+          const validModes = ['default', 'teal', 'rose', 'custom']
+          merged.themeMode =
+            typeof merged.themeMode === 'string' &&
+            validModes.includes(merged.themeMode)
+              ? merged.themeMode
+              : 'default'
+          this.settings = merged
+        } else {
+          this.settings = defaultSettings
+        }
         this.dbStatus = 'connected'
         this.persistState()
 

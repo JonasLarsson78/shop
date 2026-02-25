@@ -10,7 +10,7 @@ const heroPoints = computed(() =>
     shopStore.settings.heroPoint1,
     shopStore.settings.heroPoint2,
     shopStore.settings.heroPoint3,
-  ].filter((point) => point.trim().length > 0)
+  ].filter((point) => typeof point === 'string' && point.trim().length > 0)
 )
 </script>
 

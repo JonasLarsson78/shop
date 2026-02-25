@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useShopStore } from '../../stores/shop'
 
 const shopStore = useShopStore()
@@ -26,6 +26,35 @@ const settingsForm = reactive({
   freeShippingThreshold: shopStore.settings.freeShippingThreshold,
   vatPercent: (shopStore.settings as any).vatPercent ?? 25,
 })
+
+// Keep the form in sync if settings are loaded/updated after component creation
+watch(
+  () => shopStore.settings,
+  (s) => {
+    if (!s) return
+    settingsForm.storeName = s.storeName ?? ''
+    settingsForm.subName = s.subName ?? ''
+    settingsForm.brandImageUrl = s.brandImageUrl ?? ''
+    settingsForm.heroKicker = s.heroKicker ?? ''
+    settingsForm.heroTitle = s.heroTitle ?? ''
+    settingsForm.heroLead = s.heroLead ?? ''
+    settingsForm.heroPoint1 = s.heroPoint1 ?? ''
+    settingsForm.heroPoint2 = s.heroPoint2 ?? ''
+    settingsForm.heroPoint3 = s.heroPoint3 ?? ''
+    settingsForm.shopHeroKicker = s.shopHeroKicker ?? ''
+    settingsForm.shopHeroTitle = s.shopHeroTitle ?? ''
+    settingsForm.shopHeroLead = s.shopHeroLead ?? ''
+    settingsForm.cartHeroKicker = s.cartHeroKicker ?? ''
+    settingsForm.cartHeroTitle = s.cartHeroTitle ?? ''
+    settingsForm.cartHeroLead = s.cartHeroLead ?? ''
+    settingsForm.checkoutHeroKicker = s.checkoutHeroKicker ?? ''
+    settingsForm.checkoutHeroTitle = s.checkoutHeroTitle ?? ''
+    settingsForm.checkoutHeroLead = s.checkoutHeroLead ?? ''
+    settingsForm.freeShippingThreshold = s.freeShippingThreshold ?? 0
+    settingsForm.vatPercent = (s as any).vatPercent ?? 25
+  },
+  { immediate: true }
+)
 
 const newShipping = ref({ name: '', price: 0 })
 

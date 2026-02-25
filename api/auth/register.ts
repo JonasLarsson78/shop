@@ -1,5 +1,5 @@
-import { query } from '../_db.js'
-import { parseBody, sendMethodNotAllowed } from '../_shop.js'
+import { query } from '../lib/_db.js'
+import { parseBody, sendMethodNotAllowed } from '../lib/_shop.js'
 import crypto from 'crypto'
 
 export default async function handler(req: any, res: any) {
@@ -54,10 +54,8 @@ export default async function handler(req: any, res: any) {
     const id = result.insertId
     res.status(201).json({ id, email, name, address, phone, zip, city })
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: error instanceof Error ? error.message : 'Failed to register',
-      })
+    res.status(500).json({
+      error: error instanceof Error ? error.message : 'Failed to register',
+    })
   }
 }

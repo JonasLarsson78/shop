@@ -1,0 +1,234 @@
+{
+  "info": {
+    "_postman_id": "shop-api-collection-2026",
+    "name": "Shop API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Settings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/settings",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "settings"]
+        }
+      }
+    },
+    {
+      "name": "Update Settings",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"storeName\": \"Testbutik\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/settings",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "settings"]
+        }
+      }
+    },
+    {
+      "name": "Bootstrap Shop",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/bootstrap",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "bootstrap"]
+        }
+      }
+    },
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Testprodukt\",\n  \"description\": \"Beskrivning\",\n  \"price\": 100,\n  \"imageUrl\": \"\",\n  \"groupId\": null\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "List Groups",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/groups",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "groups"]
+        }
+      }
+    },
+    {
+      "name": "Create Group",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Testgrupp\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/groups",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "groups"]
+        }
+      }
+    },
+    {
+      "name": "List Orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [],\n  \"shippingOptionId\": 1,\n  \"customer\": {\n    \"name\": \"Testkund\",\n    \"email\": \"test@example.com\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "List Shipping Options",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/shipping-options",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "shipping-options"]
+        }
+      }
+    },
+    {
+      "name": "Create Shipping Option",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Testfrakt\",\n  \"price\": 49\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/shipping-options",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "shipping-options"]
+        }
+      }
+    }
+    ,
+    {
+      "name": "Auth Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"test1234\",\n  \"name\": \"Test Testsson\",\n  \"address\": \"Gatan 1\",\n  \"phone\": \"0701234567\",\n  \"zip\": \"12345\",\n  \"city\": \"Stad\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Auth Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"test1234\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Auth Update",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"name\": \"Nytt namn\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/update",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "update"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

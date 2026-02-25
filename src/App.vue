@@ -17,6 +17,10 @@ const syncAdminAuthState = () => {
 onMounted(() => {
   syncAdminAuthState()
   applyTheme(getStoredTheme())
+  // Ensure full snapshot (settings, products, groups) is loaded on mount
+  void shopStore.initializeData()
+  // Also fetch settings individually for quicker header update
+  void shopStore.fetchSettings()
   window.addEventListener('storage', syncAdminAuthState)
   window.addEventListener(adminAuthChangedEvent, syncAdminAuthState)
 })
