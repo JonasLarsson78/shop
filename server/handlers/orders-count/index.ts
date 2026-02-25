@@ -1,5 +1,8 @@
-import { ensureSchemaAndSeed, sendMethodNotAllowed } from '../lib/_shop.js'
-import { query } from '../lib/_db.js'
+import {
+  ensureSchemaAndSeed,
+  sendMethodNotAllowed,
+} from '../../../api/lib/_shop.js'
+import { query } from '../../../api/lib/_db.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
