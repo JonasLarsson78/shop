@@ -1028,3 +1028,75 @@ export const updateOrderStatus = async (
     items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : r.items,
   }
 }
+
+export const handleGroupById = async (req: any, res: any) => {
+  if (req.method !== 'PUT' && req.method !== 'DELETE') {
+    sendMethodNotAllowed(res, ['PUT', 'DELETE'])
+    return
+  }
+
+  const groupId = getQueryId(req)
+
+  if (!groupId) {
+    res.status(400).json({ error: 'Missing group id' })
+    return
+  }
+
+  try {
+    await ensureSchemaAndSeed()
+
+    if (req.method === 'DELETE') {
+      await deleteGroup(groupId)
+      res.status(200).json({ ok: true })
+      return
+    }
+
+    const group = await updateGroup(groupId, parseBody(req))
+    res.status(200).json(group)
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle group request',
+      })
+  }
+}
+
+export const handleProductById = async (req: any, res: any) => {
+  if (req.method !== 'PUT' && req.method !== 'DELETE') {
+    sendMethodNotAllowed(res, ['PUT', 'DELETE'])
+    return
+  }
+
+  const productId = getQueryId(req)
+
+  if (!productId) {
+    res.status(400).json({ error: 'Missing product id' })
+    return
+  }
+
+  try {
+    await ensureSchemaAndSeed()
+
+    if (req.method === 'DELETE') {
+      await deleteProduct(productId)
+      res.status(200).json({ ok: true })
+      return
+    }
+
+    const product = await updateProduct(productId, parseBody(req))
+    res.status(200).json(product)
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to handle product request',
+      })
+  }
+}
