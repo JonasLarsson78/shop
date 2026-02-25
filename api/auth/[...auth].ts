@@ -26,6 +26,21 @@ const getAction = (req: any) => {
 }
 
 export default async function handler(req: any, res: any) {
+  // allow CORS for browser requests
+  if (res && typeof res.setHeader === 'function') {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  }
+
+  // respond to preflight
+  if (req.method === 'OPTIONS') {
+    if (res && typeof res.setHeader === 'function') {
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+    }
+    res.status(204).json({})
+    return
+  }
+
   const action = getAction(req)
 
   if (action === 'login') {
