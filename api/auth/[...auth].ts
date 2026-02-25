@@ -3,7 +3,8 @@ import { parseBody, sendMethodNotAllowed } from '../_shop.js'
 import crypto from 'crypto'
 
 const getAction = (req: any) => {
-  const raw = req.url || req.originalUrl || req.headers['x-now-deployment-url'] || ''
+  const raw =
+    req.url || req.originalUrl || req.headers['x-now-deployment-url'] || ''
   let path = ''
   try {
     // if raw is a full URL or path, get pathname
@@ -17,7 +18,8 @@ const getAction = (req: any) => {
   const last = parts[parts.length - 1] || ''
   if (last === 'auth' || last === 'api') {
     // try to read from query (fallback)
-    if (req.query && typeof req.query.action === 'string') return req.query.action
+    if (req.query && typeof req.query.action === 'string')
+      return req.query.action
     return ''
   }
   return last
@@ -73,11 +75,9 @@ export default async function handler(req: any, res: any) {
         city: user.city,
       })
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : 'Failed to login',
-        })
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Failed to login',
+      })
     }
 
     return
@@ -131,11 +131,9 @@ export default async function handler(req: any, res: any) {
 
       res.status(201).json({ id, email, name, address, phone, zip, city })
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : 'Failed to register',
-        })
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Failed to register',
+      })
     }
 
     return
