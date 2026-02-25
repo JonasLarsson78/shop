@@ -1,5 +1,5 @@
-import { query } from './_db'
-import { DEFAULT_PRODUCT_IMAGE } from './_defaults'
+import { query } from './_db.js'
+import { DEFAULT_PRODUCT_IMAGE } from './_defaults.js'
 import type { ResultSetHeader } from 'mysql2'
 
 export type Product = {

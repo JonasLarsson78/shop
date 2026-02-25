@@ -1,5 +1,5 @@
-import { query } from './_db'
-import { sendMethodNotAllowed, parseBody } from './_shop'
+import { query } from './_db.js'
+import { sendMethodNotAllowed, parseBody } from './_shop.js'
 import type { ResultSetHeader } from 'mysql2'
 
 export type ShippingOption = {
