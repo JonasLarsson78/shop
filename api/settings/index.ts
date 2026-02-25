@@ -3,8 +3,8 @@ import {
   getSettings,
   parseBody,
   updateSettings,
-} from '../../../api/lib/_shop.js'
-import { requireMethod, handleError } from '../../../api/utils.js'
+} from '../lib/_shop.js'
+import { requireMethod, handleError } from '../utils.js'
 
 export default async function handler(req: any, res: any) {
   if (!requireMethod(req, res, ['GET', 'PUT'])) return
