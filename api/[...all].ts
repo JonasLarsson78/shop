@@ -4,9 +4,9 @@ import path from 'path'
 import { pathToFileURL } from 'url'
 
 // Statically import known handlers so the Vercel bundler includes them
-import myOrdersHandler from '../server/handlers/my-orders/index.js'
-import settingsHandler from '../server/handlers/settings/index.js'
-import ordersCountHandler from '../server/handlers/orders-count/index.js'
+import myOrdersHandler from '../server/handlers/my-orders/index.ts'
+import settingsHandler from '../server/handlers/settings/index.ts'
+import ordersCountHandler from '../server/handlers/orders-count/index.ts'
 
 export default async function handler(req: any, res: any) {
   const raw = req.query && req.query.all
