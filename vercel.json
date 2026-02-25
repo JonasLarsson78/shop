@@ -15,7 +15,8 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/" }
+
   ],
   "cleanUrls": true,
   "trailingSlash": false
