@@ -4,7 +4,7 @@ import {
   parseBody,
   sendMethodNotAllowed,
   updateSettings,
-} from './_shop'
+} from './_shop.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET' && req.method !== 'PUT') {

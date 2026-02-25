@@ -2,7 +2,7 @@ import {
   ensureSchemaAndSeed,
   getShopSnapshot,
   sendMethodNotAllowed,
-} from './_shop'
+} from './_shop.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST' && req.method !== 'GET') {
