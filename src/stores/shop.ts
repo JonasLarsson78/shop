@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { applyTheme } from '../utils/theme'
 
 export interface Product {
   id: number
@@ -312,9 +313,7 @@ export const useShopStore = defineStore('shop', {
             customMutedHex: themeCustomMutedHex || '#0f766e',
             customDangerHex: themeCustomDangerHex || '#be123c',
           }
-          import('../utils/theme').then(({ applyTheme }) => {
-            applyTheme(themeSelection)
-          })
+          applyTheme(themeSelection)
         }
       } catch (error) {
         console.error('Failed to load shop data from DB API:', error)
