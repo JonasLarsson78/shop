@@ -40,3 +40,4 @@ coverage
 *.sln
 *.sw?
 .vercel
+.env*.local

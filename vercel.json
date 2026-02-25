@@ -14,9 +14,9 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/auth/:action*", "destination": "/api/auth/auth-catchall.ts" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/" }
-
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "cleanUrls": true,
   "trailingSlash": false
