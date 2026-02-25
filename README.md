@@ -1,67 +1,106 @@
-# Vue 3 + TypeScript + Vite
+# Shop (Vue 3 + TypeScript + Vite)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A small shop template using Vue 3, TypeScript, Vite and a lightweight MySQL + serverless API backend (Vercel Functions). The project contains an admin UI for managing products, groups, shipping and theme settings.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+Useful links:
+
+- Vue 3 script setup: https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
+- TypeScript + Vue guide: https://vuejs.org/guide/typescript/overview.html
 
 ## MySQL + Vercel Functions backend
 
-This project is prepared to run backend API routes in `api/` using Vercel Functions and MySQL.
+This project runs backend API routes from the `api/` folder (designed for Vercel Functions) and uses MySQL for persistence.
 
-### 1) Environment variables
+### Environment
 
-Copy `.env.example` to `.env.local` and fill in values:
+Copy `.env.example` to `.env.local` and fill in the database credentials:
 
 - `DB_HOST`
-- `DB_PORT`
+- `DB_PORT` (optional)
 - `DB_USER`
 - `DB_PASSWORD`
 - `DB_NAME`
 
-For Vercel deployment, set the same keys in **Project Settings → Environment Variables**.
+For Vercel deployment, set the same keys under Project Settings → Environment Variables.
 
-### 2) Database bootstrap
+### Database bootstrap / migration
 
-The endpoint `POST /api/bootstrap` creates required tables if they do not exist and seeds default data when tables are empty:
+A startup migration script and API endpoint ensure tables exist and seed defaults when necessary.
 
-- `groups`
-- `products`
-- `settings`
+- To run the migration manually (uses your `.env.local`):
 
-The frontend calls this endpoint automatically on app startup.
+```bash
+npm run db:init
+```
 
-You can also create/verify tables directly from your local `.env`:
+- The API endpoint `POST /api/bootstrap` also ensures the schema and seeds data; the frontend calls this automatically on app startup.
 
-`npm run db:init`
-
-### 3) Available API routes
+### API routes (overview)
 
 - `GET/POST /api/products`
 - `PUT/DELETE /api/products/:id`
 - `GET/POST /api/groups`
 - `PUT/DELETE /api/groups/:id`
 - `GET/PUT /api/settings`
+- `POST /api/bootstrap` (creates tables / seeds)
+- `GET /api/orders-count` (admin)
 
-### 4) Local development
+## Theme & DB persistence
 
-Frontend-only dev still works with:
+Theme selection (presets and custom colors) is persisted in the database so the site shows the same theme across restarts and deployments.
 
-`npm run dev`
+- Theme fields live on the single `settings` row:
+  - `theme_mode` — one of `default`, `teal`, `rose`, `custom`
+  - `theme_custom_accent_hex`
+  - `theme_custom_muted_hex`
+  - `theme_custom_danger_hex`
 
-To run frontend + Vercel Functions locally (recommended for DB testing):
+- The Admin → Theme UI saves theme changes via `PUT /api/settings`.
+- On startup the frontend reads settings via `POST /api/bootstrap` and applies the stored theme.
 
-`npm run dev:vercel`
+If you add or change the database, run the migration to ensure these columns exist:
 
-This uses a pinned Vercel CLI version to avoid npm peer-dependency conflicts on some setups.
+```bash
+npm run db:init
+```
 
-If you previously tried installing `vercel` in this project and got `ERESOLVE`, remove it and retry:
+Then start the local dev server with API routes active:
 
-`npm uninstall vercel @vercel/backends`
+```bash
+npm run dev:vercel
+```
 
-then run:
+To test theme persistence:
 
-`npm run dev:vercel`
+1. Open Admin → Theme and choose a preset or enter custom colors.
+2. Click the button to apply/save the theme (this issues `PUT /api/settings`).
+3. Reload the site — the theme should reflect the saved values from the DB.
 
-When `vercel dev` is running, API routes in `api/` are active and MySQL is used.
+If a save fails, check the dev server console for logs — the API prints incoming payloads and errors when debugging is enabled. Paste any server log output here and I can help diagnose further.
 
-If API routes are not available locally, the app falls back to local in-memory/localStorage behavior.
+## Local development
+
+- Frontend only:
+
+```bash
+npm run dev
+```
+
+- Frontend + Vercel Functions (recommended for DB testing):
+
+```bash
+npm run dev:vercel
+```
+
+If `vercel` install conflicts occur, run:
+
+```bash
+npm uninstall vercel @vercel/backends
+npm run dev:vercel
+```
+
+When `vercel dev` is running the `api/` routes are active and use the configured MySQL instance. If API routes are unavailable the app falls back to local in-memory/localStorage behavior for some features.
+
+---
+
+If you'd like, I can add a short API test script that hits `PUT /api/settings` with example payloads to automate manual checks. Want me to add that?
