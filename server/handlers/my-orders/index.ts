@@ -1,4 +1,4 @@
-import { ensureSchemaAndSeed, listOrders } from '../lib/_shop.js'
+import { ensureSchemaAndSeed, listOrders } from '../../../api/lib/_shop.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
