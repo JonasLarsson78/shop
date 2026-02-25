@@ -4,10 +4,38 @@ import crypto from 'crypto'
 
 // Extract action from req.query.action or req.url
 function getAction(req: any) {
+  // Try query first
   if (req.query && typeof req.query.action === 'string') return req.query.action
-  const url = req.url || req.originalUrl || ''
-  const match = url.match(/\/api\/auth\/(\w+)/)
-  if (match && match[1]) return match[1]
+
+  // Try to extract from path (robust for Vercel prod and dev)
+  let path = ''
+  if (typeof req.url === 'string') {
+    try {
+      path = new URL(req.url, 'http://localhost').pathname
+    } catch {
+      path = req.url.split('?')[0]
+    }
+  }
+  if (!path && typeof req.originalUrl === 'string') {
+    try {
+      path = new URL(req.originalUrl, 'http://localhost').pathname
+    } catch {
+      path = req.originalUrl.split('?')[0]
+    }
+  }
+  // Match /api/auth/<action> or /auth/<action>
+  const m = path.match(/\/auth\/(\w+)/)
+  if (m && m[1]) return m[1]
+
+  // Try headers (for edge cases)
+  const h = req.headers || {}
+  for (const key of ['x-forwarded-path', 'x-now-deployment-url', 'x-original-url']) {
+    if (typeof h[key] === 'string') {
+      const pm = h[key].match(/\/auth\/(\w+)/)
+      if (pm && pm[1]) return pm[1]
+    }
+  }
+
   return ''
 }
 
