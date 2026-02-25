@@ -14,7 +14,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/auth/:action*", "destination": "/api/auth/auth-catchall.ts" },
+    // Removed custom auth rewrite; now using explicit files for each endpoint
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
