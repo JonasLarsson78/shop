@@ -25,7 +25,7 @@ export default async function handler(req: any, res: any) {
     return
   }
 
-  if (req.method === 'PUT') {
+  if (req.method === 'POST') {
     const body = parseBody(req)
     const name = typeof body.name === 'string' ? body.name.trim() : ''
     if (!name) {
@@ -45,6 +45,6 @@ export default async function handler(req: any, res: any) {
     return
   }
 
-  res.setHeader('Allow', 'GET, PUT')
+  res.setHeader('Allow', 'GET, POST')
   res.status(405).json({ error: 'Method Not Allowed' })
 }

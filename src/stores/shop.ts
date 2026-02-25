@@ -572,7 +572,7 @@ export const useShopStore = defineStore('shop', {
         const updated = await apiRequest<ProductGroup>(
           `/api/groups/${groupId}`,
           {
-            method: 'PUT',
+            method: 'POST',
             body: JSON.stringify({ name: trimmedName }),
           }
         )
