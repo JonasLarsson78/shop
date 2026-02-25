@@ -96,16 +96,17 @@ export const getSettings = async () => {
   const rows = await query<ShopSettings[]>(
     'SELECT * FROM shop_settings WHERE id = 1'
   )
-  const row = rows[0] || {}
+  const row = (rows[0] ?? {}) as Partial<ShopSettings>
   // Normalize numeric and theme fields coming from DB (DECIMAL may be returned as string)
   const normalized: any = {
     ...row,
-    shippingCost: row.shippingCost != null ? Number(row.shippingCost) : null,
+    shippingCost:
+      row.shippingCost != null ? Number(row.shippingCost as any) : null,
     freeShippingThreshold:
       row.freeShippingThreshold != null
-        ? Number(row.freeShippingThreshold)
+        ? Number(row.freeShippingThreshold as any)
         : null,
-    vatPercent: row.vatPercent != null ? Number(row.vatPercent) : null,
+    vatPercent: row.vatPercent != null ? Number(row.vatPercent as any) : null,
   }
   const validModes = ['default', 'teal', 'rose', 'custom']
   normalized.themeMode =
