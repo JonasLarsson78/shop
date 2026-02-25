@@ -9,7 +9,10 @@ export default async function handler(req: any, res: any) {
   }
 
   if (req.method === 'GET') {
-    const rows = await query('SELECT id, name FROM `groups` WHERE id = ? LIMIT 1', [id])
+    const rows = await query(
+      'SELECT id, name FROM `groups` WHERE id = ? LIMIT 1',
+      [id]
+    )
     if (!Array.isArray(rows) || rows.length === 0) {
       res.status(404).json({ error: 'Group not found' })
       return
@@ -26,7 +29,10 @@ export default async function handler(req: any, res: any) {
       return
     }
     await query('UPDATE `groups` SET name = ? WHERE id = ?', [name, id])
-    const rows = await query('SELECT id, name FROM `groups` WHERE id = ? LIMIT 1', [id])
+    const rows = await query(
+      'SELECT id, name FROM `groups` WHERE id = ? LIMIT 1',
+      [id]
+    )
     res.status(200).json(rows[0])
     return
   }
