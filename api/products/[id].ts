@@ -5,7 +5,7 @@ import {
   parseBody,
   sendMethodNotAllowed,
   updateProduct,
-} from '../_shop'
+} from '../_shop.js'
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'PUT' && req.method !== 'DELETE') {
