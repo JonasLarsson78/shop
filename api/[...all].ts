@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
     try {
       const base = 'http://localhost'
       const url = req.url ? new URL(req.url, base) : null
-      let pathname = url ? url.pathname : (req.path || '')
+      let pathname = url ? url.pathname : req.path || ''
       // Remove leading /api/ or /api if present
       if (pathname === '/api' || pathname === '/api/') {
         pathname = ''
