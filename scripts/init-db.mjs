@@ -234,6 +234,26 @@ try {
       alterSql:
         'ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold',
     },
+    {
+      name: 'theme_mode',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_mode VARCHAR(20) NOT NULL DEFAULT 'default' AFTER vat_percent",
+    },
+    {
+      name: 'theme_custom_accent_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_accent_hex VARCHAR(10) NOT NULL DEFAULT '#65ae6e' AFTER theme_mode",
+    },
+    {
+      name: 'theme_custom_muted_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_muted_hex VARCHAR(10) NOT NULL DEFAULT '#0f766e' AFTER theme_custom_accent_hex",
+    },
+    {
+      name: 'theme_custom_danger_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_danger_hex VARCHAR(10) NOT NULL DEFAULT '#be123c' AFTER theme_custom_muted_hex",
+    },
   ]
 
   for (const column of settingsColumnsToEnsure) {

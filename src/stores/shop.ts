@@ -36,6 +36,10 @@ interface Settings {
   shippingCost: number
   freeShippingThreshold: number
   vatPercent: number
+  themeMode?: 'default' | 'teal' | 'rose' | 'custom'
+  themeCustomAccentHex?: string
+  themeCustomMutedHex?: string
+  themeCustomDangerHex?: string
 }
 
 interface PersistedShopState {
@@ -287,6 +291,31 @@ export const useShopStore = defineStore('shop', {
         this.settings = snapshot.settings ?? defaultSettings
         this.dbStatus = 'connected'
         this.persistState()
+
+        // Apply theme from DB
+        if (snapshot.settings) {
+          const {
+            themeMode,
+            themeCustomAccentHex,
+            themeCustomMutedHex,
+            themeCustomDangerHex,
+          } = snapshot.settings
+          // Only allow valid ThemeMode values
+          const validModes = ['default', 'teal', 'rose', 'custom']
+          const mode =
+            typeof themeMode === 'string' && validModes.includes(themeMode)
+              ? (themeMode as 'default' | 'teal' | 'rose' | 'custom')
+              : 'default'
+          const themeSelection = {
+            mode,
+            customAccentHex: themeCustomAccentHex || '#65ae6e',
+            customMutedHex: themeCustomMutedHex || '#0f766e',
+            customDangerHex: themeCustomDangerHex || '#be123c',
+          }
+          import('../utils/theme').then(({ applyTheme }) => {
+            applyTheme(themeSelection)
+          })
+        }
       } catch (error) {
         console.error('Failed to load shop data from DB API:', error)
         this.products = []

@@ -7,8 +7,24 @@ import {
   themeOptions,
   type ThemeMode,
 } from '../../utils/theme'
+import { useShopStore } from '../../stores/shop'
 
-const savedTheme = getStoredTheme()
+const shopStore = useShopStore()
+
+const savedTheme = (() => {
+  const s = shopStore.settings as any
+  if (s && typeof s.themeMode === 'string') {
+    return {
+      mode: s.themeMode as ThemeMode,
+      customAccentHex: s.themeCustomAccentHex || '#65ae6e',
+      customMutedHex: s.themeCustomMutedHex || '#0f766e',
+      customDangerHex: s.themeCustomDangerHex || '#be123c',
+    }
+  }
+
+  return getStoredTheme()
+})()
+
 const selectedMode = ref<ThemeMode>(savedTheme.mode)
 const customAccentHex = ref(savedTheme.customAccentHex)
 const customMutedHex = ref(savedTheme.customMutedHex)
@@ -29,6 +45,13 @@ const applyPresetTheme = (mode: ThemeMode) => {
     customMutedHex: customMutedHex.value,
     customDangerHex: customDangerHex.value,
   })
+  // persist to DB
+  shopStore.updateSettings({
+    themeMode: mode,
+    themeCustomAccentHex: customAccentHex.value,
+    themeCustomMutedHex: customMutedHex.value,
+    themeCustomDangerHex: customDangerHex.value,
+  })
 }
 
 const applyCustomTheme = () => {
@@ -42,6 +65,12 @@ const applyCustomTheme = () => {
     customAccentHex: customAccentHex.value,
     customMutedHex: customMutedHex.value,
     customDangerHex: customDangerHex.value,
+  })
+  shopStore.updateSettings({
+    themeMode: 'custom',
+    themeCustomAccentHex: customAccentHex.value,
+    themeCustomMutedHex: customMutedHex.value,
+    themeCustomDangerHex: customDangerHex.value,
   })
 }
 
@@ -57,6 +86,13 @@ watch([customAccentHex, customMutedHex, customDangerHex], () => {
     customAccentHex: customAccentHex.value,
     customMutedHex: customMutedHex.value,
     customDangerHex: customDangerHex.value,
+  })
+  // debounce would be ideal, but persist immediately for now
+  shopStore.updateSettings({
+    themeMode: 'custom',
+    themeCustomAccentHex: customAccentHex.value,
+    themeCustomMutedHex: customMutedHex.value,
+    themeCustomDangerHex: customDangerHex.value,
   })
 })
 </script>

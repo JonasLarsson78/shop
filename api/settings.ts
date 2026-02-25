@@ -20,17 +20,21 @@ export default async function handler(req: any, res: any) {
       res.status(200).json(settings)
       return
     }
-
-    const settings = await updateSettings(parseBody(req))
+    const payload = parseBody(req)
+    console.log('PUT /api/settings payload:', payload)
+    const settings = await updateSettings(payload)
     res.status(200).json(settings)
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to handle settings request',
-      })
+    console.error('Settings handler error:', error)
+    res.status(400).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to handle settings request',
+      stack:
+        error instanceof Error && process.env.NODE_ENV !== 'production'
+          ? error.stack
+          : undefined,
+    })
   }
 }

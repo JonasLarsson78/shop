@@ -38,6 +38,10 @@ export type ShopSettings = {
   shippingCost: number
   freeShippingThreshold: number
   vatPercent: number
+  themeMode: string
+  themeCustomAccentHex: string
+  themeCustomMutedHex: string
+  themeCustomDangerHex: string
 }
 
 type VercelRequest = {
@@ -261,6 +265,10 @@ const ensureSchemaAndSeedInternal = async () => {
       shipping_cost INT NOT NULL,
       free_shipping_threshold INT NOT NULL,
       vat_percent INT NOT NULL DEFAULT 25,
+        theme_mode VARCHAR(20) NOT NULL DEFAULT 'default',
+        theme_custom_accent_hex VARCHAR(10) NOT NULL DEFAULT '#65ae6e',
+        theme_custom_muted_hex VARCHAR(10) NOT NULL DEFAULT '#0f766e',
+        theme_custom_danger_hex VARCHAR(10) NOT NULL DEFAULT '#be123c',
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
@@ -365,6 +373,26 @@ const ensureSchemaAndSeedInternal = async () => {
       name: 'vat_percent',
       alterSql:
         'ALTER TABLE settings ADD COLUMN vat_percent INT NOT NULL DEFAULT 25 AFTER free_shipping_threshold',
+    },
+    {
+      name: 'theme_mode',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_mode VARCHAR(20) NOT NULL DEFAULT 'default' AFTER vat_percent",
+    },
+    {
+      name: 'theme_custom_accent_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_accent_hex VARCHAR(10) NOT NULL DEFAULT '#65ae6e' AFTER theme_mode",
+    },
+    {
+      name: 'theme_custom_muted_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_muted_hex VARCHAR(10) NOT NULL DEFAULT '#0f766e' AFTER theme_custom_accent_hex",
+    },
+    {
+      name: 'theme_custom_danger_hex',
+      alterSql:
+        "ALTER TABLE settings ADD COLUMN theme_custom_danger_hex VARCHAR(10) NOT NULL DEFAULT '#be123c' AFTER theme_custom_muted_hex",
     },
   ] as const
 
@@ -542,32 +570,8 @@ export const deleteGroup = async (groupId: number) => {
 }
 
 export const getSettings = async (): Promise<ShopSettings | null> => {
-  const rows = await query<
-    Array<{
-      storeName: string
-      subName: string
-      brandImageUrl: string
-      heroKicker: string
-      heroTitle: string
-      heroLead: string
-      heroPoint1: string
-      heroPoint2: string
-      heroPoint3: string
-      shopHeroKicker: string
-      shopHeroTitle: string
-      shopHeroLead: string
-      cartHeroKicker: string
-      cartHeroTitle: string
-      cartHeroLead: string
-      checkoutHeroKicker: string
-      checkoutHeroTitle: string
-      checkoutHeroLead: string
-      shippingCost: number
-      freeShippingThreshold: number
-      vatPercent: number
-    }>
-  >(`
-    SELECT
+  const rows = await query<Array<ShopSettings>>(
+    `SELECT
       store_name AS storeName,
       sub_name AS subName,
       brand_image_url AS brandImageUrl,
@@ -588,11 +592,15 @@ export const getSettings = async (): Promise<ShopSettings | null> => {
       checkout_hero_lead AS checkoutHeroLead,
       shipping_cost AS shippingCost,
       free_shipping_threshold AS freeShippingThreshold,
-      vat_percent AS vatPercent
+      vat_percent AS vatPercent,
+      theme_mode AS themeMode,
+      theme_custom_accent_hex AS themeCustomAccentHex,
+      theme_custom_muted_hex AS themeCustomMutedHex,
+      theme_custom_danger_hex AS themeCustomDangerHex
     FROM settings
     WHERE id = 1
-    LIMIT 1
-  `)
+    LIMIT 1`
+  )
 
   if (!rows[0]) {
     return null
@@ -691,78 +699,123 @@ export const updateSettings = async (
     ? Math.max(0, Math.floor(Number(payload.vatPercent)))
     : (currentSettings?.vatPercent ?? 25)
 
-  await query(
-    `INSERT INTO settings (
-       id,
-       store_name,
-       sub_name,
-      brand_image_url,
-       hero_kicker,
-       hero_title,
-       hero_lead,
-       hero_point_1,
-       hero_point_2,
-       hero_point_3,
-       shop_hero_kicker,
-       shop_hero_title,
-       shop_hero_lead,
-       cart_hero_kicker,
-       cart_hero_title,
-       cart_hero_lead,
-       checkout_hero_kicker,
-       checkout_hero_title,
-       checkout_hero_lead,
-       shipping_cost,
-       free_shipping_threshold,
-       vat_percent
-     )
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE
-       store_name = VALUES(store_name),
-       sub_name = VALUES(sub_name),
-       brand_image_url = VALUES(brand_image_url),
-       hero_kicker = VALUES(hero_kicker),
-       hero_title = VALUES(hero_title),
-       hero_lead = VALUES(hero_lead),
-       hero_point_1 = VALUES(hero_point_1),
-       hero_point_2 = VALUES(hero_point_2),
-       hero_point_3 = VALUES(hero_point_3),
-       shop_hero_kicker = VALUES(shop_hero_kicker),
-       shop_hero_title = VALUES(shop_hero_title),
-       shop_hero_lead = VALUES(shop_hero_lead),
-       cart_hero_kicker = VALUES(cart_hero_kicker),
-       cart_hero_title = VALUES(cart_hero_title),
-       cart_hero_lead = VALUES(cart_hero_lead),
-       checkout_hero_kicker = VALUES(checkout_hero_kicker),
-       checkout_hero_title = VALUES(checkout_hero_title),
-       checkout_hero_lead = VALUES(checkout_hero_lead),
-       shipping_cost = VALUES(shipping_cost),
-       free_shipping_threshold = VALUES(free_shipping_threshold),
-       vat_percent = VALUES(vat_percent)`,
-    [
-      storeName,
-      subName,
-      brandImageUrl,
-      heroKicker,
-      heroTitle,
-      heroLead,
-      heroPoint1,
-      heroPoint2,
-      heroPoint3,
-      shopHeroKicker,
-      shopHeroTitle,
-      shopHeroLead,
-      cartHeroKicker,
-      cartHeroTitle,
-      cartHeroLead,
-      checkoutHeroKicker,
-      checkoutHeroTitle,
-      checkoutHeroLead,
-      shippingCost,
-      freeShippingThreshold,
-      vatPercent,
-    ]
+  // Theme fields
+  const themeMode =
+    typeof payload.themeMode === 'string'
+      ? payload.themeMode
+      : (currentSettings?.themeMode ?? 'default')
+  const themeCustomAccentHex =
+    typeof payload.themeCustomAccentHex === 'string'
+      ? payload.themeCustomAccentHex
+      : (currentSettings?.themeCustomAccentHex ?? '#65ae6e')
+  const themeCustomMutedHex =
+    typeof payload.themeCustomMutedHex === 'string'
+      ? payload.themeCustomMutedHex
+      : (currentSettings?.themeCustomMutedHex ?? '#0f766e')
+  const themeCustomDangerHex =
+    typeof payload.themeCustomDangerHex === 'string'
+      ? payload.themeCustomDangerHex
+      : (currentSettings?.themeCustomDangerHex ?? '#be123c')
+
+  // Use explicit INSERT or UPDATE to avoid placeholder mismatch
+  const existsRows = await query<Array<{ c: number }>>(
+    'SELECT COUNT(*) AS c FROM settings WHERE id = 1'
   )
+
+  const params = [
+    storeName,
+    subName,
+    brandImageUrl,
+    heroKicker,
+    heroTitle,
+    heroLead,
+    heroPoint1,
+    heroPoint2,
+    heroPoint3,
+    shopHeroKicker,
+    shopHeroTitle,
+    shopHeroLead,
+    cartHeroKicker,
+    cartHeroTitle,
+    cartHeroLead,
+    checkoutHeroKicker,
+    checkoutHeroTitle,
+    checkoutHeroLead,
+    shippingCost,
+    freeShippingThreshold,
+    vatPercent,
+    themeMode,
+    themeCustomAccentHex,
+    themeCustomMutedHex,
+    themeCustomDangerHex,
+  ]
+
+  if (existsRows && existsRows[0]?.c > 0) {
+    await query(
+      `UPDATE settings SET
+        store_name = ?,
+        sub_name = ?,
+        brand_image_url = ?,
+        hero_kicker = ?,
+        hero_title = ?,
+        hero_lead = ?,
+        hero_point_1 = ?,
+        hero_point_2 = ?,
+        hero_point_3 = ?,
+        shop_hero_kicker = ?,
+        shop_hero_title = ?,
+        shop_hero_lead = ?,
+        cart_hero_kicker = ?,
+        cart_hero_title = ?,
+        cart_hero_lead = ?,
+        checkout_hero_kicker = ?,
+        checkout_hero_title = ?,
+        checkout_hero_lead = ?,
+        shipping_cost = ?,
+        free_shipping_threshold = ?,
+        vat_percent = ?,
+        theme_mode = ?,
+        theme_custom_accent_hex = ?,
+        theme_custom_muted_hex = ?,
+        theme_custom_danger_hex = ?
+      WHERE id = 1`,
+      params
+    )
+  } else {
+    await query(
+      `INSERT INTO settings (
+        id,
+        store_name,
+        sub_name,
+        brand_image_url,
+        hero_kicker,
+        hero_title,
+        hero_lead,
+        hero_point_1,
+        hero_point_2,
+        hero_point_3,
+        shop_hero_kicker,
+        shop_hero_title,
+        shop_hero_lead,
+        cart_hero_kicker,
+        cart_hero_title,
+        cart_hero_lead,
+        checkout_hero_kicker,
+        checkout_hero_title,
+        checkout_hero_lead,
+        shipping_cost,
+        free_shipping_threshold,
+        vat_percent,
+        theme_mode,
+        theme_custom_accent_hex,
+        theme_custom_muted_hex,
+        theme_custom_danger_hex
+      ) VALUES (
+        1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      )`,
+      params
+    )
+  }
 
   return {
     storeName,
@@ -786,6 +839,10 @@ export const updateSettings = async (
     shippingCost,
     freeShippingThreshold,
     vatPercent,
+    themeMode,
+    themeCustomAccentHex,
+    themeCustomMutedHex,
+    themeCustomDangerHex,
   }
 }
 
